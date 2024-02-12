@@ -87,4 +87,4 @@ web-build/
 
 /coverage
 
-env.sh
+.envrc
