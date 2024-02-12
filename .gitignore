@@ -88,3 +88,4 @@ web-build/
 /coverage
 
 .envrc
+git-setup.sh
