@@ -14,3 +14,10 @@ A mobile app for a family or any closed group to handle their day-to-day needs.
 - Install dependencies `bun install`
 - Run Android app in simulator `bun run android` (or)
   Run iOS app in simulator `bun run ios`
+
+## Courtesy
+- Icons from Freepik.com 
+    - <a href="https://www.freepik.com/icon/wallet_4504461#fromView=search&term=wallet+online&track=ais&page=1&position=56&uuid=2f2a87b6-cc3a-4aa6-8ecf-8faf8fd00371">Icon by Superndre</a>
+    - <a href="https://www.freepik.com/icon/payment-method_1663219#fromView=search&term=payment&track=ais&page=1&position=64&uuid=1bcdb960-b053-4e54-a129-784d7bb3b49d">Icon by Freepik</a>
+    - <a href="https://www.freepik.com/icon/calendar_12127241#fromView=search&term=filter+calendar&track=ais&page=1&position=5&uuid=e10a8b4c-c807-45d4-9521-b93a99de3493">Icon by TravisAvery</a>
+    - <a href="https://www.freepik.com/icon/commission_8155668#fromView=search&term=loan&track=ais&page=1&position=16&uuid=07470a9f-13de-4b80-b564-daee4a8c2091">Icon by Freepik</a>

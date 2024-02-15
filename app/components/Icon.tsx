@@ -1,3 +1,4 @@
+import { FontAwesome, FontAwesome5, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons"
 import * as React from "react"
 import { ComponentType } from "react"
 import {
@@ -11,49 +12,71 @@ import {
   ViewStyle,
 } from "react-native"
 
-export type IconTypes = keyof typeof iconRegistry
-
-interface IconProps extends TouchableOpacityProps {
-  /**
-   * The name of the icon
-   */
-  icon: IconTypes
-
-  /**
-   * An optional tint color for the icon
-   */
+export type ImageIconNames = keyof typeof iconRegistry
+export type FontIconTypes = "FontAwesome" | "FontAwesome5" | "Ionicons" | "AntDesign" | "Material"
+interface CommonIconProps {
   color?: string
-
-  /**
-   * An optional size for the icon. If not provided, the icon will be sized to the icon's resolution.
-   */
   size?: number
-
-  /**
-   * Style overrides for the icon image
-   */
-  style?: StyleProp<ImageStyle>
-
-  /**
-   * Style overrides for the icon container
-   */
   containerStyle?: StyleProp<ViewStyle>
-
-  /**
-   * An optional function to be called when the icon is pressed
-   */
   onPress?: TouchableOpacityProps["onPress"]
+}
+interface ImageIconProps extends TouchableOpacityProps, CommonIconProps {
+  type?: "image"
+  icon: ImageIconNames
+  style?: StyleProp<ImageStyle>
+}
+interface FontIconProps extends TouchableOpacityProps, CommonIconProps {
+  type: FontIconTypes
+  icon: string
+  style?: StyleProp<ImageStyle>
+}
+export type IconSpecifier = {
+  name: string
+  type: FontIconTypes
+} | {
+  name: ImageIconNames
+  type: "image"
+}
+
+type ImageIconPropsWithOutWrapper = Omit<ImageIconProps, "containerStyle" | "onPress">
+function ImageIcon({ icon, color, size, style }: Readonly<ImageIconPropsWithOutWrapper>) {
+  const $imageStyle: StyleProp<ImageStyle> = [
+    $imageStyleBase,
+    color !== undefined && { tintColor: color },
+    size !== undefined && { minWidth: size, minHeight: size },
+    style,
+  ]
+
+  return <Image style={$imageStyle} source={iconRegistry[icon]} />
+}
+
+type FontIconComponentTypes =
+  | typeof FontAwesome
+  | typeof FontAwesome5
+  | typeof MaterialCommunityIcons
+  | typeof Ionicons
+type FontIconPropsWithOutWrapper = Omit<FontIconProps, "containerStyle" | "onPress">
+function FontIcon({ type, icon, ...props }: Readonly<FontIconPropsWithOutWrapper>) {
+  const iconTypeMap: Record<string, FontIconComponentTypes> = {
+    FontAwesome,
+    FontAwesome5,
+    Material: MaterialCommunityIcons,
+    Ionicons,
+  }
+  const IconComponent = iconTypeMap[type] || FontAwesome
+  return <IconComponent name={icon} {...props} />
 }
 
 /**
  * A component to render a registered icon.
  * It is wrapped in a <TouchableOpacity /> if `onPress` is provided, otherwise a <View />.
  * @see [Documentation and Examples]{@link https://docs.infinite.red/ignite-cli/boilerplate/components/Icon/}
- * @param {IconProps} props - The props for the `Icon` component.
+ * @param {CommonIconProps} props - The props for the `Icon` component.
  * @returns {JSX.Element} The rendered `Icon` component.
  */
-export function Icon(props: IconProps) {
+export function Icon(props: ImageIconProps | FontIconProps) {
   const {
+    type,
     icon,
     color,
     size,
@@ -67,20 +90,17 @@ export function Icon(props: IconProps) {
     TouchableOpacityProps | ViewProps
   >
 
-  const $imageStyle: StyleProp<ImageStyle> = [
-    $imageStyleBase,
-    color !== undefined && { tintColor: color },
-    size !== undefined && { width: size, height: size },
-    $imageStyleOverride,
-  ]
-
   return (
     <Wrapper
-      accessibilityRole={isPressable ? "imagebutton" : undefined}
+      accessibilityRole={isPressable ? "button" : undefined}
       {...WrapperProps}
       style={$containerStyleOverride}
     >
-      <Image style={$imageStyle} source={iconRegistry[icon]} />
+      {!type || type === "image" ? (
+        <ImageIcon {...{icon, color, size}} style={$imageStyleOverride} />
+      ) : (
+        <FontIcon {...{type, icon, color, size}} style={$imageStyleOverride} />
+      )}
     </Wrapper>
   )
 }
@@ -99,6 +119,10 @@ export const iconRegistry = {
   settings: require("../../assets/icons/settings.png"),
   view: require("../../assets/icons/view.png"),
   x: require("../../assets/icons/x.png"),
+  mobilePay: require("../../assets/icons/mobilePay.png"),
+  mobileWallet: require("../../assets/icons/mobileWallet.png"),
+  calendarFilter: require("../../assets/icons/calendarFilter.png"),
+  loan: require("../../assets/icons/loan.png"),
 }
 
 const $imageStyleBase: ImageStyle = {

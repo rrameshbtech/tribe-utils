@@ -1,9 +1,11 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
+import { ExpenseStoreModel } from "./ExpenseStore"
 
 /**
  * A RootStore model.
  */
 export const RootStoreModel = types.model("RootStore").props({
+  expenseStore: types.optional(ExpenseStoreModel, {} as any),
 })
 
 /**

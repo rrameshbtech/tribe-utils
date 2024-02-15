@@ -37,6 +37,7 @@ const palette = {
   overlay50: "rgba(25, 16, 21, 0.5)",
 } as const
 
+// Todo: Make colors refered from the named ones and not directly from palate. where ever possile
 export const colors = {
   /**
    * The palette is available to use, but prefer using the name.

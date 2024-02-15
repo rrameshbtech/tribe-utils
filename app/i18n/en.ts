@@ -23,6 +23,35 @@ const en = {
       button: "Let's try this again",
     },
   },
+  expense: {
+    list: {
+      spentAt: "{{spentAt}}",
+      unknownSpentAt: "unknown",
+      totalExpenses: "Total Expenses",
+      searchPlaceholder: "Search expenses",
+      filter: {
+        day: "Day",
+        week: "Week",
+        month: "Month",
+      }
+    },
+    new: {
+      heading: "What's your spend?",
+      amount: "Amount",
+      payee: "Payee",
+      date: "Date",
+      category: "Category",
+      mode: "Mode",
+      verbose: "Spent {{amount}}",
+      placeholder: {
+        amount: "How much did you spend?",
+        payee: "Who did you pay?",
+        date: "When did you spend?",
+        category: "What did you spend on?",
+        mode: "How did you pay?",
+      },
+    }
+  }
 }
 
 export default en

@@ -8,8 +8,7 @@ import {
   ViewStyle,
 } from "react-native"
 import { colors, spacing } from "../theme"
-import { Icon, IconTypes } from "./Icon"
-import { Text, TextProps } from "./Text"
+import { Icon, ImageIconNames } from "./Icon"
 
 export interface ListItemProps extends TouchableOpacityProps {
   /**
@@ -27,31 +26,11 @@ export interface ListItemProps extends TouchableOpacityProps {
    * Default: false
    */
   bottomSeparator?: boolean
-  /**
-   * Text to display if not using `tx` or nested components.
-   */
-  text?: TextProps["text"]
-  /**
-   * Text which is looked up via i18n.
-   */
-  tx?: TextProps["tx"]
-  /**
-   * Children components.
-   */
-  children?: TextProps["children"]
-  /**
-   * Optional options to pass to i18n. Useful for interpolation
-   * as well as explicitly setting locale or translation fallbacks.
-   */
-  txOptions?: TextProps["txOptions"]
+  
   /**
    * Optional text style override.
    */
   textStyle?: StyleProp<TextStyle>
-  /**
-   * Pass any additional props directly to the Text component.
-   */
-  TextProps?: TextProps
   /**
    * Optional View container style override.
    */
@@ -63,7 +42,7 @@ export interface ListItemProps extends TouchableOpacityProps {
   /**
    * Icon that should appear on the left.
    */
-  leftIcon?: IconTypes
+  leftIcon?: ImageIconNames
   /**
    * An optional tint color for the left icon
    */
@@ -71,7 +50,7 @@ export interface ListItemProps extends TouchableOpacityProps {
   /**
    * Icon that should appear on the right.
    */
-  rightIcon?: IconTypes
+  rightIcon?: ImageIconNames
   /**
    * An optional tint color for the right icon
    */
@@ -89,7 +68,7 @@ export interface ListItemProps extends TouchableOpacityProps {
 }
 
 interface ListItemActionProps {
-  icon?: IconTypes
+  icon?: ImageIconNames
   iconColor?: string
   Component?: ReactElement
   size: number
@@ -114,17 +93,10 @@ export function ListItem(props: ListItemProps) {
     rightIcon,
     rightIconColor,
     style,
-    text,
-    TextProps,
     topSeparator,
-    tx,
-    txOptions,
-    textStyle: $textStyleOverride,
     containerStyle: $containerStyleOverride,
     ...TouchableOpacityProps
   } = props
-
-  const $textStyles = [$textStyle, $textStyleOverride, TextProps?.style]
 
   const $containerStyles = [
     topSeparator && $separatorTop,
@@ -144,11 +116,9 @@ export function ListItem(props: ListItemProps) {
           iconColor={leftIconColor}
           Component={LeftComponent}
         />
-
-        <Text {...TextProps} tx={tx} text={text} txOptions={txOptions} style={$textStyles}>
+        <View style={{alignSelf: "stretch", flexGrow:  1}}>
           {children}
-        </Text>
-
+        </View>
         <ListItemAction
           side="right"
           size={height}
@@ -175,6 +145,7 @@ function ListItemAction(props: ListItemActionProps) {
   if (icon !== undefined) {
     return (
       <Icon
+        type='image'
         size={24}
         icon={icon}
         color={iconColor}
@@ -201,14 +172,8 @@ const $separatorBottom: ViewStyle = {
   borderBottomColor: colors.separator,
 }
 
-const $textStyle: TextStyle = {
-  paddingVertical: spacing.xs,
-  alignSelf: "center",
-  flexGrow: 1,
-  flexShrink: 1,
-}
-
 const $touchableStyle: ViewStyle = {
+  flex: 1,
   flexDirection: "row",
   alignItems: "flex-start",
 }

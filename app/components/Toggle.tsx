@@ -15,7 +15,7 @@ import {
 } from "react-native"
 import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated"
 import { colors, spacing } from "../theme"
-import { iconRegistry, IconTypes } from "./Icon"
+import { iconRegistry, ImageIconNames } from "./Icon"
 import { Text, TextProps } from "./Text"
 
 type Variants = "checkbox" | "switch" | "radio"
@@ -115,7 +115,7 @@ interface CheckboxToggleProps extends BaseToggleProps {
   /**
    * Checkbox-only prop that changes the icon used for the "on" state.
    */
-  checkboxIcon?: IconTypes
+  checkboxIcon?: ImageIconNames
 }
 
 interface RadioToggleProps extends BaseToggleProps {

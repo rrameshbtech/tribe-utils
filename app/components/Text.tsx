@@ -6,7 +6,7 @@ import { colors, typography } from "../theme"
 
 type Sizes = keyof typeof $sizeStyles
 type Weights = keyof typeof typography.primary
-type Presets = keyof typeof $presets
+export type Presets = keyof typeof $presets
 
 export interface TextProps extends RNTextProps {
   /**
@@ -81,6 +81,7 @@ const $sizeStyles = {
   sm: { fontSize: 16, lineHeight: 24 } satisfies TextStyle,
   xs: { fontSize: 14, lineHeight: 21 } satisfies TextStyle,
   xxs: { fontSize: 12, lineHeight: 18 } satisfies TextStyle,
+  xxxs: { fontSize: 8, lineHeight: 10 } satisfies TextStyle,
 }
 
 const $fontWeightStyles = Object.entries(typography.primary).reduce((acc, [weight, fontFamily]) => {
