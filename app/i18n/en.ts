@@ -42,7 +42,7 @@ const en = {
       date: "Date",
       category: "Category",
       mode: "Mode",
-      verbose: "Spent {{amount}}",
+      verbose: "Spent {{amount}} at {{payee}}",
       placeholder: {
         amount: "How much did you spend?",
         payee: "Who did you pay?",

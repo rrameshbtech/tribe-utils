@@ -2,7 +2,7 @@ import React, { FC } from "react"
 import { observer } from "mobx-react-lite"
 import { View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Card, Icon, Screen, Text, TextField } from "app/components"
+import { Card, Icon, Screen, Text, TextField, TrasWithComponents } from "app/components"
 import { colors, spacing } from "app/theme"
 import { Expense, ExpenseModel } from "app/models"
 
@@ -99,10 +99,9 @@ interface VerboseExpenseSummaryProps {
 function VerboseExpenseSummary({ expense }: VerboseExpenseSummaryProps) {
   return (
     <View>
-      <Text
-        preset="subheading"
+      <TrasWithComponents
         tx="expense.new.verbose"
-        txOptions={{ amount: <Text>{expense.amount.toLocaleString()}</Text> }}
+        txOptions={{payee: "Amazon", amount: <Text preset="bold">{expense.amount.toLocaleString()}</Text> }}
       />
     </View>
   )
