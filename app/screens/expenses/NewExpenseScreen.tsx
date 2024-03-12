@@ -38,21 +38,29 @@ export const NewExpenseScreen: FC<NewExpenseScreenProps> = observer(function New
   return (
     <Screen
       style={$root}
-      preset="auto"
+      contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top", "bottom"]}
       StatusBarProps={{ backgroundColor: colors.tint }}
     >
       <NewExpenseHeader />
-      <ExpenseSummaryCard
-        expense={expense}
-        onExpenseDetailPress={(fieldName: ExpenseInput) => setCurrentInput(fieldName)}
-      />
-      <ExpenseForm visibleField={currentInput} value={expense} onChange={onExpenseChange} onSave={onSave} />
+      <View style={$pageContentStyles} >
+        <ExpenseSummaryCard
+          expense={expense}
+          onExpenseDetailPress={(fieldName: ExpenseInput) => setCurrentInput(fieldName)}
+        />
+        <ExpenseForm
+          visibleField={currentInput}
+          value={expense}
+          onChange={onExpenseChange}
+          onSave={onSave}
+        />
+      </View>
     </Screen>
   )
 })
 const $root: ViewStyle = {
   flex: 1,
+  flexDirection: "column",
 }
 
 function NewExpenseHeader() {
@@ -78,11 +86,13 @@ function NewExpenseHeader() {
   )
 }
 const $headerContainerStyles: ViewStyle = {
-  flex: 1,
+  flex: 0,
   backgroundColor: colors.tint,
   alignItems: "flex-start",
   alignContent: "space-between",
-  height: spacing.xxl,
+  flexBasis: "auto",
+  height: 64,
+  padding: spacing.md,
 }
 const $titleContainerStyles: ViewStyle = {
   flex: 1,
@@ -90,4 +100,17 @@ const $titleContainerStyles: ViewStyle = {
   alignContent: "flex-start",
   alignItems: "center",
   gap: spacing.sm,
+  flexBasis: "auto",
+}
+
+const $screenContentContainer = {
+  flex: 1,
+  flexDirection: "column",
+  paddingTop: 0,
+} as ViewStyle
+
+const $pageContentStyles: ViewStyle = {
+  flex: 1,
+  flexDirection: "column",
+  padding: 0,
 }

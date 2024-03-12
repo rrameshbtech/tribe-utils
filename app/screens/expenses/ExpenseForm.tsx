@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { View, ViewStyle, TextInput } from "react-native"
-import { Button, TextField } from "app/components"
+import { Button, AutoComplete, TextField } from "app/components"
 import { colors, spacing } from "app/theme"
 import { ExpenseInput } from "./NewExpenseScreen"
 import { Expense } from "app/models"
@@ -123,7 +123,12 @@ function ExpenseCategoryInput() {
 }
 
 function ExpensePayeeInput() {
-  return <TextField placeholderTx="expense.new.placeholder.payee" labelTx="expense.new.payee" />
+  const ref = React.useRef<TextInput>(null)
+  useEffect(() => {
+    ref.current?.focus()
+  }, [])
+
+  return <AutoComplete ref={ref} />
 }
 
 function ExpenseSpenderInput() {
@@ -135,6 +140,6 @@ function ExpenseModeInput() {
 }
 function ExpenseLocationInput() {
   return (
-    <TextField placeholderTx="expense.new.placeholder.location" labelTx="expense.new.location" />
+    <TextField autoComplete="postal-address-locality" placeholderTx="expense.new.placeholder.location" labelTx="expense.new.location" />
   )
 }
