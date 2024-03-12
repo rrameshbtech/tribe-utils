@@ -2,12 +2,12 @@ import React from 'react'
 import { Presets, Text } from 'app/components'
 import { useLocale } from 'app/utils/useLocale'
 
-export interface AmountLabelProps {
+export interface MoneyLabelProps {
   amount: number,
   styles?: any,
-  preset?: Presets
+  preset?: Presets,
 }
-export function AmountLabel({ amount, preset, styles: amountLabelStyles }: Readonly<AmountLabelProps>) {
+export function MoneyLabel({ amount, preset, styles: amountLabelStyles }: Readonly<MoneyLabelProps>) {
   const { digitGroupingRegex, digitGroupingSeparator, currencySymbol } = useLocale()
   const amountWithThousandsSeparator = amount
     .toFixed(2)

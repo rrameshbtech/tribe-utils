@@ -40,15 +40,21 @@ const en = {
       amount: "Amount",
       payee: "Payee",
       date: "Date",
+      spender: "Spender",
       category: "Category",
+      location: "Location",
       mode: "Mode",
-      verbose: "Spent {{amount}} at {{payee}}",
+      save: "Save",
+      next: "Next",
+      verbose: "{{spender}} spent {{amount}} for {{category}} in {{payee}} using {{mode}} on {{date}} at {{location}}",
       placeholder: {
         amount: "How much did you spend?",
         payee: "Who did you pay?",
         date: "When did you spend?",
         category: "What did you spend on?",
         mode: "How did you pay?",
+        spender: "Who spent?",
+        location: "Where did you spend?",
       },
     }
   }

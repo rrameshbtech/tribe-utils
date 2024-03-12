@@ -11,18 +11,18 @@ const palette = {
   neutral800: "#191015",
   neutral900: "#000000",
 
-  primary100: "#F4E0D9",
-  primary200: "#E8C1B4",
-  primary300: "#DDA28E",
-  primary400: "#D28468",
-  primary500: "#C76542",
-  primary600: "#A54F31",
+  primary100: "#E8E1F0",
+  primary200: "#C3ADDB",
+  primary300: "#9F7AC6",
+  primary400: "#7B47B1",
+  primary500: "#56229C",
+  primary600: "#421A7E",
 
-  secondary100: "#DCDDE9",
-  secondary200: "#BCC0D6",
-  secondary300: "#9196B9",
-  secondary400: "#626894",
-  secondary500: "#41476E",
+  secondary100: "#E2F0E8",
+  secondary200: "#ADD8BF",
+  secondary300: "#79C196",
+  secondary400: "#44996D",
+  secondary500: "#006144",
 
   accent100: "#FFEED4",
   accent200: "#FFE1B2",
@@ -30,9 +30,15 @@ const palette = {
   accent400: "#FBC878",
   accent500: "#FFBB50",
 
+  purple100: "#E8E1F0",
+  purple200: "#C3ADDB",
+  purple300: "#9F7AC6",
+  purple400: "#7B47B1",
+  purple500: "#56229C",
+
   angry100: "#F2D6CD",
   angry500: "#C03403",
-
+  
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
 } as const

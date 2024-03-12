@@ -6,14 +6,15 @@ import { Icon, Screen, Text, TextField } from "app/components"
 import { ExpenseListItem } from "./ExpenseListItem"
 import { EXPENSE_FILTER_DURATIONS, Expense, ExpenseFilterDurations, useStores } from "app/models"
 import { colors, spacing } from "app/theme"
-import { AmountLabel } from "./AmountLabel"
+import { MoneyLabel } from "./MoneyLabel"
 
 interface ExpenseListScreenProps extends AppStackScreenProps<"ExpenseList"> {}
 export const ExpenseListScreen: FC<ExpenseListScreenProps> = observer(function ExpenseListScreen() {
-  const { expenseStore } = useStores()
+  const { expenseStore, userStore } = useStores()
   useEffect(() => {
     expenseStore.init()
-  }, [expenseStore])
+    userStore.init()
+  }, [expenseStore, userStore])
 
   return (
     <Screen
@@ -142,7 +143,7 @@ function ExpenseSummary() {
   return (
     <View style={$expenseSummaryStyles}>
       <Text style={{ color: colors.palette.neutral200 }} tx="expense.list.totalExpenses" />
-      <AmountLabel amount={totalExpenses} styles={{ color: colors.palette.neutral200 }} />
+      <MoneyLabel amount={totalExpenses} styles={{ color: colors.palette.neutral200 }} />
     </View>
   )
 }
@@ -162,8 +163,12 @@ function AddExpenseButton() {
   }
 
   return (
-    <TouchableOpacity style={{ ...$rightBottomStyles, ...$circleStyles}} accessibilityRole="button" onPress={navigateToAddExpense} >
-      <Icon type="FontAwesome5" icon="plus-circle" size={48} color={colors.tint}/>
+    <TouchableOpacity
+      style={{ ...$rightBottomStyles, ...$circleStyles }}
+      accessibilityRole="button"
+      onPress={navigateToAddExpense}
+    >
+      <Icon type="FontAwesome5" icon="plus-circle" size={48} color={colors.tint} />
     </TouchableOpacity>
   )
 }

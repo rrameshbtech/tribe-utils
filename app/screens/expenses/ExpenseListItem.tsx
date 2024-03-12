@@ -4,7 +4,7 @@ import { Expense } from "app/models"
 import { format } from "date-fns"
 import { View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
-import { AmountLabel } from "./AmountLabel"
+import { MoneyLabel } from "./MoneyLabel"
 
 interface ExpenseListItemProps {
   expense: Expense
@@ -144,6 +144,6 @@ interface ExpenseAmountProps {
   amount: number
 }
 function ExpenseAmount({ amount }: Readonly<ExpenseAmountProps>) {
-  return <AmountLabel amount={amount} styles={$expenseAmountStyles} />
+  return <MoneyLabel amount={amount} styles={$expenseAmountStyles} />
 }
 const $expenseAmountStyles = { color: colors.palette.secondary500 }

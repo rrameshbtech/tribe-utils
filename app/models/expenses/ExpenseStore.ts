@@ -1,5 +1,5 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
-import { withSetPropAction } from "./helpers/withSetPropAction"
+import { withSetPropAction } from "../helpers/withSetPropAction"
 import { Expense, ExpenseModel } from "./Expense"
 import { startOfDay, startOfMonth, startOfWeek, sub } from "date-fns"
 import { convertToMutable } from "app/utils/typeConverters"

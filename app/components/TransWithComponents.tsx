@@ -9,24 +9,34 @@ export interface TrasWithComponentsProps {
   containerStyles?: ViewStyle
 }
 
+/**
+ * translate text with components
+ * @param {TxKeyPath} tx - The i18n key.
+ * @param {Record<string, JSX.Element | string>} txOptions - The i18n options with components in placeholder values.
+ * @param {ViewStyle} containerStyles - The container styles.
+ * @returns translated text with components enclosed in a container.
+ * @example
+ * ```tsx
+ * <TrasWithComponents
+ *  tx="expense.new.verbose"
+ *  txOptions={{payee: "Amazon", amount: <Text preset="bold">{expense.amount.toLocaleString()}</Text> }}
+ *  containerStyles={{flex: 1, flexDirection: "row"}}
+ * />
+ * ```
+ */
 export function TrasWithComponents({
   tx,
   txOptions,
   containerStyles: overrideContainerStyles,
 }: Readonly<TrasWithComponentsProps>): JSX.Element {
-  const containerStyles = { ...containerBaseStyles, ...overrideContainerStyles }
+  const containerStyles = { ...$containerBaseStyles, ...overrideContainerStyles }
   const [optionsWithJsx, optionsWithOutJSX] = groupOptionsByType(txOptions)
 
   const translatedText = translate(tx, optionsWithOutJSX)
-  const componentPlaceholders = Object.keys(optionsWithJsx).map((key) => ({
-    key,
-    component: optionsWithJsx[key],
-  }))
-    
   return (
     <View style={containerStyles}>
-      {componentPlaceholders ? (
-        replacePlaceholders(translatedText, componentPlaceholders)
+      {Object.keys(optionsWithJsx).length > 0 ? (
+        replacePlaceholders(translatedText, optionsWithJsx)
       ) : (
         <Text>{translatedText}</Text>
       )}
@@ -34,27 +44,38 @@ export function TrasWithComponents({
   )
 }
 
-type Placeholder = {
-  key: string
-  component: JSX.Element
+type Placeholder = Record<string, JSX.Element>
+
+function getFirstPlaceholder(text: string): string | null {
+  const placeholderRegEx = /{{(\w+)}}/
+  const matches = placeholderRegEx.exec(text)
+  if(!matches){
+    return null
+  }
+
+  return `{{(${matches[1]})}}`
 }
 
 // recursively replace placeholders with components
-function replacePlaceholders(text: string, placeholders: Placeholder[]): JSX.Element[]{
-  if (placeholders.length === 0) {
+function replacePlaceholders(text: string, placeholders: Placeholder): JSX.Element[]{
+  if (!text) {
+    return []
+  }
+
+  const firstPlaceholder = getFirstPlaceholder(text)
+  if (!firstPlaceholder) {
     return [<Text key="end-text" text={text} />]
   }
 
-  const key = placeholders[0].key
-  const [beforeText, afterText] = text.split(`{{${key}}}`)
-  const remainingPlaceholders = placeholders.slice(1)
-  const beforeTextComponent = beforeText ? <Text key={`${key}-before-text`} text={beforeText} /> : <></>
-  const placeholderComponent = <View key={key}>{placeholders[0].component}</View>
+  const firstPlaceholderRegex = new RegExp(firstPlaceholder)
+  const [beforeText, key, afterText] = text.split(firstPlaceholderRegex)
+  const beforeTextComponent = beforeText ? [<Text key={`${key}-before-text`} text={beforeText} />] : []
+  const placeholderComponent = <View key={key}>{placeholders[key]}</View>
 
   return [
-    beforeTextComponent,
+    ...beforeTextComponent,
     placeholderComponent,
-    ...replacePlaceholders(afterText, remainingPlaceholders),
+    ...replacePlaceholders(afterText, placeholders),
   ]
 }
 
@@ -72,7 +93,8 @@ function groupOptionsByType(txOptions: Record<string, string | JSX.Element>): [a
   }, initialOptions)
 }
 
-const containerBaseStyles: ViewStyle = {
+const $containerBaseStyles: ViewStyle = {
   display: "flex",
   flexDirection: "row",
+  flexWrap: "wrap",
 }

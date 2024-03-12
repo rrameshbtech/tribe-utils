@@ -1,5 +1,5 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
-import { withSetPropAction } from "./helpers/withSetPropAction"
+import { withSetPropAction } from "../helpers/withSetPropAction"
 import { convertToMutable } from 'app/utils/typeConverters'
 
 const expenseCategories = [
@@ -43,13 +43,13 @@ export const ExpenseModel = types
   .props({
     id: types.optional(types.identifier, () => Math.random().toString(36).substring(2, 9)),
     category: types.optional(types.enumeration("ExpenseCategory", convertToMutable(expenseCategories)), "Others"),
-    amount: types.optional(types.number, 0),
+    amount: types.optional(types.number, 55.23),
     date: types.optional(types.Date, () => new Date()),
-    spender: types.optional(types.string, ""),
+    spender: types.optional(types.string, "test"),
     source: types.optional(types.enumeration("ExpenseSource", convertToMutable(expenseSources)), "Self"),
     mode: types.optional(types.enumeration("PaymentMode", convertToMutable(paymentModes)), "Cash"),
-    location: types.optional(types.string, ""),
-    payee: types.optional(types.string, ""),
+    location: types.optional(types.string, "Coimbatore"),
+    payee: types.optional(types.string, "Local Store"),
     notes: types.optional(types.string, ""),
     createdAt: types.optional(types.Date, () => new Date()),
     updatedAt: types.optional(types.Date, () => new Date()),
