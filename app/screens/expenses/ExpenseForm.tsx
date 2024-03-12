@@ -5,6 +5,8 @@ import { colors, spacing } from "app/theme"
 import { ExpenseInput } from "./NewExpenseScreen"
 import { Expense } from "app/models"
 import MoneyInput from "./MoneyInput"
+import DatePicker from "react-native-date-picker"
+import { useLocale } from 'app/utils/useLocale'
 
 interface ExpenseFormProps {
   visibleField: ExpenseInput
@@ -47,7 +49,7 @@ function renderVisibleField(
     case "spender":
       return <ExpenseSpenderInput />
     case "date":
-      return <ExpenseDateInput />
+      return <ExpenseDateInput date={expense.date} onChange={onChange} />
     case "mode":
       return <ExpenseModeInput />
     case "location":
@@ -90,6 +92,30 @@ function ExpenseAmountInput({ amount, onChange }: Readonly<ExpenseAmountInputPro
   }
 }
 
+interface ExpenseDateInputProps {
+  date: Date
+  onChange: (changed: Partial<Expense>) => void
+}
+function ExpenseDateInput({ date, onChange }: Readonly<ExpenseDateInputProps>) {
+  const { languageTag } = useLocale()
+  // TODO: change this if we want to allow users to select past month expenses
+  const firstDayOfCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  const handleDateChange = (newDate: Date) => {
+    onChange({ date: newDate })
+  }
+  
+  return (
+    <DatePicker
+      date={date}
+      onDateChange={handleDateChange}
+      minimumDate={firstDayOfCurrentMonth}
+      maximumDate={new Date()}
+      fadeToColor={colors.background}
+      locale={languageTag}
+    />
+  )
+}
+
 function ExpenseCategoryInput() {
   return (
     <TextField placeholderTx="expense.new.placeholder.category" labelTx="expense.new.category" />
@@ -104,9 +130,6 @@ function ExpenseSpenderInput() {
   return <TextField placeholderTx="expense.new.placeholder.spender" labelTx="expense.new.spender" />
 }
 
-function ExpenseDateInput() {
-  return <TextField placeholderTx="expense.new.placeholder.date" labelTx="expense.new.date" />
-}
 function ExpenseModeInput() {
   return <TextField placeholderTx="expense.new.placeholder.mode" labelTx="expense.new.mode" />
 }

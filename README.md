@@ -5,6 +5,10 @@ A mobile app for a family or any closed group to handle their day-to-day needs.
 - React Native
 - TypeScript
 - Ignite (boilderplate, Refer to Ignite@9 rest of the tools & frameworks used) <a href="https://shift.infinite.red/announcing-ignite-9-0-exp-ress-o-89ab5801937d" target="_blank">[↗]</a>
+- [React Native DatePicker - react-native-date-picker](https://github.com/henninghall/react-native-date-picker)
+
+## Min Versions
+Only Android API level >=21 (Android 5), iOS >= 11 are supported.
 
 ## Prerequisite
 - Install Bun <a href="https://www.bun.sh" target="_blank">[↗]</a>
