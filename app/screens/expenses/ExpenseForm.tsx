@@ -3,7 +3,7 @@ import { View, ViewStyle, TextInput } from "react-native"
 import { Button, AutoComplete, TextField } from "app/components"
 import { colors, spacing } from "app/theme"
 import { ExpenseInput } from "./NewExpenseScreen"
-import { Expense } from "app/models"
+import { Expense } from "app/states"
 import MoneyInput from "./MoneyInput"
 import DatePicker from "react-native-date-picker"
 import { useLocale } from 'app/utils/useLocale'

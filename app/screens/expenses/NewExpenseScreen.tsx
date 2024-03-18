@@ -4,7 +4,7 @@ import { View, ViewStyle } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
 import { colors, spacing } from "app/theme"
-import { Expense, ExpenseModel, useStores } from "app/models"
+import {Expense, initExpense, useRootStore } from "app/states"
 import { ExpenseSummaryCard } from "./ExpenseSummary"
 import { ExpenseForm } from "./ExpenseForm"
 import { TouchableOpacity } from "react-native-gesture-handler"
@@ -21,9 +21,8 @@ export type ExpenseInput =
 
 export const NewExpenseScreen: FC<NewExpenseScreenProps> = observer(function NewExpenseScreen() {
   const [currentInput, setCurrentInput] = React.useState<ExpenseInput>("amount")
-  const { userStore, expenseStore } = useStores()
   const [expense, setExpense] = React.useState<Expense>(
-    ExpenseModel.create({ spender: userStore.currentUserName }),
+    initExpense()
   )
   function onExpenseChange(changedValue: Partial<Expense>) {
     setExpense({
@@ -32,7 +31,8 @@ export const NewExpenseScreen: FC<NewExpenseScreenProps> = observer(function New
     })
   }
   function onSave() {
-    expenseStore.addExpense(expense)
+    const addExpense = useRootStore(state => state.addExpense)
+    addExpense(expense)
     navigate("ExpenseList")
   }
   return (

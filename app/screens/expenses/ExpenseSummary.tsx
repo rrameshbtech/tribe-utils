@@ -2,7 +2,7 @@ import React from "react"
 import { Pressable, View, ViewStyle } from "react-native"
 import { Card, Text, TrasWithComponents } from "app/components"
 import { spacing } from "app/theme"
-import { Expense } from "app/models"
+import { Expense } from "app/states"
 import { MoneyLabel } from "./MoneyLabel"
 import { ExpenseInput } from "./NewExpenseScreen"
 
@@ -122,7 +122,7 @@ function DateLabel({ date, onPress }: Readonly<DateLabelProps>) {
 }
 
 interface LocationLabelProps extends PressableLabelProps  {
-  location: string
+  location?: string
 }
 function LocationLabel({ location, onPress }: Readonly<LocationLabelProps>) {
   return (

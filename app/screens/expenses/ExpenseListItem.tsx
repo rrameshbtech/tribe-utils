@@ -1,10 +1,10 @@
 import React from "react"
 import { Icon, IconSpecifier, ListItem, Text } from "app/components"
-import { Expense } from "app/models"
 import { format } from "date-fns"
 import { View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
 import { MoneyLabel } from "./MoneyLabel"
+import { Expense } from "app/states"
 
 interface ExpenseListItemProps {
   expense: Expense

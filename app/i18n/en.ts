@@ -30,9 +30,9 @@ const en = {
       totalExpenses: "Total Expenses",
       searchPlaceholder: "Search expenses",
       filter: {
-        day: "Day",
-        week: "Week",
-        month: "Month",
+        Day: "Day",
+        Week: "Week",
+        Month: "Month",
       }
     },
     new: {

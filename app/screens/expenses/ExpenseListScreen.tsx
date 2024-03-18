@@ -1,20 +1,26 @@
-import React, { FC, useEffect } from "react"
+import React, { FC } from "react"
 import { observer } from "mobx-react-lite"
 import { ViewStyle, View, FlatList, TouchableOpacity } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
 import { Icon, Screen, Text, TextField } from "app/components"
 import { ExpenseListItem } from "./ExpenseListItem"
-import { EXPENSE_FILTER_DURATIONS, Expense, ExpenseFilterDurations, useStores } from "app/models"
+// import { EXPENSE_FILTER_DURATIONS, Expense, ExpenseFilterDurations, useStores } from "app/models"
 import { colors, spacing } from "app/theme"
 import { MoneyLabel } from "./MoneyLabel"
+import { useRootStore, getVisibleExpenses,
+  Expense, getVisibleExpenseTotal
+ } from "app/states"
+
 
 interface ExpenseListScreenProps extends AppStackScreenProps<"ExpenseList"> {}
 export const ExpenseListScreen: FC<ExpenseListScreenProps> = observer(function ExpenseListScreen() {
-  const { expenseStore, userStore } = useStores()
-  useEffect(() => {
-    expenseStore.init()
-    userStore.init()
-  }, [expenseStore, userStore])
+  // const { expenseStore, userStore } = useStores()
+  // useEffect(() => {
+  //   expenseStore.init()
+  //   userStore.init()
+  // }, [expenseStore, userStore])
+
+  const expenses =  useRootStore(getVisibleExpenses)
 
   return (
     <Screen
@@ -26,7 +32,7 @@ export const ExpenseListScreen: FC<ExpenseListScreenProps> = observer(function E
       <View style={$listView}>
         <FlatList<Expense>
           renderItem={({ item }) => <ExpenseListItem expense={item} />}
-          data={expenseStore.visibleExpenses}
+          data={expenses}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={<ExpenseListHeader />}
           stickyHeaderIndices={[0]}
@@ -53,7 +59,9 @@ const $listView: ViewStyle = {
 
 function ExpenseListHeader() {
   // Todo - search should have cancel button & filter should have a dropdown
-  const { expenseStore } = useStores()
+  const setSearchTerm = useRootStore(state => state.setSearchTerm)
+  const searchTerm = useRootStore(state => state.searchTerm)
+  
   return (
     <View style={$expenseListHeaderStyles}>
       <TextField
@@ -61,8 +69,8 @@ function ExpenseListHeader() {
         LeftAccessory={(props) => <SearchIcon containerStyle={props.style} />}
         RightAccessory={(props) => <ExpenseFilterIcon containerStyle={props.style} />}
         inputWrapperStyle={$expenseSearchInputWrapperStyles}
-        onChangeText={(text) => expenseStore.setSearchTerm(text)}
-        value={expenseStore.searchTerm}
+        onChangeText={(text) => setSearchTerm(text)}
+        value={searchTerm}
       />
       <ExpenseSummary />
     </View>
@@ -96,14 +104,8 @@ interface ExpenseFilterIconProps {
   containerStyle?: ViewStyle
 }
 function ExpenseFilterIcon({ containerStyle }: Readonly<ExpenseFilterIconProps>) {
-  const { expenseStore } = useStores()
-  const toggle = () => {
-    const currentIndex = EXPENSE_FILTER_DURATIONS.indexOf(expenseStore.durationFilter)
-    const nextIndex = (currentIndex + 1) % EXPENSE_FILTER_DURATIONS.length
-    const nextDuration = EXPENSE_FILTER_DURATIONS[nextIndex]
-
-    expenseStore.setDurationFilter(nextDuration)
-  }
+  const durationFilter = useRootStore(state => state.expenseFilter)
+  const toggleFilter = useRootStore(state => state.toggleExpenseFilter)
 
   const $filterIconWrapperStyles: ViewStyle = {
     ...containerStyle,
@@ -115,12 +117,12 @@ function ExpenseFilterIcon({ containerStyle }: Readonly<ExpenseFilterIconProps>)
   const $iconTextStyles = { color: colors.palette.neutral600, lineHeight: 8 }
 
   return (
-    <TouchableOpacity onPress={toggle} style={$filterIconWrapperStyles}>
+    <TouchableOpacity onPress={() => toggleFilter()} style={$filterIconWrapperStyles}>
       <Icon type="image" icon="calendarFilter" size={24} color={colors.palette.neutral600} />
       <Text
         size="xxxs"
         style={$iconTextStyles}
-        tx={`expense.list.filter.${expenseStore.durationFilter as ExpenseFilterDurations}`}
+        tx={`expense.list.filter.${durationFilter}`}
       />
     </TouchableOpacity>
   )
@@ -135,11 +137,7 @@ const $expenseSummaryStyles: ViewStyle = {
   padding: spacing.xs,
 }
 function ExpenseSummary() {
-  const { expenseStore } = useStores()
-  const totalExpenses = expenseStore.visibleExpenses.reduce(
-    (total, expense) => total + expense.amount,
-    0,
-  )
+  const totalExpenses = useRootStore(getVisibleExpenseTotal)
   return (
     <View style={$expenseSummaryStyles}>
       <Text style={{ color: colors.palette.neutral200 }} tx="expense.list.totalExpenses" />
