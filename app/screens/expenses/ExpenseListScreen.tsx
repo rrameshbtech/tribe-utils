@@ -92,7 +92,7 @@ function SearchIcon({ containerStyle }: Readonly<SearchIconProps>) {
   return (
     <Icon
       type="FontAwesome5"
-      icon="search-dollar"
+      name="search-dollar"
       size={24}
       color={colors.palette.neutral600}
       containerStyle={containerStyle}
@@ -118,7 +118,7 @@ function ExpenseFilterIcon({ containerStyle }: Readonly<ExpenseFilterIconProps>)
 
   return (
     <TouchableOpacity onPress={() => toggleFilter()} style={$filterIconWrapperStyles}>
-      <Icon type="image" icon="calendarFilter" size={24} color={colors.palette.neutral600} />
+      <Icon type="image" name="calendarFilter" size={24} color={colors.palette.neutral600} />
       <Text
         size="xxxs"
         style={$iconTextStyles}
@@ -166,7 +166,7 @@ function AddExpenseButton() {
       accessibilityRole="button"
       onPress={navigateToAddExpense}
     >
-      <Icon type="FontAwesome5" icon="plus-circle" size={48} color={colors.tint} />
+      <Icon type="FontAwesome5" name="plus-circle" size={48} color={colors.tint} />
     </TouchableOpacity>
   )
 }

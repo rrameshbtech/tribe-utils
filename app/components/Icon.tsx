@@ -1,6 +1,6 @@
-import { FontAwesome, FontAwesome5, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons"
 import * as React from "react"
 import { ComponentType } from "react"
+import { imageIconRegistry, ImageIcon, FontIcon, FontIconMap } from "app/models/icon"
 import {
   Image,
   ImageStyle,
@@ -11,35 +11,23 @@ import {
   ViewProps,
   ViewStyle,
 } from "react-native"
+import { FontAwesome } from "@expo/vector-icons"
 
-export type ImageIconNames = keyof typeof iconRegistry
-export type FontIconTypes = "FontAwesome" | "FontAwesome5" | "Ionicons" | "AntDesign" | "Material"
 interface CommonIconProps {
   color?: string
   size?: number
   containerStyle?: StyleProp<ViewStyle>
   onPress?: TouchableOpacityProps["onPress"]
 }
-interface ImageIconProps extends TouchableOpacityProps, CommonIconProps {
-  type?: "image"
-  icon: ImageIconNames
+interface ImageIconProps extends TouchableOpacityProps, CommonIconProps, ImageIcon {
   style?: StyleProp<ImageStyle>
 }
-interface FontIconProps extends TouchableOpacityProps, CommonIconProps {
-  type: FontIconTypes
-  icon: string
+interface FontIconProps extends TouchableOpacityProps, CommonIconProps, FontIcon {
   style?: StyleProp<ImageStyle>
-}
-export type IconSpecifier = {
-  name: string
-  type: FontIconTypes
-} | {
-  name: ImageIconNames
-  type: "image"
 }
 
 type ImageIconPropsWithOutWrapper = Omit<ImageIconProps, "containerStyle" | "onPress">
-function ImageIcon({ icon, color, size, style }: Readonly<ImageIconPropsWithOutWrapper>) {
+function ImageIconComponent({ name, color, size, style }: Readonly<ImageIconPropsWithOutWrapper>) {
   const $imageStyle: StyleProp<ImageStyle> = [
     $imageStyleBase,
     color !== undefined && { tintColor: color },
@@ -47,24 +35,13 @@ function ImageIcon({ icon, color, size, style }: Readonly<ImageIconPropsWithOutW
     style,
   ]
 
-  return <Image style={$imageStyle} source={iconRegistry[icon]} />
+  return <Image style={$imageStyle} source={imageIconRegistry[name]} />
 }
 
-type FontIconComponentTypes =
-  | typeof FontAwesome
-  | typeof FontAwesome5
-  | typeof MaterialCommunityIcons
-  | typeof Ionicons
 type FontIconPropsWithOutWrapper = Omit<FontIconProps, "containerStyle" | "onPress">
-function FontIcon({ type, icon, ...props }: Readonly<FontIconPropsWithOutWrapper>) {
-  const iconTypeMap: Record<string, FontIconComponentTypes> = {
-    FontAwesome,
-    FontAwesome5,
-    Material: MaterialCommunityIcons,
-    Ionicons,
-  }
-  const IconComponent = iconTypeMap[type] || FontAwesome
-  return <IconComponent name={icon} {...props} />
+function FontIconComponent({ type, name, ...props }: Readonly<FontIconPropsWithOutWrapper>) {
+  const IconComponent = FontIconMap[type] || FontAwesome
+  return <IconComponent name={name} {...props} />
 }
 
 /**
@@ -77,7 +54,7 @@ function FontIcon({ type, icon, ...props }: Readonly<FontIconPropsWithOutWrapper
 export function Icon(props: ImageIconProps | FontIconProps) {
   const {
     type,
-    icon,
+    name,
     color,
     size,
     style: $imageStyleOverride,
@@ -97,32 +74,12 @@ export function Icon(props: ImageIconProps | FontIconProps) {
       style={$containerStyleOverride}
     >
       {!type || type === "image" ? (
-        <ImageIcon {...{icon, color, size}} style={$imageStyleOverride} />
+        <ImageIconComponent {...{ type: "image", name, color, size }} style={$imageStyleOverride} />
       ) : (
-        <FontIcon {...{type, icon, color, size}} style={$imageStyleOverride} />
+        <FontIconComponent {...{ type, name, color, size }} style={$imageStyleOverride} />
       )}
     </Wrapper>
   )
-}
-
-export const iconRegistry = {
-  back: require("../../assets/icons/back.png"),
-  bell: require("../../assets/icons/bell.png"),
-  caretLeft: require("../../assets/icons/caretLeft.png"),
-  caretRight: require("../../assets/icons/caretRight.png"),
-  check: require("../../assets/icons/check.png"),
-  hidden: require("../../assets/icons/hidden.png"),
-  ladybug: require("../../assets/icons/ladybug.png"),
-  lock: require("../../assets/icons/lock.png"),
-  menu: require("../../assets/icons/menu.png"),
-  more: require("../../assets/icons/more.png"),
-  settings: require("../../assets/icons/settings.png"),
-  view: require("../../assets/icons/view.png"),
-  x: require("../../assets/icons/x.png"),
-  mobilePay: require("../../assets/icons/mobilePay.png"),
-  mobileWallet: require("../../assets/icons/mobileWallet.png"),
-  calendarFilter: require("../../assets/icons/calendarFilter.png"),
-  loan: require("../../assets/icons/loan.png"),
 }
 
 const $imageStyleBase: ImageStyle = {

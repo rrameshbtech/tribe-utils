@@ -1,3 +1,5 @@
+import { FontAwesome, FontAwesome5, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons"
+
 export const imageIconRegistry = {
   back: require("../../assets/icons/back.png"),
   bell: require("../../assets/icons/bell.png"),
@@ -18,13 +20,23 @@ export const imageIconRegistry = {
   loan: require("../../assets/icons/loan.png"),  
 }
 
-export interface FontIcon {
-  name: string
-  type: "FontAwesome" | "FontAwesome5" | "Material" | "Ionicons"
+export type FontIconType = "FontAwesome" | "FontAwesome5" | "Ionicons" | "Material"
+export const FontIconMap: Record<FontIconType, any> = {
+  FontAwesome: FontAwesome,
+  FontAwesome5: FontAwesome5,
+  Ionicons: Ionicons,
+  Material: MaterialCommunityIcons,
 }
 
+export interface FontIcon {
+  name: string
+  type: FontIconType
+}
+
+export type ImageIconName = keyof typeof imageIconRegistry
+
 export interface ImageIcon {
-  name: keyof typeof imageIconRegistry
+  name: ImageIconName
   type: "image"
 }
 

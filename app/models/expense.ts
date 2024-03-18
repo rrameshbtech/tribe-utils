@@ -2,36 +2,19 @@ import { StateCreator } from "zustand"
 import { Icon } from "./icon"
 import { startOfDay, startOfMonth, startOfWeek, sub } from "date-fns"
 
-export type ExpenseCategory =
-  | "Mobile"
-  | "Grocery"
-  | "Clothes"
-  | "Entertainment"
-  | "Travel"
-  | "Books"
-  | "Education"
-  | "Food"
-  | "Others"
-  | "Medical"
-  | "Household"
-  | "Personal Care"
-  | "Gifts"
-  | "Fuel"
-  | "Electronics"
-  | "Rent"
-  | "Insurance"
-  | "Donation"
-  | "Taxes"
-  | "Loan"
-  | "Bank Charges"
-  | "Taxes"
-  | "Salary"
-  | "Interest"
 export type ExpenseSource = "Self" | "OCR" | "SMS"
 
 export interface PaymentMode {
-  id: string
   name: string
+  aliases?: string[]
+  icon: Icon
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface ExpenseCategory {
+  name: string
+  aliases?: string[]
   icon: Icon
   createdAt: Date
   updatedAt: Date
@@ -39,7 +22,7 @@ export interface PaymentMode {
 
 export interface Expense {
   id: string
-  category: ExpenseCategory
+  category: string
   amount: number
   date: Date
   spender: string
@@ -61,6 +44,9 @@ export interface ExpenseSlice {
   addExpense: (expense: Expense) => void
   setSearchTerm: (searchTerm: string) => void
   toggleExpenseFilter: () => void
+
+  paymentModes: Record<string, PaymentMode>
+  expenseCategories: Record<string, ExpenseCategory>
 }
 
 export const initExpense = (): Expense => ({
@@ -102,6 +88,9 @@ export const createExpenseSlice: StateCreator<ExpenseSlice, [], [], ExpenseSlice
     })
   },
   setSearchTerm: (searchTerm: string) => set({ searchTerm }),
+
+  paymentModes: defaultPaymentModes(),
+  expenseCategories: defaultExpenseCategories(),
 })
 
 export const getVisibleExpenses = (state: ExpenseSlice) => {
@@ -139,6 +128,102 @@ export const getVisibleExpenseTotal = (state: ExpenseSlice) => {
   return getVisibleExpenses(state).reduce((acc, expense) => acc + expense.amount, 0)
 }
 
+const defaultPaymentModes = (): Record<string, PaymentMode> => ({
+  Cash: {
+    name: "Cash",
+    icon: { type: "FontAwesome", name: "money" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Wallet: {
+    name: "Wallet",
+    icon: { type: "image", name: "mobileWallet" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  UPI: {
+    name: "UPI",
+    icon: { type: "image", name: "mobilePay" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  BankTransfer: {
+    name: "BankTransfer",
+    icon: { type: "FontAwesome", name: "bank" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Credit: {
+    name: "Credit",
+    icon: { type: "image", name: "loan" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  BankCard: {
+    name: "BankCard",
+    icon: { type: "FontAwesome", name: "credit-card" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+})
+
+const defaultExpenseCategories = (): Record<string, ExpenseCategory> => ({
+  Grocery: {
+    name: "Grocery",
+    icon: { type: "FontAwesome", name: "shopping-basket" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Communication: {
+    name: "Communication",
+    icon: { type: "FontAwesome5", name: "phone-alt" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Entertainment: {
+    name: "Entertainment",
+    icon: { type: "FontAwesome", name: "film" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Books: {
+    name: "Books",
+    icon: { type: "Material", name: "bookshelf" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Education: {
+    name: "Education",
+    icon: { type: "FontAwesome5", name: "user-graduate" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Food: {
+    name: "Food",
+    icon: { type: "FontAwesome", name: "cutlery" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Travel: {
+    name: "Travel",
+    icon: { type: "FontAwesome", name: "plane" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Sports: {
+    name: "Sports",
+    icon: { type: "FontAwesome", name: "futbol-o" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Others: {
+    name: "Others",
+    icon: { type: "FontAwesome", name: "question" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+})
+
 const defaultExpenses = (): Record<string, Expense> => ({
   "1": {
     id: "1",
@@ -158,7 +243,7 @@ const defaultExpenses = (): Record<string, Expense> => ({
     date: new Date("2024-02-20 00:00:00+5:30"),
     spender: "Ramesh Ramalingam",
     mode: "UPI",
-    category: "Mobile",
+    category: "Communication",
     payee: "Airtel",
     source: "Self",
     createdAt: new Date(),
@@ -183,7 +268,7 @@ const defaultExpenses = (): Record<string, Expense> => ({
     spender: "Ramesh Ramalingam",
     mode: "Cash",
     payee: "Store",
-    category: "Clothes",
+    category: "Sports",
     source: "Self",
     createdAt: new Date(),
     updatedAt: new Date(),
