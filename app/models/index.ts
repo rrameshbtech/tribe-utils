@@ -1,7 +1,0 @@
-export * from "./RootStore"
-export * from "./helpers/getRootStore"
-export * from "./helpers/useStores"
-export * from "./helpers/setupRootStore"
-export * from "./expenses/Expense"
-export * from "./expenses/ExpenseStore"
-export * from "./users/UserStore"

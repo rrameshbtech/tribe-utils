@@ -24,6 +24,7 @@ export const NewExpenseScreen: FC<NewExpenseScreenProps> = observer(function New
   const [expense, setExpense] = React.useState<Expense>(
     initExpense()
   )
+  const addExpense = useRootStore(state => state.addExpense)
   function onExpenseChange(changedValue: Partial<Expense>) {
     setExpense({
       ...expense,
@@ -31,10 +32,10 @@ export const NewExpenseScreen: FC<NewExpenseScreenProps> = observer(function New
     })
   }
   function onSave() {
-    const addExpense = useRootStore(state => state.addExpense)
     addExpense(expense)
     navigate("ExpenseList")
   }
+
   return (
     <Screen
       style={$root}
