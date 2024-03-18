@@ -2,7 +2,7 @@ import React from "react"
 import { Pressable, View, ViewStyle } from "react-native"
 import { Card, Text, TrasWithComponents } from "app/components"
 import { spacing } from "app/theme"
-import { Expense } from "app/states"
+import { Expense } from "app/models"
 import { MoneyLabel } from "./MoneyLabel"
 import { ExpenseInput } from "./NewExpenseScreen"
 

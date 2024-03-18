@@ -9,7 +9,7 @@ import { colors, spacing } from "app/theme"
 import { MoneyLabel } from "./MoneyLabel"
 import { useRootStore, getVisibleExpenses,
   Expense, getVisibleExpenseTotal
- } from "app/states"
+ } from "app/models"
 
 
 interface ExpenseListScreenProps extends AppStackScreenProps<"ExpenseList"> {}

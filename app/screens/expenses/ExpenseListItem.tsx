@@ -4,7 +4,7 @@ import { format } from "date-fns"
 import { View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
 import { MoneyLabel } from "./MoneyLabel"
-import { Expense } from "app/states"
+import { Expense } from "app/models"
 
 interface ExpenseListItemProps {
   expense: Expense
