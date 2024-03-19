@@ -1,12 +1,17 @@
 import React, { useEffect } from "react"
 import { View, ViewStyle, TextInput } from "react-native"
-import { Button, AutoComplete, TextField } from "app/components"
+import {
+  Button,
+  AutoComplete,
+  TextField,
+} from "app/components"
 import { colors, spacing } from "app/theme"
 import { ExpenseInput } from "./NewExpenseScreen"
-import { Expense } from "app/models"
+import { Expense, useRootStore } from "app/models"
 import MoneyInput from "./MoneyInput"
 import DatePicker from "react-native-date-picker"
-import { useLocale } from 'app/utils/useLocale'
+import { useLocale } from "app/utils/useLocale"
+import { SelectableList } from "app/components/SelectableList"
 
 interface ExpenseFormProps {
   visibleField: ExpenseInput
@@ -43,15 +48,15 @@ function renderVisibleField(
     case "amount":
       return <ExpenseAmountInput amount={expense.amount} onChange={onChange} />
     case "category":
-      return <ExpenseCategoryInput />
+      return <ExpenseCategoryInput onChange={onChange} value={expense.category} />
     case "payee":
-      return <ExpensePayeeInput />
+      return <ExpensePayeeInput value={expense.payee} onChange={onChange} />
     case "spender":
       return <ExpenseSpenderInput />
     case "date":
       return <ExpenseDateInput date={expense.date} onChange={onChange} />
     case "mode":
-      return <ExpenseModeInput />
+      return <PaymentModeInput value={expense.mode} onChange={onChange} />
     case "location":
       return <ExpenseLocationInput />
     default:
@@ -103,7 +108,7 @@ function ExpenseDateInput({ date, onChange }: Readonly<ExpenseDateInputProps>) {
   const handleDateChange = (newDate: Date) => {
     onChange({ date: newDate })
   }
-  
+
   return (
     <DatePicker
       date={date}
@@ -116,30 +121,73 @@ function ExpenseDateInput({ date, onChange }: Readonly<ExpenseDateInputProps>) {
   )
 }
 
-function ExpenseCategoryInput() {
-  return (
-    <TextField placeholderTx="expense.new.placeholder.category" labelTx="expense.new.category" />
-  )
+interface ExpenseLocationInputProps {
+  value: string
+  onChange: (changed: Partial<Expense>) => void
 }
-
-function ExpensePayeeInput() {
+function ExpensePayeeInput({ value, onChange }: Readonly<ExpenseLocationInputProps>) {
+  const payees = useRootStore((state) => state.payees)
   const ref = React.useRef<TextInput>(null)
   useEffect(() => {
     ref.current?.focus()
   }, [])
+  function handleLocationChange(newLocation: string) {
+    onChange({ payee: newLocation })
+  }
 
-  return <AutoComplete ref={ref} />
+  return <AutoComplete {...{ value, ref }} onChange={handleLocationChange} options={payees} />
 }
 
 function ExpenseSpenderInput() {
   return <TextField placeholderTx="expense.new.placeholder.spender" labelTx="expense.new.spender" />
 }
 
-function ExpenseModeInput() {
-  return <TextField placeholderTx="expense.new.placeholder.mode" labelTx="expense.new.mode" />
+interface PaymentModeInputProps {
+  onChange: (changed: Partial<Expense>) => void
+  value: string
 }
+function PaymentModeInput({ value, onChange }: Readonly<PaymentModeInputProps>) {
+  const paymentModes = useRootStore((state) => Object.values(state.paymentModes))
+  const handlePaymentModeChange = (newMode: string) => {
+    onChange({ mode: newMode })
+  }
+  return (
+    <SelectableList
+      options={paymentModes}
+      value={value}
+      onChange={handlePaymentModeChange}
+      translationScope="expense.paymentModes"
+    />
+  )
+}
+
+interface ExpenseCategoryInputProps {
+  onChange: (changed: Partial<Expense>) => void
+  value: string
+}
+function ExpenseCategoryInput({
+  onChange,
+  value: selectedCategory,
+}: Readonly<ExpenseCategoryInputProps>) {
+  const handleCategorySelection = (newCategory: string) => {
+    onChange({ category: newCategory })
+  }
+  const expenseCategories = useRootStore((state) => Object.values(state.expenseCategories))
+  return (
+    <SelectableList
+      value={selectedCategory}
+      onChange={handleCategorySelection}
+      options={expenseCategories}
+    />
+  )
+}
+
 function ExpenseLocationInput() {
   return (
-    <TextField autoComplete="postal-address-locality" placeholderTx="expense.new.placeholder.location" labelTx="expense.new.location" />
+    <TextField
+      autoComplete="postal-address-locality"
+      placeholderTx="expense.new.placeholder.location"
+      labelTx="expense.new.location"
+    />
   )
 }

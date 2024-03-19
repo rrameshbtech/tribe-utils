@@ -69,3 +69,17 @@ export const typography = {
    */
   code: Platform.select({ ios: fonts.courier, android: fonts.monospace }),
 }
+
+export const sizing = {
+  xxxs: 2,
+  xxs: 4,
+  xs: 8,
+  sm: 12,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+  xxxl: 64,
+} as const
+
+export type Sizing = keyof typeof sizing

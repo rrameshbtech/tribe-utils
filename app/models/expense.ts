@@ -47,6 +47,7 @@ export interface ExpenseSlice {
 
   paymentModes: Record<string, PaymentMode>
   expenseCategories: Record<string, ExpenseCategory>
+  payees: string[]
 }
 
 export const initExpense = (): Expense => ({
@@ -69,29 +70,51 @@ export const createExpenseSlice: StateCreator<ExpenseSlice, [], [], ExpenseSlice
   expenseFilter: "Day",
   searchTerm: "",
 
-  addExpense: (expense: Expense) =>
-    set((state) => ({ expenses: { ...state.expenses, [expense.id]: expense } })),
-  toggleExpenseFilter: () => {
-    const getNextDuration = (currentDuration: FilterDuration) => {
-      const toggleMap: Record<FilterDuration, FilterDuration> = {
-        Day: "Week",
-        Week: "Month",
-        Month: "Day",
-      }
-      return toggleMap[currentDuration]
-    }
-
-    set((state) => {
-      return {
-        expenseFilter: getNextDuration(state.expenseFilter),
-      }
-    })
-  },
+  addExpense: addExpenseFn(set),
+  toggleExpenseFilter: toggleExpenseFilterFn(set),
   setSearchTerm: (searchTerm: string) => set({ searchTerm }),
 
   paymentModes: defaultPaymentModes(),
   expenseCategories: defaultExpenseCategories(),
+  payees: defaultPayees(),
 })
+
+type ExpenseSliceSetType = (
+  partial:
+    | ExpenseSlice
+    | Partial<ExpenseSlice>
+    | ((state: ExpenseSlice) => ExpenseSlice | Partial<ExpenseSlice>),
+  replace?: boolean | undefined,
+) => void
+
+const toggleExpenseFilterFn = (set: ExpenseSliceSetType) => () => {
+  const getNextDuration = (currentDuration: FilterDuration) => {
+    const toggleMap: Record<FilterDuration, FilterDuration> = {
+      Day: "Week",
+      Week: "Month",
+      Month: "Day",
+    }
+    return toggleMap[currentDuration]
+  }
+
+  set((state) => {
+    return {
+      expenseFilter: getNextDuration(state.expenseFilter),
+    }
+  })
+}
+const addExpenseFn = (set: ExpenseSliceSetType) => (expense: Expense) => {
+  set((state) => {
+    return { expenses: { ...state.expenses, [expense.id]: expense } }
+  })
+  upsertPayees(set)(expense)
+}
+const upsertPayees = (set: ExpenseSliceSetType) => (expense: Expense) => {
+  set((state) => {
+    const payees = [...new Set([...state.payees, expense.payee])]
+    return { payees }
+  })
+}
 
 export const getVisibleExpenses = (state: ExpenseSlice) => {
   const { expenses, expenseFilter, searchTerm } = state
@@ -223,6 +246,19 @@ const defaultExpenseCategories = (): Record<string, ExpenseCategory> => ({
     updatedAt: new Date(),
   },
 })
+
+const defaultPayees = (): string[] => [
+  "Local Store",
+  "Amazon",
+  "Flipkart",
+  "Book My Show",
+  "Online Shopping",
+  "Swiggy",
+  "Zomato",
+  "Food App",
+  "School",
+  "Local Cafe",
+]
 
 const defaultExpenses = (): Record<string, Expense> => ({
   "1": {

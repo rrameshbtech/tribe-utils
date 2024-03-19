@@ -70,7 +70,7 @@ function NewExpenseHeader() {
       <View style={$titleContainerStyles}>
         <TouchableOpacity accessibilityRole="button" onPress={() => navigate("ExpenseList")}>
           <Icon
-            icon="close"
+            name="close"
             type="Material"
             style={{ marginLeft: spacing.xs }}
             size={24}

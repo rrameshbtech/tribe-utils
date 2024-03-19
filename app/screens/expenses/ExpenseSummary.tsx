@@ -5,6 +5,7 @@ import { spacing } from "app/theme"
 import { Expense } from "app/models"
 import { MoneyLabel } from "./MoneyLabel"
 import { ExpenseInput } from "./NewExpenseScreen"
+import { t } from "i18n-js"
 
 interface ExpenseSummaryCardProps {
   expense: Expense
@@ -99,18 +100,18 @@ function CategoryLabel({ name, onPress }: Readonly<CategoryLabelProps>) {
   )
 }
 
-interface ModeLabelProps extends PressableLabelProps{
+interface ModeLabelProps extends PressableLabelProps {
   mode: string
 }
 function ModeLabel({ mode, onPress }: Readonly<ModeLabelProps>) {
   return (
     <Pressable onPress={() => onPress?.("mode")}>
-      <Text text={mode} preset="bold" />
+      <Text preset="bold">{t(`expense.paymentModes.${mode}`, { defaultValue: mode })}</Text>
     </Pressable>
   )
 }
 
-interface DateLabelProps extends PressableLabelProps{
+interface DateLabelProps extends PressableLabelProps {
   date: Date
 }
 function DateLabel({ date, onPress }: Readonly<DateLabelProps>) {
@@ -121,7 +122,7 @@ function DateLabel({ date, onPress }: Readonly<DateLabelProps>) {
   )
 }
 
-interface LocationLabelProps extends PressableLabelProps  {
+interface LocationLabelProps extends PressableLabelProps {
   location?: string
 }
 function LocationLabel({ location, onPress }: Readonly<LocationLabelProps>) {

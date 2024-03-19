@@ -56,6 +56,10 @@ const en = {
         spender: "Who spent?",
         location: "Where did you spend?",
       },
+    },
+    paymentModes: {
+      BankCard: "Bank Card",
+      BankTransfer: "Bank Transfer",
     }
   }
 }

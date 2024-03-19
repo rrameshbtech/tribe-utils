@@ -1,5 +1,5 @@
 import { colors, spacing } from "app/theme"
-import React, { forwardRef, useImperativeHandle, useState } from "react"
+import React, { ForwardedRef, createRef, forwardRef, useImperativeHandle, useState } from "react"
 import { View, TextStyle, ViewStyle } from "react-native"
 import { FlatList, TextInput } from "react-native-gesture-handler"
 import { ListItem } from "./ListItem"
@@ -7,30 +7,24 @@ import { Text } from "./Text"
 
 interface DropDownProps {
   value?: string
+  options: string[]
   onChange?: (value: string) => void
   styles?: TextStyle
   containerStyles?: ViewStyle
 }
 
-const AutoComplete = forwardRef( ({
-  styles: overrideStyles,
-  containerStyles: overrideContainerStyles,
-}: Readonly<DropDownProps>, ref) => {
-  const [value, setValue] = useState("1")
+const AutoCompleteWithOutRef = (
+  {
+    value,
+    options,
+    onChange,
+    styles: overrideStyles,
+    containerStyles: overrideContainerStyles,
+  }: Readonly<DropDownProps>,
+  ref: ForwardedRef<unknown>,
+) => {
   const [isListVisible, setIsListVisible] = useState(false)
-  const [options] = useState([
-    "Option1",
-    "Option2",
-    "Option3",
-    "Option4",
-    "Option5",
-    "Option6",
-    "Option7",
-    "Option8",
-    "Option9",
-    "Option10",
-  ])
-  const inputRef = React.createRef<TextInput>()
+  const inputRef = createRef<TextInput>()
   const containerStyles = { ...$containerStyles, ...overrideContainerStyles }
   const styles = { ...$styles, ...overrideStyles }
 
@@ -53,7 +47,7 @@ const AutoComplete = forwardRef( ({
             onFocus={showAutoCompleteList}
             style={styles}
             value={value}
-            onChangeText={setValue}
+            onChangeText={onChange}
             inputMode="text"
             autoCorrect={false}
             clearButtonMode="while-editing"
@@ -71,7 +65,7 @@ const AutoComplete = forwardRef( ({
   function hideAutoCompleteList() {
     setIsListVisible(false)
   }
-  function renderAutoCompleteOption({ item }): JSX.Element {
+  function renderAutoCompleteOption({ item }: any): JSX.Element {
     const listItemStyles = {
       ...$listItemStyles,
       display: isListVisible ? "flex" : "none",
@@ -83,13 +77,18 @@ const AutoComplete = forwardRef( ({
     )
   }
   function handleItemPress(item: string) {
-    setValue(item)
+    onChange?.(item)
     hideAutoCompleteList()
   }
   function autoCompleteOptions() {
-    return options.filter((option) => option.includes(value))
+    if (!value) {
+      return options
+    }
+    const filterValue = value.toLocaleLowerCase()
+    return options.filter((option) => option.toLocaleLowerCase().includes(filterValue))
   }
-})
+}
+const AutoComplete = forwardRef(AutoCompleteWithOutRef)
 AutoComplete.displayName = "AutoComplete"
 export { AutoComplete }
 
