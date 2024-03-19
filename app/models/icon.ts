@@ -40,4 +40,9 @@ export interface ImageIcon {
   type: "image"
 }
 
-export type Icon = FontIcon | ImageIcon
+export interface InitialsIcon {
+  name: string
+  type: "initials"
+}
+
+export type Icon = FontIcon | ImageIcon | InitialsIcon

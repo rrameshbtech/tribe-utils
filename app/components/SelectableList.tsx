@@ -61,7 +61,7 @@ function OptionIcon({ icon }: Readonly<OptionIconProps>) {
   return (
     <IconComponent
       {...icon}
-      size={24}
+      size={sizing.lg}
       color={colors.palette.primary500}
       containerStyle={optionIconContainerStyles}
     />
@@ -70,6 +70,7 @@ function OptionIcon({ icon }: Readonly<OptionIconProps>) {
 const optionIconContainerStyles: ViewStyle = {
   flex: 0,
   alignItems: "center",
+  justifyContent: "center",
   minWidth: sizing.xxl,
   minHeight: sizing.xxl,
   padding: spacing.sm,

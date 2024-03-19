@@ -241,7 +241,7 @@ const defaultExpenseCategories = (): Record<string, ExpenseCategory> => ({
   },
   Others: {
     name: "Others",
-    icon: { type: "FontAwesome", name: "question" },
+    icon: { type: "initials", name: "Others" },
     createdAt: new Date(),
     updatedAt: new Date(),
   },
