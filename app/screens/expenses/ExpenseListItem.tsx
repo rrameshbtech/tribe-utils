@@ -2,7 +2,7 @@ import React from "react"
 import { Icon as IconComponent, ListItem, Text } from "app/components"
 import { format } from "date-fns"
 import { View, ViewStyle } from "react-native"
-import { colors, spacing } from "app/theme"
+import { colors, sizing, spacing } from "app/theme"
 import { MoneyLabel } from "./MoneyLabel"
 import { Expense, useRootStore } from "app/models"
 
@@ -41,20 +41,11 @@ function ExpenseCategoryIcon({ category }: Readonly<ExpenseCategoryIconProps>) {
   return (
     <IconComponent
       {...categoryIcon}
-      size={24}
+      size={sizing.lg}
       color={colors.palette.primary500}
-      containerStyle={$expenseCategoryIconStyles}
+      shape="circle"
     />
   )
-}
-const $expenseCategoryIconStyles: ViewStyle = {
-  flex: 0,
-  alignItems: "center",
-  minWidth: 48,
-  minHeight: 48,
-  padding: spacing.sm,
-  backgroundColor: colors.palette.primary100,
-  borderRadius: 48,
 }
 
 interface ExpenseDateProps {
@@ -103,8 +94,8 @@ interface PaymentModeIconProps {
 function PaymentModeIcon({ mode }: Readonly<PaymentModeIconProps>) {
   const paymentModes = useRootStore((state) => state.paymentModes)
   const color = colors.palette.neutral500
-  const size = 16
-  const icon = paymentModes[mode]?.icon || { name: "question", type: "FontAwesome" }
+  const size = sizing.md
+  const icon = paymentModes[mode]?.icon || { name: mode, type: "initials" }
 
   return <IconComponent {...icon} {...{ size, color }} />
 }

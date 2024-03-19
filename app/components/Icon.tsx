@@ -14,10 +14,12 @@ import {
   ViewStyle,
 } from "react-native"
 import { FontAwesome } from "@expo/vector-icons"
+import { colors, sizing, spacing } from "app/theme"
 
 interface CommonIconProps {
   color?: string
   size?: number
+  shape?: "circle" | "square"
   containerStyle?: StyleProp<ViewStyle>
   onPress?: TouchableOpacityProps["onPress"]
 }
@@ -94,11 +96,18 @@ export function Icon(props: ImageIconProps | FontIconProps | InitialsIconProps) 
     type,
     name,
     color,
-    size,
+    size = sizing.lg,
+    shape,
     style: styleOverride,
     containerStyle: $containerStyleOverride,
     ...WrapperProps
   } = props
+
+  const containerStyle = [
+    shape ? $containerStyle(size): {},
+    shape === "circle" ? $circleContainerStyle(size) : {},
+    $containerStyleOverride,
+  ]
 
   const isPressable = !!WrapperProps.onPress
   const Wrapper = (WrapperProps?.onPress ? TouchableOpacity : View) as ComponentType<
@@ -125,12 +134,26 @@ export function Icon(props: ImageIconProps | FontIconProps | InitialsIconProps) 
     <Wrapper
       accessibilityRole={isPressable ? "button" : undefined}
       {...WrapperProps}
-      style={$containerStyleOverride}
+      style={containerStyle}
     >
       <IconComponentByType />
     </Wrapper>
   )
 }
+
+const $containerStyle = (size: number): ViewStyle => ({
+  flex: 0,
+  alignItems: "center",
+  justifyContent: "center",
+  minWidth: size * 2,
+  minHeight: size * 2,
+  padding: size / 2,
+  backgroundColor: colors.palette.primary100,
+})
+
+const $circleContainerStyle = (size: number): ViewStyle => ({
+  borderRadius: size * 2,
+})
 
 const $imageStyleBase: ImageStyle = {
   resizeMode: "contain",

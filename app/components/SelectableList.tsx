@@ -1,5 +1,5 @@
 import React from "react"
-import { Icon } from "app/models/icon"
+import { Icon, InitialsIcon } from "app/models/icon"
 import { colors, sizing, spacing } from "app/theme"
 import { ViewStyle } from "react-native"
 import { ListView } from "./ListView"
@@ -30,53 +30,48 @@ export function SelectableList({
   options,
   translationScope = "",
 }: Readonly<SelectableListProps>) {
+  const renderSelectableItem = getRenderSelectableItemFn(value, onChange, translationScope)
   return (
     <ListView
       data={options}
       estimatedItemSize={options.length}
-      renderItem={({ item }) => (
-        <ListItem
-          style={$selectableItemStyles}
-          onPress={() => onChange(item.name)}
-          LeftComponent={<OptionIcon icon={item.icon} />}
-          RightComponent={<OptionSelector isSelected={item.name === value} />}
-        >
-          <Text style={{ lineHeight: spacing.xxl }}>
-            {t(`${translationScope}.${item.name}`, { defaultValue: item.name })}
-          </Text>
-        </ListItem>
-      )}
+      renderItem={renderSelectableItem}
       keyExtractor={(item) => item.name}
     />
   )
 }
 
+const getRenderSelectableItemFn =
+  (value: string, onChange: (value: string) => void, translationScope = "") =>
+  ({ item }: { item: SelectableListOption }) => {
+    const nameInitialsIcon: InitialsIcon = { type: "initials", name: item.name }
+    return (
+      <ListItem
+        style={$selectableItemStyles}
+        onPress={() => onChange(item.name)}
+        LeftComponent={<OptionIcon icon={item.icon ?? nameInitialsIcon} />}
+        RightComponent={<OptionSelector isSelected={item.name === value} />}
+      >
+        <Text style={{ lineHeight: spacing.xxl }}>
+          {t(`${translationScope}.${item.name}`, { defaultValue: item.name })}
+        </Text>
+      </ListItem>
+    )
+  }
+
 interface OptionIconProps {
-  icon?: Icon
+  icon: Icon
 }
 function OptionIcon({ icon }: Readonly<OptionIconProps>) {
-  if (!icon) {
-    return <></>
-  }
   return (
     <IconComponent
       {...icon}
       size={sizing.lg}
+      shape="circle"
       color={colors.palette.primary500}
-      containerStyle={optionIconContainerStyles}
+      containerStyle={{ marginRight: spacing.sm }}
     />
   )
-}
-const optionIconContainerStyles: ViewStyle = {
-  flex: 0,
-  alignItems: "center",
-  justifyContent: "center",
-  minWidth: sizing.xxl,
-  minHeight: sizing.xxl,
-  padding: spacing.sm,
-  backgroundColor: colors.palette.primary100,
-  borderRadius: sizing.xxl,
-  marginRight: spacing.sm,
 }
 
 interface OptionSelectorProps {

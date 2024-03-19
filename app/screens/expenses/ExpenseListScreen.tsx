@@ -3,16 +3,13 @@ import { ViewStyle, View, FlatList, TouchableOpacity } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
 import { Icon, Screen, Text, TextField } from "app/components"
 import { ExpenseListItem } from "./ExpenseListItem"
-import { colors, spacing } from "app/theme"
+import { colors, sizing, spacing } from "app/theme"
 import { MoneyLabel } from "./MoneyLabel"
-import { useRootStore, getVisibleExpenses,
-  Expense, getVisibleExpenseTotal
- } from "app/models"
-
+import { useRootStore, getVisibleExpenses, Expense, getVisibleExpenseTotal } from "app/models"
 
 interface ExpenseListScreenProps extends AppStackScreenProps<"ExpenseList"> {}
 export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseListScreen() {
-  const expenses =  useRootStore(getVisibleExpenses)
+  const expenses = useRootStore(getVisibleExpenses)
 
   return (
     <Screen
@@ -51,9 +48,9 @@ const $listView: ViewStyle = {
 
 function ExpenseListHeader() {
   // Todo - search should have cancel button & filter should have a dropdown
-  const setSearchTerm = useRootStore(state => state.setSearchTerm)
-  const searchTerm = useRootStore(state => state.searchTerm)
-  
+  const setSearchTerm = useRootStore((state) => state.setSearchTerm)
+  const searchTerm = useRootStore((state) => state.searchTerm)
+
   return (
     <View style={$expenseListHeaderStyles}>
       <TextField
@@ -96,8 +93,8 @@ interface ExpenseFilterIconProps {
   containerStyle?: ViewStyle
 }
 function ExpenseFilterIcon({ containerStyle }: Readonly<ExpenseFilterIconProps>) {
-  const durationFilter = useRootStore(state => state.expenseFilter)
-  const toggleFilter = useRootStore(state => state.toggleExpenseFilter)
+  const durationFilter = useRootStore((state) => state.expenseFilter)
+  const toggleFilter = useRootStore((state) => state.toggleExpenseFilter)
 
   const $filterIconWrapperStyles: ViewStyle = {
     ...containerStyle,
@@ -111,11 +108,7 @@ function ExpenseFilterIcon({ containerStyle }: Readonly<ExpenseFilterIconProps>)
   return (
     <TouchableOpacity onPress={() => toggleFilter()} style={$filterIconWrapperStyles}>
       <Icon type="image" name="calendarFilter" size={24} color={colors.palette.neutral600} />
-      <Text
-        size="xxxs"
-        style={$iconTextStyles}
-        tx={`expense.list.filter.${durationFilter}`}
-      />
+      <Text size="xxxs" style={$iconTextStyles} tx={`expense.list.filter.${durationFilter}`} />
     </TouchableOpacity>
   )
 }
@@ -144,21 +137,25 @@ function AddExpenseButton() {
     bottom: spacing.xl,
     right: spacing.xl,
   }
-  const $circleStyles = {
-    backgroundColor: colors.background,
-    borderRadius: 50,
-  }
-  function navigateToAddExpense() {
+
+  function goToAddExpenseScreen() {
     navigate("NewExpense")
   }
 
   return (
     <TouchableOpacity
-      style={{ ...$rightBottomStyles, ...$circleStyles }}
+      style={$rightBottomStyles}
       accessibilityRole="button"
-      onPress={navigateToAddExpense}
+      onPress={goToAddExpenseScreen}
     >
-      <Icon type="FontAwesome5" name="plus-circle" size={48} color={colors.tint} />
+      <Icon
+        type="FontAwesome5"
+        name="plus"
+        shape="circle"
+        size={sizing.xl}
+        color={colors.background}
+        containerStyle={{ backgroundColor: colors.tint, opacity: 0.9 }}
+      />
     </TouchableOpacity>
   )
 }
