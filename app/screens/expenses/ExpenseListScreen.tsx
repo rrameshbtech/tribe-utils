@@ -1,10 +1,8 @@
 import React, { FC } from "react"
-import { observer } from "mobx-react-lite"
 import { ViewStyle, View, FlatList, TouchableOpacity } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
 import { Icon, Screen, Text, TextField } from "app/components"
 import { ExpenseListItem } from "./ExpenseListItem"
-// import { EXPENSE_FILTER_DURATIONS, Expense, ExpenseFilterDurations, useStores } from "app/models"
 import { colors, spacing } from "app/theme"
 import { MoneyLabel } from "./MoneyLabel"
 import { useRootStore, getVisibleExpenses,
@@ -13,13 +11,7 @@ import { useRootStore, getVisibleExpenses,
 
 
 interface ExpenseListScreenProps extends AppStackScreenProps<"ExpenseList"> {}
-export const ExpenseListScreen: FC<ExpenseListScreenProps> = observer(function ExpenseListScreen() {
-  // const { expenseStore, userStore } = useStores()
-  // useEffect(() => {
-  //   expenseStore.init()
-  //   userStore.init()
-  // }, [expenseStore, userStore])
-
+export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseListScreen() {
   const expenses =  useRootStore(getVisibleExpenses)
 
   return (
@@ -41,7 +33,7 @@ export const ExpenseListScreen: FC<ExpenseListScreenProps> = observer(function E
       <AddExpenseButton />
     </Screen>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

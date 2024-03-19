@@ -1,5 +1,4 @@
 import React, { FC } from "react"
-import { observer } from "mobx-react-lite"
 import { View, ViewStyle } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
@@ -19,7 +18,7 @@ export type ExpenseInput =
   | "mode"
   | "location"
 
-export const NewExpenseScreen: FC<NewExpenseScreenProps> = observer(function NewExpenseScreen() {
+export const NewExpenseScreen: FC<NewExpenseScreenProps> = function NewExpenseScreen() {
   const [currentInput, setCurrentInput] = React.useState<ExpenseInput>("amount")
   const [expense, setExpense] = React.useState<Expense>(
     initExpense()
@@ -58,7 +57,7 @@ export const NewExpenseScreen: FC<NewExpenseScreenProps> = observer(function New
       </View>
     </Screen>
   )
-})
+}
 const $root: ViewStyle = {
   flex: 1,
   flexDirection: "column",
