@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { View, ViewStyle, TextInput } from "react-native"
-import { AutoComplete, TextField, Icon } from "app/components"
+import { AutoComplete, TextField, Icon, Text } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { ExpenseInput } from "./NewExpenseScreen"
 import { Expense, useRootStore } from "app/models"
@@ -8,6 +8,7 @@ import MoneyInput from "./MoneyInput"
 import DatePicker from "react-native-date-picker"
 import { useLocale } from "app/utils/useLocale"
 import { SelectableList } from "app/components/SelectableList"
+import { TxKeyPath } from "app/i18n"
 
 interface ExpenseFormProps {
   visibleField: ExpenseInput
@@ -21,7 +22,7 @@ export function ExpenseForm({
   value: expense,
   onChange,
   onSave,
-  onNext
+  onNext,
 }: Readonly<ExpenseFormProps>) {
   return (
     <View style={$formContainerStyles}>
@@ -44,7 +45,7 @@ function renderVisibleField(
   field: ExpenseInput,
   expense: Expense,
   onChange: (changedValue: Partial<Expense>) => void,
-  onNext?: () => void
+  onNext?: () => void,
 ) {
   function updateAndMoveToNext(changedValue: Partial<Expense>) {
     onChange(changedValue)
@@ -52,7 +53,9 @@ function renderVisibleField(
   }
   switch (field) {
     case "amount":
-      return <ExpenseAmountInput amount={expense.amount} onChange={onChange} onEndEditing={onNext} />
+      return (
+        <ExpenseAmountInput amount={expense.amount} onChange={onChange} onEndEditing={onNext} />
+      )
     case "category":
       return <ExpenseCategoryInput onChange={updateAndMoveToNext} value={expense.category} />
     case "payee":
@@ -97,7 +100,16 @@ function ExpenseAmountInput({ amount, onChange, onEndEditing }: Readonly<Expense
   }, [])
 
   return (
-    <MoneyInput ref={ref} value={amountText} onChangeText={handleAmountChange} styles={{ fontSize: sizing.xxl }} onEndEditing={onEndEditing} />
+    <>
+      <InputLabel tx="expense.new.label.amount" />
+      <MoneyInput
+        ref={ref}
+        value={amountText}
+        onChangeText={handleAmountChange}
+        styles={{ fontSize: sizing.xxl }}
+        onEndEditing={onEndEditing}
+      />
+    </>
   )
 
   function handleAmountChange(newAmountText: string) {
@@ -110,6 +122,10 @@ interface ExpenseDateInputProps {
   date: Date
   onChange: (changed: Partial<Expense>) => void
 }
+function InputLabel({ tx }: { tx: TxKeyPath }) {
+  return <Text tx={tx} style={{ color:colors.textDim, alignSelf: "center" }}></Text>
+}
+
 function ExpenseDateInput({ date, onChange }: Readonly<ExpenseDateInputProps>) {
   const { languageTag } = useLocale()
   // TODO: change this if we want to allow users to select past month expenses
@@ -119,14 +135,17 @@ function ExpenseDateInput({ date, onChange }: Readonly<ExpenseDateInputProps>) {
   }
 
   return (
-    <DatePicker
-      date={date}
-      onDateChange={handleDateChange}
-      minimumDate={firstDayOfCurrentMonth}
-      maximumDate={new Date()}
-      fadeToColor={colors.background}
-      locale={languageTag}
-    />
+    <>
+      <InputLabel tx="expense.new.label.date" />
+      <DatePicker
+        date={date}
+        onDateChange={handleDateChange}
+        minimumDate={firstDayOfCurrentMonth}
+        maximumDate={new Date()}
+        fadeToColor={colors.background}
+        locale={languageTag}
+      />
+    </>
   )
 }
 
@@ -149,11 +168,22 @@ function ExpensePayeeInput({ value, onChange, onEndEditing }: Readonly<ExpenseLo
     onEndEditing?.()
   }
 
-  return <AutoComplete {...{ value, ref }} onChangeText={handleLocationChange} onSelection={updateAndMoveToNext} onEndEditing={onEndEditing} options={payees} />
+  return (
+    <>
+      <InputLabel tx="expense.new.label.payee" />
+      <AutoComplete
+        {...{ value, ref }}
+        onChangeText={handleLocationChange}
+        onSelection={updateAndMoveToNext}
+        onEndEditing={onEndEditing}
+        options={payees}
+      />
+    </>
+  )
 }
 
 function ExpenseSpenderInput() {
-  return <TextField placeholderTx="expense.new.placeholder.spender" labelTx="expense.new.spender" />
+  return <TextField placeholderTx="expense.new.label.spender" labelTx="expense.new.spender" />
 }
 
 interface PaymentModeInputProps {
@@ -166,12 +196,15 @@ function PaymentModeInput({ value, onChange }: Readonly<PaymentModeInputProps>) 
     onChange({ mode: newMode })
   }
   return (
-    <SelectableList
-      options={paymentModes}
-      value={value}
-      onChange={handlePaymentModeChange}
-      translationScope="expense.paymentModes"
-    />
+    <>
+      <InputLabel tx="expense.new.label.mode" />
+      <SelectableList
+        options={paymentModes}
+        value={value}
+        onChange={handlePaymentModeChange}
+        translationScope="expense.paymentModes"
+      />
+    </>
   )
 }
 
@@ -188,11 +221,14 @@ function ExpenseCategoryInput({
   }
   const expenseCategories = useRootStore((state) => Object.values(state.expenseCategories))
   return (
-    <SelectableList
-      value={selectedCategory}
-      onChange={handleCategorySelection}
-      options={expenseCategories}
-    />
+    <>
+      <InputLabel tx="expense.new.label.category" />
+      <SelectableList
+        value={selectedCategory}
+        onChange={handleCategorySelection}
+        options={expenseCategories}
+      />
+    </>
   )
 }
 
@@ -200,7 +236,7 @@ function ExpenseLocationInput() {
   return (
     <TextField
       autoComplete="postal-address-locality"
-      placeholderTx="expense.new.placeholder.location"
+      placeholderTx="expense.new.label.location"
       labelTx="expense.new.location"
     />
   )

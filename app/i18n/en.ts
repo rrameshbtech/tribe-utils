@@ -52,12 +52,12 @@ const en = {
         spenderLabel: "by {{spender}}",
       },
       verbose: "{{spender}} spent {{amount}} for {{category}} in {{payee}} using {{mode}} on {{date}}",
-      placeholder: {
-        amount: "How much did you spend?",
-        payee: "Who did you pay?",
-        date: "When did you spend?",
-        category: "What did you spend on?",
-        mode: "How did you pay?",
+      label: {
+        amount: "how much did you spend?",
+        payee: "whom did you pay to?",
+        date: "when did you spend?",
+        category: "for what?",
+        mode: "how did you pay?",
         spender: "Who spent?",
         location: "Where did you spend?",
       },
