@@ -97,7 +97,7 @@ function ExpenseAmountInput({ amount, onChange, onEndEditing }: Readonly<Expense
   }, [])
 
   return (
-    <MoneyInput ref={ref} value={amountText} onChangeText={handleAmountChange} onEndEditing={onEndEditing} />
+    <MoneyInput ref={ref} value={amountText} onChangeText={handleAmountChange} styles={{ fontSize: sizing.xxl }} onEndEditing={onEndEditing} />
   )
 
   function handleAmountChange(newAmountText: string) {

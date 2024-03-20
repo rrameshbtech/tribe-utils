@@ -46,6 +46,11 @@ const en = {
       mode: "Mode",
       save: "Save",
       next: "Next",
+      card: {
+        modeAndCategoryLabel: "in {{mode}} for {{category}}",
+        payeeLabel: "at {{payee}}",
+        spenderLabel: "by {{spender}}",
+      },
       verbose: "{{spender}} spent {{amount}} for {{category}} in {{payee}} using {{mode}} on {{date}}",
       placeholder: {
         amount: "How much did you spend?",

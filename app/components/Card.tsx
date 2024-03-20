@@ -258,6 +258,8 @@ const $containerBase: ViewStyle = {
 
 const $alignmentWrapper: ViewStyle = {
   flex: 1,
+  flexDirection: "column",
+  rowGap: spacing.xs,
   alignSelf: "stretch",
 }
 

@@ -36,13 +36,16 @@ export interface Expense {
 }
 
 export type FilterDuration = "Day" | "Week" | "Month"
+export type ExpenseSummaryCardMode = "card" | "details"
 
 export interface ExpenseSlice {
   expenses: Record<string, Expense>
   expenseFilter: FilterDuration
   searchTerm: string
+  expenseSummaryCardMode: ExpenseSummaryCardMode
   addExpense: (expense: Expense) => void
   setSearchTerm: (searchTerm: string) => void
+  setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) => void
   toggleExpenseFilter: () => void
 
   paymentModes: Record<string, PaymentMode>
@@ -69,10 +72,12 @@ export const createExpenseSlice: StateCreator<ExpenseSlice, [], [], ExpenseSlice
   expenses: defaultExpenses(),
   expenseFilter: "Day",
   searchTerm: "",
+  expenseSummaryCardMode: "card",
 
   addExpense: addExpenseFn(set),
   toggleExpenseFilter: toggleExpenseFilterFn(set),
   setSearchTerm: (searchTerm: string) => set({ searchTerm }),
+  setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) => set({ expenseSummaryCardMode: mode }),
 
   paymentModes: defaultPaymentModes(),
   expenseCategories: defaultExpenseCategories(),

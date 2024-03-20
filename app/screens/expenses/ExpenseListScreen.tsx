@@ -126,7 +126,7 @@ function ExpenseSummary() {
   return (
     <View style={$expenseSummaryStyles}>
       <Text style={{ color: colors.palette.neutral200 }} tx="expense.list.totalExpenses" />
-      <MoneyLabel amount={totalExpenses} styles={{ color: colors.palette.neutral200 }} />
+      <MoneyLabel amount={totalExpenses} style={{ color: colors.palette.neutral200 }} />
     </View>
   )
 }

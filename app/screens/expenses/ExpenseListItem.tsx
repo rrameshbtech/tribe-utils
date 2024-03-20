@@ -104,6 +104,6 @@ interface ExpenseAmountProps {
   amount: number
 }
 function ExpenseAmount({ amount }: Readonly<ExpenseAmountProps>) {
-  return <MoneyLabel amount={amount} styles={$expenseAmountStyles} />
+  return <MoneyLabel amount={amount} style={$expenseAmountStyles} />
 }
 const $expenseAmountStyles = { color: colors.palette.secondary500 }

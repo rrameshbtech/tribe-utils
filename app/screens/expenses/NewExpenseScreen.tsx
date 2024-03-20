@@ -2,7 +2,7 @@ import React, { FC } from "react"
 import { View, ViewStyle } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
-import { colors, spacing } from "app/theme"
+import { colors, sizing, spacing } from "app/theme"
 import { Expense, initExpense, useRootStore } from "app/models"
 import { ExpenseSummaryCard } from "./ExpenseSummary"
 import { ExpenseForm } from "./ExpenseForm"
@@ -76,6 +76,7 @@ const $root: ViewStyle = {
 }
 
 function NewExpenseHeader() {
+
   return (
     <View style={$headerContainerStyles}>
       <View style={$titleContainerStyles}>
@@ -94,13 +95,18 @@ function NewExpenseHeader() {
           tx="expense.new.heading"
         />
       </View>
+      <View>
+        <ExpenseSummaryModeToggle />
+      </View>
     </View>
   )
 }
 const $headerContainerStyles: ViewStyle = {
   flex: 0,
+  flexDirection: "row",
+  justifyContent: "space-between",
   backgroundColor: colors.tint,
-  alignItems: "flex-start",
+  alignItems: "center",
   alignContent: "space-between",
   flexBasis: "auto",
   height: 64,
@@ -125,4 +131,31 @@ const $pageContentStyles: ViewStyle = {
   flex: 1,
   flexDirection: "column",
   padding: 0,
+}
+
+
+function ExpenseSummaryModeToggle() {
+  const mode = useRootStore((state) => state.expenseSummaryCardMode)
+  const setExpenseSummaryCardMode = useRootStore((state) => state.setExpenseSummaryCardMode)
+
+  if (mode === "details") {
+    return (
+      <Icon
+        type="FontAwesome"
+        name="align-left"
+        size={sizing.md}
+        color={colors.palette.neutral300}
+        onPress={() => setExpenseSummaryCardMode("card")}
+      />
+    )
+  }
+  return (
+    <Icon
+      type="FontAwesome"
+      name="vcard-o"
+      size={sizing.md}
+      color={colors.palette.neutral300}
+      onPress={() => setExpenseSummaryCardMode("details")}
+    />
+  )
 }
