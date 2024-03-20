@@ -3,6 +3,8 @@ const en = {
     ok: "OK!",
     cancel: "Cancel",
     back: "Back",
+    yes: "Yes",
+    no: "No",
   },
   welcomeScreen: {
     postscript:
@@ -61,6 +63,11 @@ const en = {
         spender: "Who spent?",
         location: "Where did you spend?",
       },
+      error: {
+        title: "Oops! Forgot something?",
+        amountZero: "Expense amount cannot be 0",
+        forgotToSave: "You didn't save. Are you sure to cancel?",
+      }
     },
     paymentModes: {
       BankCard: "Bank Card",

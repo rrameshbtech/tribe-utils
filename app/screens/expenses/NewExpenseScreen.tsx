@@ -1,12 +1,14 @@
-import React, { FC } from "react"
-import { View, ViewStyle } from "react-native"
-import { AppStackScreenProps, navigate } from "app/navigators"
+import React, { FC, useEffect } from "react"
+import { Alert, View, ViewStyle } from "react-native"
+import { AppStackScreenProps, goBack, navigate } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { Expense, initExpense, useRootStore } from "app/models"
 import { ExpenseSummaryCard } from "./ExpenseSummary"
 import { ExpenseForm } from "./ExpenseForm"
 import { TouchableOpacity } from "react-native-gesture-handler"
+import { translate } from "app/i18n"
+import { useNavigation } from "@react-navigation/native"
 
 interface NewExpenseScreenProps extends AppStackScreenProps<"NewExpense"> {}
 export type ExpenseInput =
@@ -21,20 +23,54 @@ export type ExpenseInput =
 export const NewExpenseScreen: FC<NewExpenseScreenProps> = function NewExpenseScreen() {
   const [editField, setEditField] = React.useState<ExpenseInput>("amount")
   const [expense, setExpense] = React.useState<Expense>(initExpense())
+  const [isDirty, setIsDirty] = React.useState(false)
+  const navigation = useNavigation()
+
   const addExpense = useRootStore((state) => state.addExpense)
   function onExpenseChange(changedValue: Partial<Expense>) {
     setExpense({
       ...expense,
       ...changedValue,
     })
+    setIsDirty(true)
   }
+
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", (e) => {
+        if (!isDirty) {
+          return
+        }
+
+        e.preventDefault()
+        Alert.alert(
+          translate("expense.new.error.title"),
+          translate("expense.new.error.forgotToSave"),
+          [
+            { text: translate("common.no"), style: "cancel", isPreferred: true },
+            {
+              text: translate("common.yes"),
+              style: "destructive",
+              onPress: () => navigation.dispatch(e.data.action),
+            },
+          ],
+        )
+      }),
+    [isDirty, navigation],
+  )
+
   function onSave() {
+    if (expense.amount === 0) {
+      Alert.alert(translate("expense.new.error.title"), translate("expense.new.error.amountZero"), [
+        { text: translate("common.ok"), onPress: () => setEditField("amount") },
+      ])
+      return
+    }
     addExpense(expense)
     navigate("ExpenseList")
   }
 
   function toggleEditingField() {
-    console.log("editingField", editField)
     if (editField === "amount") {
       setEditField("category")
     } else if (editField === "category") {
@@ -53,7 +89,7 @@ export const NewExpenseScreen: FC<NewExpenseScreenProps> = function NewExpenseSc
       safeAreaEdges={["top", "bottom"]}
       StatusBarProps={{ backgroundColor: colors.tint }}
     >
-      <NewExpenseHeader />
+      <NewExpenseHeader onClose={goBack} />
       <View style={$pageContentStyles}>
         <ExpenseSummaryCard
           {...{ expense, editField }}
@@ -75,12 +111,11 @@ const $root: ViewStyle = {
   flexDirection: "column",
 }
 
-function NewExpenseHeader() {
-
+function NewExpenseHeader({ onClose }: { onClose?: () => void }) {
   return (
     <View style={$headerContainerStyles}>
       <View style={$titleContainerStyles}>
-        <TouchableOpacity accessibilityRole="button" onPress={() => navigate("ExpenseList")}>
+        <TouchableOpacity accessibilityRole="button" onPress={onClose}>
           <Icon
             name="close"
             type="Material"
@@ -132,7 +167,6 @@ const $pageContentStyles: ViewStyle = {
   flexDirection: "column",
   padding: 0,
 }
-
 
 function ExpenseSummaryModeToggle() {
   const mode = useRootStore((state) => state.expenseSummaryCardMode)

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { View, ViewStyle, TextInput } from "react-native"
+import { View, ViewStyle, TextInput, AppState } from "react-native"
 import { AutoComplete, TextField, Icon, Text } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { ExpenseInput } from "./NewExpenseScreen"
@@ -54,12 +54,18 @@ function renderVisibleField(
   switch (field) {
     case "amount":
       return (
-        <ExpenseAmountInput amount={expense.amount} onChange={onChange} onEndEditing={onNext} />
+        <ExpenseAmountInput
+          amount={expense.amount}
+          onChange={onChange}
+          onSubmitEditing={() => onNext?.()}
+        />
       )
     case "category":
       return <ExpenseCategoryInput onChange={updateAndMoveToNext} value={expense.category} />
     case "payee":
-      return <ExpensePayeeInput value={expense.payee} onChange={onChange} onEndEditing={onNext} />
+      return (
+        <ExpensePayeeInput value={expense.payee} onChange={onChange} onSubmitEditing={onNext} />
+      )
     case "spender":
       return <ExpenseSpenderInput />
     case "date":
@@ -90,13 +96,19 @@ const $controlBarStyles: ViewStyle = {
 interface ExpenseAmountInputProps {
   amount: number
   onChange: (changed: Partial<Expense>) => void
-  onEndEditing?: () => void
+  onSubmitEditing?: () => void
 }
-function ExpenseAmountInput({ amount, onChange, onEndEditing }: Readonly<ExpenseAmountInputProps>) {
+function ExpenseAmountInput({
+  amount,
+  onChange,
+  onSubmitEditing,
+}: Readonly<ExpenseAmountInputProps>) {
   const ref = React.useRef<TextInput>(null)
   const [amountText, setAmountText] = React.useState(amount.toString())
+
   useEffect(() => {
     ref.current?.focus()
+    return AppState.addEventListener("focus", () => ref.current?.focus()).remove
   }, [])
 
   return (
@@ -107,7 +119,8 @@ function ExpenseAmountInput({ amount, onChange, onEndEditing }: Readonly<Expense
         value={amountText}
         onChangeText={handleAmountChange}
         styles={{ fontSize: sizing.xxl }}
-        onEndEditing={onEndEditing}
+        onSubmitEditing={onSubmitEditing}
+        returnKeyType="next"
       />
     </>
   )
@@ -123,7 +136,7 @@ interface ExpenseDateInputProps {
   onChange: (changed: Partial<Expense>) => void
 }
 function InputLabel({ tx }: { tx: TxKeyPath }) {
-  return <Text tx={tx} style={{ color:colors.textDim, alignSelf: "center" }}></Text>
+  return <Text tx={tx} style={{ color: colors.textDim, alignSelf: "center" }}></Text>
 }
 
 function ExpenseDateInput({ date, onChange }: Readonly<ExpenseDateInputProps>) {
@@ -152,9 +165,13 @@ function ExpenseDateInput({ date, onChange }: Readonly<ExpenseDateInputProps>) {
 interface ExpenseLocationInputProps {
   value: string
   onChange: (changed: Partial<Expense>) => void
-  onEndEditing?: () => void
+  onSubmitEditing?: () => void
 }
-function ExpensePayeeInput({ value, onChange, onEndEditing }: Readonly<ExpenseLocationInputProps>) {
+function ExpensePayeeInput({
+  value,
+  onChange,
+  onSubmitEditing,
+}: Readonly<ExpenseLocationInputProps>) {
   const payees = useRootStore((state) => state.payees)
   const ref = React.useRef<TextInput>(null)
   useEffect(() => {
@@ -165,7 +182,7 @@ function ExpensePayeeInput({ value, onChange, onEndEditing }: Readonly<ExpenseLo
   }
   function updateAndMoveToNext(selectedPayee: string) {
     onChange({ payee: selectedPayee })
-    onEndEditing?.()
+    onSubmitEditing?.()
   }
 
   return (
@@ -175,8 +192,11 @@ function ExpensePayeeInput({ value, onChange, onEndEditing }: Readonly<ExpenseLo
         {...{ value, ref }}
         onChangeText={handleLocationChange}
         onSelection={updateAndMoveToNext}
-        onEndEditing={onEndEditing}
+        onSubmitEditing={onSubmitEditing}
         options={payees}
+        inputMode="text"
+        clearButtonMode="always"
+        returnKeyType="next"
       />
     </>
   )

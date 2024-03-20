@@ -3,11 +3,13 @@ import { pipe } from "app/utils/fns"
 import { useLocale } from "app/utils/useLocale"
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react"
 import {
+  Keyboard,
   NativeSyntheticEvent,
   Pressable,
   Text,
   TextInput,
   TextInputKeyPressEventData,
+  TextInputProps,
   TextStyle,
   View,
   ViewStyle,
@@ -15,7 +17,7 @@ import {
 
 const DEFAULT_FONT_SIZE = 36
 const DEFAULT_PLACEHOLDER = "0"
-interface MoneyInputProps {
+interface MoneyInputProps extends TextInputProps {
   value: string
   styles?: TextStyle
   containerStyles?: ViewStyle
@@ -46,6 +48,7 @@ const MoneyInput = forwardRef(
       onChangeText,
       onEndEditing,
       decimalPrecision = 2,
+      ...textInputProps
     }: MoneyInputProps,
     ref,
   ) => {
@@ -63,15 +66,22 @@ const MoneyInput = forwardRef(
       ...overrideContainerStyles,
     }
 
+    useEffect(
+      () =>
+        Keyboard.addListener("keyboardDidHide", () => {
+          textInputRef.current?.blur()
+        }).remove,
+      [],
+    )
+
     useImperativeHandle(ref, () => ({
       focus: () => {
         textInputRef.current?.focus()
-        setIsFocused(true)
       },
     }))
 
     return (
-      <Pressable style={containerStyles} onPress={handleContainerPress} >
+      <Pressable style={containerStyles} onPress={handleContainerPress}>
         <Text style={{ ...styles, ...$currencySymbolStyles(styles) }}>{currencySymbol}</Text>
         {hasValidValue && <Text style={styles}>{formatValue(value)}</Text>}
         <BlinkingCursor styles={styles} isVisible={isFocused} />
@@ -84,7 +94,9 @@ const MoneyInput = forwardRef(
           ref={textInputRef}
           onKeyPress={handleKeyPress}
           onBlur={handleBlur}
+          onFocus={() => setIsFocused(true)}
           onEndEditing={onEndEditing}
+          {...textInputProps}
         />
       </Pressable>
     )
@@ -167,7 +179,6 @@ const MoneyInput = forwardRef(
 
     function handleContainerPress() {
       textInputRef.current?.focus()
-      setIsFocused(true)
     }
 
     function handleBlur() {
@@ -211,7 +222,6 @@ const $currencySymbolStyles = (textStyle: TextStyle): TextStyle => ({
   alignSelf: "center",
   marginRight: 4,
 })
-
 
 /**
  * BlinkingCursor
