@@ -1,14 +1,14 @@
 import { colors, spacing } from "app/theme"
 import React, { ForwardedRef, createRef, forwardRef, useImperativeHandle, useState } from "react"
-import { View, TextStyle, ViewStyle } from "react-native"
+import { View, TextStyle, ViewStyle, TextInputProps } from "react-native"
 import { FlatList, TextInput } from "react-native-gesture-handler"
 import { ListItem } from "./ListItem"
 import { Text } from "./Text"
 
-interface DropDownProps {
+interface DropDownProps extends TextInputProps {
   value?: string
   options: string[]
-  onChange?: (value: string) => void
+  onSelection?: (value: string) => void
   styles?: TextStyle
   containerStyles?: ViewStyle
 }
@@ -17,9 +17,10 @@ const AutoCompleteWithOutRef = (
   {
     value,
     options,
-    onChange,
+    onSelection,
     styles: overrideStyles,
     containerStyles: overrideContainerStyles,
+    ...textInputProps
   }: Readonly<DropDownProps>,
   ref: ForwardedRef<unknown>,
 ) => {
@@ -47,11 +48,11 @@ const AutoCompleteWithOutRef = (
             onFocus={showAutoCompleteList}
             style={styles}
             value={value}
-            onChangeText={onChange}
             inputMode="text"
             autoCorrect={false}
             clearButtonMode="while-editing"
             selectTextOnFocus={true}
+            {...textInputProps}
           />
         }
         stickyHeaderIndices={[0]}
@@ -77,7 +78,7 @@ const AutoCompleteWithOutRef = (
     )
   }
   function handleItemPress(item: string) {
-    onChange?.(item)
+    onSelection?.(item)
     hideAutoCompleteList()
   }
   function autoCompleteOptions() {

@@ -3,7 +3,7 @@ import { View, ViewStyle } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
 import { colors, spacing } from "app/theme"
-import {Expense, initExpense, useRootStore } from "app/models"
+import { Expense, initExpense, useRootStore } from "app/models"
 import { ExpenseSummaryCard } from "./ExpenseSummary"
 import { ExpenseForm } from "./ExpenseForm"
 import { TouchableOpacity } from "react-native-gesture-handler"
@@ -19,11 +19,9 @@ export type ExpenseInput =
   | "location"
 
 export const NewExpenseScreen: FC<NewExpenseScreenProps> = function NewExpenseScreen() {
-  const [currentInput, setCurrentInput] = React.useState<ExpenseInput>("amount")
-  const [expense, setExpense] = React.useState<Expense>(
-    initExpense()
-  )
-  const addExpense = useRootStore(state => state.addExpense)
+  const [editField, setEditField] = React.useState<ExpenseInput>("amount")
+  const [expense, setExpense] = React.useState<Expense>(initExpense())
+  const addExpense = useRootStore((state) => state.addExpense)
   function onExpenseChange(changedValue: Partial<Expense>) {
     setExpense({
       ...expense,
@@ -35,6 +33,19 @@ export const NewExpenseScreen: FC<NewExpenseScreenProps> = function NewExpenseSc
     navigate("ExpenseList")
   }
 
+  function toggleEditingField() {
+    console.log("editingField", editField)
+    if (editField === "amount") {
+      setEditField("category")
+    } else if (editField === "category") {
+      setEditField("mode")
+    } else if (editField === "mode") {
+      setEditField("payee")
+    } else if (editField === "payee") {
+      setEditField("date")
+    }
+  }
+
   return (
     <Screen
       style={$root}
@@ -43,16 +54,17 @@ export const NewExpenseScreen: FC<NewExpenseScreenProps> = function NewExpenseSc
       StatusBarProps={{ backgroundColor: colors.tint }}
     >
       <NewExpenseHeader />
-      <View style={$pageContentStyles} >
+      <View style={$pageContentStyles}>
         <ExpenseSummaryCard
-          expense={expense}
-          onExpenseDetailPress={(fieldName: ExpenseInput) => setCurrentInput(fieldName)}
+          {...{ expense, editField }}
+          onExpenseDetailPress={(fieldName: ExpenseInput) => setEditField(fieldName)}
         />
         <ExpenseForm
-          visibleField={currentInput}
+          visibleField={editField}
           value={expense}
           onChange={onExpenseChange}
           onSave={onSave}
+          onNext={toggleEditingField}
         />
       </View>
     </Screen>

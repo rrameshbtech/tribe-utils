@@ -19,11 +19,6 @@ export interface SelectableListProps {
   options: SelectableListOption[]
   translationScope?: string
 }
-const $selectableItemStyles: ViewStyle = {
-  flex: 1,
-  alignContent: "center",
-  marginRight: spacing.sm,
-}
 export function SelectableList({
   value,
   onChange,
@@ -45,18 +40,29 @@ const getRenderSelectableItemFn =
   (value: string, onChange: (value: string) => void, translationScope = "") =>
   ({ item }: { item: SelectableListOption }) => {
     const nameInitialsIcon: InitialsIcon = { type: "initials", name: item.name }
+    const isSelected = item.name === value
     return (
       <ListItem
-        style={$selectableItemStyles}
+        style={[$selectableItemStyles, isSelected && $selectedItemStyle]}
         onPress={() => onChange(item.name)}
         LeftComponent={<OptionIcon icon={item.icon ?? nameInitialsIcon} />}
-        RightComponent={<OptionSelector isSelected={item.name === value} />}
+        RightComponent={<OptionSelector {...{ isSelected }} />}
       >
         <Text style={{ lineHeight: spacing.xxl }}>
           {t(`${translationScope}.${item.name}`, { defaultValue: item.name })}
         </Text>
       </ListItem>
     )
+  }
+
+  const $selectableItemStyles: ViewStyle = {
+    flex: 1,
+    alignContent: "center",
+    padding: spacing.xs,
+  }
+  const $selectedItemStyle: ViewStyle = {
+    backgroundColor: colors.palette.neutral300,
+    borderRadius: sizing.xxs
   }
 
 interface OptionIconProps {

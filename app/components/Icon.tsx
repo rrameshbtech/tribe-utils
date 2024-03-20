@@ -149,10 +149,11 @@ const $containerStyle = (size: number): ViewStyle => ({
   minHeight: size * 2,
   padding: size / 2,
   backgroundColor: colors.palette.primary100,
+  borderRadius: sizing.xs,
 })
 
 const $circleContainerStyle = (size: number): ViewStyle => ({
-  borderRadius: size * 2,
+  borderRadius: size,
 })
 
 const $imageStyleBase: ImageStyle = {

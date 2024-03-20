@@ -1,20 +1,24 @@
-import React from 'react'
-import { Presets, Text } from 'app/components'
-import { useLocale } from 'app/utils/useLocale'
+import React from "react"
+import { Presets, Text } from "app/components"
+import { useLocale } from "app/utils/useLocale"
+import { TextProps } from "react-native"
 
-export interface MoneyLabelProps {
-  amount: number,
-  styles?: any,
-  preset?: Presets,
+export interface MoneyLabelProps extends Omit<TextProps, "text"> {
+  amount: number
+  preset?: Presets
 }
-export function MoneyLabel({ amount, preset, styles: amountLabelStyles }: Readonly<MoneyLabelProps>) {
+export function MoneyLabel({
+  amount,
+  preset,
+  ...textProps
+}: Readonly<MoneyLabelProps>) {
   const { digitGroupingRegex, digitGroupingSeparator, currencySymbol } = useLocale()
   const amountWithThousandsSeparator = amount
     .toFixed(2)
     .replace(digitGroupingRegex, digitGroupingSeparator ?? ",")
 
   return (
-    <Text preset={preset} style={amountLabelStyles}>
+    <Text preset={preset} {...textProps}>
       {currencySymbol}
       {amountWithThousandsSeparator}
     </Text>

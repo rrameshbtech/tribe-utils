@@ -20,6 +20,7 @@ interface MoneyInputProps {
   styles?: TextStyle
   containerStyles?: ViewStyle
   onChangeText?: (value: string) => void
+  onEndEditing?: () => void
   /**
    * The number of decimal places to allow
    * @default 2
@@ -43,6 +44,7 @@ const MoneyInput = forwardRef(
       styles: overrideStyles,
       containerStyles: overrideContainerStyles,
       onChangeText,
+      onEndEditing,
       decimalPrecision = 2,
     }: MoneyInputProps,
     ref,
@@ -82,6 +84,7 @@ const MoneyInput = forwardRef(
           ref={textInputRef}
           onKeyPress={handleKeyPress}
           onBlur={handleBlur}
+          onEndEditing={onEndEditing}
         />
       </Pressable>
     )
