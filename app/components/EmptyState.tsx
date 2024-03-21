@@ -6,6 +6,7 @@ import { Button, ButtonProps } from "./Button"
 import { Text, TextProps } from "./Text"
 
 const sadFace = require("../../assets/images/sad-face.png")
+const welcomeFace = require("../../assets/images/welcome-face.png")
 
 interface EmptyStateProps {
   /**
@@ -114,6 +115,11 @@ const EmptyStatePresets = {
     heading: translate("emptyStateComponent.generic.heading"),
     content: translate("emptyStateComponent.generic.content"),
     button: translate("emptyStateComponent.generic.button"),
+  } as EmptyStatePresetItem,
+  noExpenses: {
+    imageSource: welcomeFace,
+    heading: translate("emptyStateComponent.noExpenses.heading"),
+    content: translate("emptyStateComponent.noExpenses.content"),
   } as EmptyStatePresetItem,
 } as const
 

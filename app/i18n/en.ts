@@ -26,13 +26,22 @@ const en = {
       content: "No data found yet. Try clicking the button to refresh or reload the app.",
       button: "Let's try this again",
     },
+    noExpenses: {
+      heading: "Oops! No expenses yet",
+      content: "Have n't opened your wallet or is it empty already? Ignore my bad joke. If you missed any don't forget to add.",
+      button: "Add an expense",
+    }
   },
   expense: {
     list: {
       spentAt: "{{spentAt}}",
       unknownSpentAt: "unknown",
       totalExpenses: "Total Expenses",
-      searchPlaceholder: "Search expenses",
+      searchPlaceholder:{
+        Day: "Today's expenses",
+        Week: "Current week's expenses",
+        Month: "Current month's expenses",
+      } ,
       filter: {
         Day: "Day",
         Week: "Week",

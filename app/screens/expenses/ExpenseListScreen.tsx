@@ -1,7 +1,7 @@
 import React, { FC } from "react"
 import { ViewStyle, View, FlatList, TouchableOpacity } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
-import { Icon, Screen, Text, TextField } from "app/components"
+import { EmptyState, Icon, Screen, Text, TextField } from "app/components"
 import { ExpenseListItem } from "./ExpenseListItem"
 import { colors, sizing, spacing } from "app/theme"
 import { MoneyLabel } from "./MoneyLabel"
@@ -38,6 +38,7 @@ export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseLis
           keyExtractor={(item) => item.id}
           ListHeaderComponent={<ExpenseListHeader />}
           stickyHeaderIndices={[0]}
+          ListEmptyComponent={<EmptyState preset="noExpenses" />}
         />
       </View>
       <AddExpenseButton />
@@ -62,11 +63,12 @@ function ExpenseListHeader() {
   // Todo - search should have cancel button & filter should have a dropdown
   const setSearchTerm = useRootStore((state) => state.setSearchTerm)
   const searchTerm = useRootStore((state) => state.searchTerm)
+  const durationFilter = useRootStore((state) => state.expenseFilter)
 
   return (
     <View style={$expenseListHeaderStyles}>
       <TextField
-        placeholderTx="expense.list.searchPlaceholder"
+        placeholderTx={`expense.list.searchPlaceholder.${durationFilter}`}
         LeftAccessory={(props) => <SearchIcon containerStyle={props.style} />}
         RightAccessory={(props) => <ExpenseFilterIcon containerStyle={props.style} />}
         inputWrapperStyle={$expenseSearchInputWrapperStyles}
