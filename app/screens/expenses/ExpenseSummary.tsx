@@ -4,7 +4,7 @@ import { Card, Text, TrasWithComponents } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { Expense, useRootStore } from "app/models"
 import { MoneyLabel } from "./MoneyLabel"
-import { ExpenseInput } from "./NewExpenseScreen"
+import { ExpenseInput } from "./ExpenseEditorScreen"
 import { t } from "i18n-js"
 
 interface ExpenseSummaryCardProps {

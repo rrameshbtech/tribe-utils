@@ -1,6 +1,6 @@
-import React, { FC, useEffect } from "react"
+import React, { FC, useEffect, useState } from "react"
 import { Alert, View, ViewStyle } from "react-native"
-import { AppStackScreenProps, goBack, navigate } from "app/navigators"
+import { AppStackScreenProps, goBack } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { Expense, initExpense, useRootStore } from "app/models"
@@ -8,9 +8,10 @@ import { ExpenseSummaryCard } from "./ExpenseSummary"
 import { ExpenseForm } from "./ExpenseForm"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import { translate } from "app/i18n"
+import Toast from "react-native-toast-message"
 import { useNavigation } from "@react-navigation/native"
 
-interface NewExpenseScreenProps extends AppStackScreenProps<"NewExpense"> {}
+interface ExpenseEditorScreenProps extends AppStackScreenProps<"ExpenseEditor"> {}
 export type ExpenseInput =
   | "amount"
   | "category"
@@ -20,25 +21,31 @@ export type ExpenseInput =
   | "mode"
   | "location"
 
-export const NewExpenseScreen: FC<NewExpenseScreenProps> = function NewExpenseScreen() {
-  const [editField, setEditField] = React.useState<ExpenseInput>("amount")
-  const [expense, setExpense] = React.useState<Expense>(initExpense())
-  const [isDirty, setIsDirty] = React.useState(false)
+type FormState = "fresh" | "changed" | "saved"
+export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function ExpenseEditorScreen({
+  route,
+}) {
+  const getExpense = useRootStore((state) => state.getExpense)
+  const upsertExpense = useRootStore((state) => state.upsertExpense)
+
+  const { expenseId } = route.params
+  const [editField, setEditField] = useState<ExpenseInput>("amount")
+  const [expense, setExpense] = useState<Expense>(getExpense(expenseId) ?? initExpense())
+  const [formState, setFormState] = useState<FormState>("fresh")
   const navigation = useNavigation()
 
-  const addExpense = useRootStore((state) => state.addExpense)
   function onExpenseChange(changedValue: Partial<Expense>) {
     setExpense({
       ...expense,
       ...changedValue,
     })
-    setIsDirty(true)
+    setFormState("changed")
   }
 
   useEffect(
     () =>
       navigation.addListener("beforeRemove", (e) => {
-        if (!isDirty) {
+        if (formState === "fresh" || formState === "saved") {
           return
         }
 
@@ -56,18 +63,27 @@ export const NewExpenseScreen: FC<NewExpenseScreenProps> = function NewExpenseSc
           ],
         )
       }),
-    [isDirty, navigation],
+    [formState, navigation],
   )
+
+  useEffect(() => {
+    if (formState === "saved") {
+      goBack()
+    }
+  }, [formState])
 
   function onSave() {
     if (expense.amount === 0) {
-      Alert.alert(translate("expense.new.error.title"), translate("expense.new.error.amountZero"), [
-        { text: translate("common.ok"), onPress: () => setEditField("amount") },
-      ])
+      Toast.show({
+        text1: translate("expense.new.error.title"),
+        text2: translate("expense.new.error.amountZero"),
+        type: "error",
+      })
+      setEditField("amount")
       return
     }
-    addExpense(expense)
-    navigate("ExpenseList")
+    upsertExpense(expense)
+    setFormState("saved")
   }
 
   function toggleEditingField() {
@@ -89,7 +105,7 @@ export const NewExpenseScreen: FC<NewExpenseScreenProps> = function NewExpenseSc
       safeAreaEdges={["top", "bottom"]}
       StatusBarProps={{ backgroundColor: colors.tint }}
     >
-      <NewExpenseHeader onClose={goBack} />
+      <ExpenseEditorHeader onClose={goBack} />
       <View style={$pageContentStyles}>
         <ExpenseSummaryCard
           {...{ expense, editField }}
@@ -111,7 +127,7 @@ const $root: ViewStyle = {
   flexDirection: "column",
 }
 
-function NewExpenseHeader({ onClose }: { onClose?: () => void }) {
+function ExpenseEditorHeader({ onClose }: { onClose?: () => void }) {
   return (
     <View style={$headerContainerStyles}>
       <View style={$titleContainerStyles}>

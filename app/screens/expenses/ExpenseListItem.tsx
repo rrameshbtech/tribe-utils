@@ -1,42 +1,65 @@
 import React from "react"
 import { Icon as IconComponent, ListItem, Text } from "app/components"
 import { format } from "date-fns"
-import { View, ViewStyle } from "react-native"
+import { Alert, Pressable, View, ViewStyle } from "react-native"
 import { colors, sizing, spacing } from "app/theme"
 import { MoneyLabel } from "./MoneyLabel"
 import { Expense, useRootStore } from "app/models"
+import { Icon } from "app/models/icon"
+import { TxKeyPath, translate } from "app/i18n"
+import Toast from "react-native-toast-message"
+import { navigate } from "app/navigators"
 
 interface ExpenseListItemProps {
   expense: Expense
+  isExpanded?: boolean
+  onPress?: (expenseId: string) => void
 }
-export function ExpenseListItem({ expense }: Readonly<ExpenseListItemProps>) {
+export function ExpenseListItem({ expense, isExpanded, onPress }: Readonly<ExpenseListItemProps>) {
   return (
-    <ListItem
-      LeftComponent={<ExpenseCategoryIcon category={expense.category} />}
-      style={$expenseListItemStyles}
-      containerStyle={$expenseContainerStyles}
-    >
-      <ExpenseDate date={expense.date} />
-      <View style={$expenseContentStyles}>
-        <ExpenseNarration expense={expense} />
-        <ExpenseAmount amount={expense.amount} />
-      </View>
-    </ListItem>
+    <View style={[$expenseItemBoxStyle, isExpanded && $expandedExpenseListItemStyle]}>
+      <ListItem
+        LeftComponent={<ExpenseCategoryIcon category={expense.category} />}
+        style={[$expenseListItemStyle]}
+        onPress={() => onPress?.(expense.id)}
+      >
+        <ExpenseDate date={expense.date} />
+        <View style={$expenseContentStyle}>
+          <ExpenseNarration expense={expense} />
+          <ExpenseAmount amount={expense.amount} />
+        </View>
+      </ListItem>
+      {isExpanded && <ExpenseItemControls expense={expense} />}
+    </View>
   )
 }
-const $expenseContainerStyles: ViewStyle = {
+const $expenseItemBoxStyle: ViewStyle = {
   marginBottom: spacing.xs,
-  marginHorizontal: spacing.sm,
+  marginHorizontal: spacing.xxs,
+  borderWidth: 1,
+  borderRadius: sizing.xs,
+  borderColor: colors.background,
 }
-const $expenseListItemStyles = { paddingVertical: spacing.xs, gap: spacing.xs }
-const $expenseContentStyles: ViewStyle = { justifyContent: "space-between", flexDirection: "row" }
+const $expenseListItemStyle = {
+  paddingVertical: spacing.xs,
+  gap: spacing.xs,
+  paddingHorizontal: spacing.xs,
+}
+const $expandedExpenseListItemStyle: ViewStyle = {
+  backgroundColor: colors.palette.neutral100,
+  borderColor: colors.palette.neutral400,
+}
+const $expenseContentStyle: ViewStyle = { justifyContent: "space-between", flexDirection: "row" }
 
 interface ExpenseCategoryIconProps {
   category: string
 }
 function ExpenseCategoryIcon({ category }: Readonly<ExpenseCategoryIconProps>) {
   const expenseCategories = useRootStore((state) => state.expenseCategories)
-  const categoryIcon = expenseCategories[category]?.icon || { name: "question", type: "FontAwesome" }
+  const categoryIcon = expenseCategories[category]?.icon || {
+    name: "question",
+    type: "FontAwesome",
+  }
 
   return (
     <IconComponent
@@ -107,3 +130,87 @@ function ExpenseAmount({ amount }: Readonly<ExpenseAmountProps>) {
   return <MoneyLabel amount={amount} style={$expenseAmountStyles} />
 }
 const $expenseAmountStyles = { color: colors.palette.secondary500 }
+
+interface ExpenseItemControlsProps {
+  expense: Expense
+}
+function ExpenseItemControls({ expense }: Readonly<ExpenseItemControlsProps>) {
+  const removeExpense = useRootStore((state) => state.removeExpense)
+  function deleteExpense() {
+    Alert.alert(
+      translate("expense.delete.confirmTitle"),
+      translate("expense.delete.confirmMessage", {
+        category: expense.category,
+        payee: expense.payee,
+      }),
+      [
+        {
+          text: translate("common.cancel"),
+          style: "cancel",
+        },
+        {
+          text: translate("common.delete"),
+          onPress: () => {
+            removeExpense(expense.id)
+            Toast.show({
+              text1: translate("expense.delete.successMessage"),
+            })
+          },
+          style: "destructive",
+        },
+      ],
+      { cancelable: true },
+    )
+  }
+  function editExpense() {
+    navigate("ExpenseEditor", { expenseId: expense.id })
+  }
+
+  return (
+    <View style={$expenseControlsStyle}>
+      <FlatIconButton
+        icon={{ name: "delete", type: "Material" }}
+        tx="common.delete"
+        onPress={deleteExpense}
+      />
+      <FlatIconButton
+        icon={{ name: "edit", type: "FontAwesome" }}
+        tx="common.edit"
+        onPress={editExpense}
+      />
+    </View>
+  )
+}
+const $expenseControlsStyle: ViewStyle = {
+  flex: 1,
+  flexDirection: "row",
+  justifyContent: "space-around",
+  padding: spacing.xs,
+  borderTopWidth: 1,
+  borderTopColor: colors.palette.neutral300,
+}
+
+interface FlatIconButtonProps {
+  icon: Icon
+  tx: TxKeyPath
+  onPress?: () => void
+}
+function FlatIconButton({ icon, tx, onPress }: Readonly<FlatIconButtonProps>) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        columnGap: spacing.xxxs,
+        paddingHorizontal: spacing.sm,
+        paddingVertical: spacing.xs,
+      }}
+      android_ripple={{ color: colors.palette.neutral300 }}
+      onPress={onPress}
+    >
+      <IconComponent {...icon} color={colors.textDim} />
+      <Text tx={tx}></Text>
+    </Pressable>
+  )
+}

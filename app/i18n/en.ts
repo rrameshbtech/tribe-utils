@@ -5,6 +5,8 @@ const en = {
     back: "Back",
     yes: "Yes",
     no: "No",
+    delete: "Delete",
+    edit: "Edit",
   },
   welcomeScreen: {
     postscript:
@@ -36,6 +38,12 @@ const en = {
         Week: "Week",
         Month: "Month",
       }
+    },
+    delete: {
+      confirmTitle: "Delete?",
+      confirmMessage: "Are you sure you want to delete this expense for {{category}} in {{payee}}?",
+      successTitle: "Deleted",
+      successMessage: "Expense deleted",
     },
     new: {
       heading: "What's your spend?",

@@ -4,11 +4,7 @@
  * Generally speaking, it will contain an auth flow (registration, login, forgot password)
  * and a "main" flow which the user will use once logged in.
  */
-import {
-  DarkTheme,
-  DefaultTheme,
-  NavigationContainer,
-} from "@react-navigation/native"
+import { DarkTheme, DefaultTheme, NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import React from "react"
 import { useColorScheme } from "react-native"
@@ -34,8 +30,8 @@ export type AppStackParamList = {
   Welcome: undefined
   // 🔥 Your screens go here
   ExpenseList: undefined
-	NewExpense: undefined
-	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+  ExpenseEditor: { expenseId: string }
+  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
 /**
@@ -54,15 +50,16 @@ const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = function AppStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false, navigationBarColor: colors.background }
-    }
-    >
-          {/* <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} /> */}
+    <Stack.Navigator screenOptions={{ headerShown: false, navigationBarColor: colors.background }}>
+      {/* <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} /> */}
       {/** 🔥 Your screens go here */}
       <Stack.Screen name="ExpenseList" component={Screens.ExpenseListScreen} />
-			<Stack.Screen name="NewExpense" component={Screens.NewExpenseScreen} />
-			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
+      <Stack.Screen
+        name="ExpenseEditor"
+        component={Screens.ExpenseEditorScreen}
+        initialParams={{ expenseId: "" }}
+      />
+      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
 }

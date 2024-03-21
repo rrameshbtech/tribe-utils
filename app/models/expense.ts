@@ -43,7 +43,10 @@ export interface ExpenseSlice {
   expenseFilter: FilterDuration
   searchTerm: string
   expenseSummaryCardMode: ExpenseSummaryCardMode
-  addExpense: (expense: Expense) => void
+
+  upsertExpense: (expense: Expense) => void
+  getExpense: (id: string) => Expense | undefined
+  removeExpense: (id: string) => void
   setSearchTerm: (searchTerm: string) => void
   setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) => void
   toggleExpenseFilter: () => void
@@ -68,13 +71,15 @@ export const initExpense = (): Expense => ({
   updatedAt: new Date(),
 })
 
-export const createExpenseSlice: StateCreator<ExpenseSlice, [], [], ExpenseSlice> = (set) => ({
+export const createExpenseSlice: StateCreator<ExpenseSlice, [], [], ExpenseSlice> = (set, get) => ({
   expenses: defaultExpenses(),
   expenseFilter: "Day",
   searchTerm: "",
   expenseSummaryCardMode: "card",
 
-  addExpense: addExpenseFn(set),
+  upsertExpense: upsertExpenseFn(set),
+  getExpense: (id: string) => get().expenses[id],
+  removeExpense: removeExpenseFn(set),
   toggleExpenseFilter: toggleExpenseFilterFn(set),
   setSearchTerm: (searchTerm: string) => set({ searchTerm }),
   setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) => set({ expenseSummaryCardMode: mode }),
@@ -108,12 +113,19 @@ const toggleExpenseFilterFn = (set: ExpenseSliceSetType) => () => {
     }
   })
 }
-const addExpenseFn = (set: ExpenseSliceSetType) => (expense: Expense) => {
+const upsertExpenseFn = (set: ExpenseSliceSetType) => (expense: Expense) => {
   set((state) => {
     return { expenses: { ...state.expenses, [expense.id]: expense } }
   })
   upsertPayees(set)(expense)
 }
+const removeExpenseFn = (set: ExpenseSliceSetType) => (id: string) => {
+  set((state) => {
+    const { [id]: _, ...remaingExpenses } = state.expenses
+    return { expenses: remaingExpenses }
+  })
+}
+
 const upsertPayees = (set: ExpenseSliceSetType) => (expense: Expense) => {
   set((state) => {
     const payees = [...new Set([...state.payees, expense.payee])]

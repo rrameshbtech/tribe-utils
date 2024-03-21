@@ -10,7 +10,14 @@ import { useRootStore, getVisibleExpenses, Expense, getVisibleExpenseTotal } fro
 interface ExpenseListScreenProps extends AppStackScreenProps<"ExpenseList"> {}
 export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseListScreen() {
   const expenses = useRootStore(getVisibleExpenses)
-
+  const [expandedItem, setExpandedItem] = React.useState<string | null>(null)
+  const toggleExpandedItem = (id: string) => {
+    if (expandedItem === id) {
+      setExpandedItem(null)
+    } else {
+      setExpandedItem(id)
+    }
+  }
   return (
     <Screen
       style={$root}
@@ -20,7 +27,13 @@ export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseLis
     >
       <View style={$listView}>
         <FlatList<Expense>
-          renderItem={({ item }) => <ExpenseListItem expense={item} />}
+          renderItem={({ item: expense }) => (
+            <ExpenseListItem
+              {...{ expense }}
+              onPress={toggleExpandedItem}
+              isExpanded={expandedItem === expense.id}
+            />
+          )}
           data={expenses}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={<ExpenseListHeader />}
@@ -36,7 +49,6 @@ const $root: ViewStyle = {
   flex: 1,
 }
 const $screenContentContainer: ViewStyle = {
-  paddingBottom: spacing.md,
   flexGrow: 1,
 }
 
@@ -72,6 +84,7 @@ const $expenseListHeaderStyles: ViewStyle = {
   justifyContent: "space-between",
   backgroundColor: colors.palette.primary500,
   padding: spacing.xs,
+  marginBottom: spacing.xxs,
 }
 
 interface SearchIconProps {
@@ -139,7 +152,7 @@ function AddExpenseButton() {
   }
 
   function goToAddExpenseScreen() {
-    navigate("NewExpense")
+    navigate("ExpenseEditor")
   }
 
   return (
