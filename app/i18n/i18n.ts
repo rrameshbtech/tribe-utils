@@ -57,3 +57,11 @@ type RecursiveKeyOfHandleValue<TValue, Text extends string> = TValue extends any
   : TValue extends object
   ? Text | `${Text}${RecursiveKeyOfInner<TValue>}`
   : Text
+
+export function convertToLocaleAbbrevatedNumber(value: number, precision = 0): string {
+  return value.toLocaleString(systemLocale.languageTag, {
+    compactDisplay: "short",
+    notation: "compact",
+    maximumFractionDigits: precision,
+  })
+}

@@ -22,9 +22,9 @@ export const imageIconRegistry = {
 
 export type FontIconType = "FontAwesome" | "FontAwesome5" | "Ionicons" | "Material"
 export const FontIconMap: Record<FontIconType, any> = {
-  FontAwesome: FontAwesome,
-  FontAwesome5: FontAwesome5,
-  Ionicons: Ionicons,
+  FontAwesome,
+  FontAwesome5,
+  Ionicons,
   Material: MaterialCommunityIcons,
 }
 

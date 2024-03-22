@@ -39,7 +39,7 @@ const palette = {
 
   angry100: "#F2D6CD",
   angry500: "#C03403",
-  
+
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
 } as const
@@ -89,4 +89,40 @@ export const colors = {
    *
    */
   errorBackground: palette.angry100,
+
+  chartSectionColors1: [
+    "#FF5733",
+    "#33FFB8",
+    "#FFC300",
+    "#FF3365",
+    "#33A7FF",
+    "#FF33A3",
+    "#3FF100",
+    "#FF7F0E",
+    "#1F77B4",
+    "#2CA02C",
+    "#9467BD",
+    "#D62728",
+    "#8C564B",
+    "#E377C2",
+    "#7F7F7F",
+  ],
+
+  chartSectionColors : [
+    '#FF5733', // Orange
+    '#ffaf98', 
+    '#FFC300', // Yellow
+    '#FF3365', // Pink
+    '#3366FF', // Blue
+    '#FF33A3', // Magenta
+    '#FF7F0E', // Dark Orange
+    '#6600CC', // Purple
+    '#FF5050', // Red
+    '#CC66FF', // Lavender
+    '#FF9966', // Peach
+    '#663300', // Brown
+    '#FF99FF', // Light Pink
+    '#9966FF', // Violet
+    '#FF0000'  // Bright Red
+  ]
 }

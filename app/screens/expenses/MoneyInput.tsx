@@ -79,7 +79,7 @@ const MoneyInput = forwardRef(
         textInputRef.current?.focus()
       },
     }))
-
+    console.log("money input rendered")
     return (
       <Pressable style={containerStyles} onPress={handleContainerPress}>
         <Text style={{ ...styles, ...$currencySymbolStyles(styles) }}>{currencySymbol}</Text>
@@ -90,7 +90,7 @@ const MoneyInput = forwardRef(
         )}
         <TextInput
           style={$textInputStyles}
-          inputMode="numeric"
+          inputMode="decimal"
           ref={textInputRef}
           onKeyPress={handleKeyPress}
           onBlur={handleBlur}

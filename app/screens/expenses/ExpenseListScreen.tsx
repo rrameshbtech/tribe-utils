@@ -65,16 +65,35 @@ function ExpenseListHeader() {
   const searchTerm = useRootStore((state) => state.searchTerm)
   const durationFilter = useRootStore((state) => state.expenseFilter)
 
+  const $expenseReportIconContainerStyle: ViewStyle = {
+    alignSelf: "center",
+    padding: sizing.xxs,
+    marginLeft: sizing.xs,
+    borderRadius: sizing.xxs,
+    backgroundColor: colors.background
+  }
+  const $expenseSearchBarContainerStyle: ViewStyle = { flexDirection: "row" }
+  const $expenseSearchBarStyle = { flex: 1 }
   return (
     <View style={$expenseListHeaderStyles}>
-      <TextField
-        placeholderTx={`expense.list.searchPlaceholder.${durationFilter}`}
-        LeftAccessory={(props) => <SearchIcon containerStyle={props.style} />}
-        RightAccessory={(props) => <ExpenseFilterIcon containerStyle={props.style} />}
-        inputWrapperStyle={$expenseSearchInputWrapperStyles}
-        onChangeText={(text) => setSearchTerm(text)}
-        value={searchTerm}
-      />
+      <View style={$expenseSearchBarContainerStyle}>
+        <TextField
+          placeholderTx={`expense.list.searchPlaceholder.${durationFilter}`}
+          LeftAccessory={(props) => <SearchIcon containerStyle={props.style} />}
+          RightAccessory={(props) => <ExpenseFilterIcon containerStyle={props.style} />}
+          inputWrapperStyle={$expenseSearchInputWrapperStyles}
+          onChangeText={(text) => setSearchTerm(text)}
+          value={searchTerm}
+          containerStyle={$expenseSearchBarStyle}
+        />
+        <Icon
+          type="FontAwesome"
+          name="area-chart"
+          color={colors.tint}
+          containerStyle={$expenseReportIconContainerStyle}
+          onPress={()=> navigate("ExpenseReport")}
+        />
+      </View>
       <ExpenseSummary />
     </View>
   )
@@ -157,6 +176,7 @@ function AddExpenseButton() {
     navigate("ExpenseEditor")
   }
 
+  const $addExpenseButtonContainerStyle: ViewStyle = { backgroundColor: colors.tint, opacity: 0.9 }
   return (
     <TouchableOpacity
       style={$rightBottomStyles}
@@ -169,7 +189,7 @@ function AddExpenseButton() {
         shape="circle"
         size={sizing.xl}
         color={colors.background}
-        containerStyle={{ backgroundColor: colors.tint, opacity: 0.9 }}
+        containerStyle={$addExpenseButtonContainerStyle}
       />
     </TouchableOpacity>
   )

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { View, ViewStyle, TextInput, AppState } from "react-native"
+import { View, ViewStyle, TextInput, AppState, Platform } from "react-native"
 import { AutoComplete, TextField, Icon, Text } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { ExpenseInput } from "./ExpenseEditorScreen"
@@ -108,7 +108,9 @@ function ExpenseAmountInput({
 
   useEffect(() => {
     ref.current?.focus()
-    return AppState.addEventListener("focus", () => ref.current?.focus()).remove
+    if (Platform.OS === "android") {
+      return AppState.addEventListener("focus", () => ref.current?.focus()).remove
+    }
   }, [])
 
   return (

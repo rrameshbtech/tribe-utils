@@ -82,7 +82,8 @@ export const createExpenseSlice: StateCreator<ExpenseSlice, [], [], ExpenseSlice
   removeExpense: removeExpenseFn(set),
   toggleExpenseFilter: toggleExpenseFilterFn(set),
   setSearchTerm: (searchTerm: string) => set({ searchTerm }),
-  setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) => set({ expenseSummaryCardMode: mode }),
+  setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) =>
+    set({ expenseSummaryCardMode: mode }),
 
   paymentModes: defaultPaymentModes(),
   expenseCategories: defaultExpenseCategories(),
@@ -164,8 +165,50 @@ export const getVisibleExpenses = (state: ExpenseSlice) => {
   }
 }
 
-export const getVisibleExpenseTotal = (state: ExpenseSlice) => {
-  return getVisibleExpenses(state).reduce((acc, expense) => acc + expense.amount, 0)
+export const getVisibleExpenseTotal = (state: ExpenseSlice) =>
+  getVisibleExpenses(state).reduce((acc, expense) => acc + expense.amount, 0)
+export interface ExpenseSummary {
+  total: number
+  largest?: Expense
+  byCategory: Record<string, number>
+  byPaymentMode: Record<string, number>
+  byPayee: Record<string, number>
+  byDate: Record<string, number>
+}
+export const getExpenseSummary = (state: ExpenseSlice): ExpenseSummary => {
+  const initialSummary: ExpenseSummary = {
+    total: 0,
+    largest: undefined,
+    byCategory: {},
+    byPaymentMode: {},
+    byPayee: {},
+    byDate: {},
+  }
+
+  return Object.values(state.expenses).reduce((summary, expense) => {
+    return {
+      total: summary.total + expense.amount,
+      largest: getLargest(expense, summary.largest),
+      byCategory:  addToGroup(summary.byCategory, expense.category, expense.amount),
+      byPayee:  addToGroup(summary.byPayee, expense.payee, expense.amount),
+      byPaymentMode: addToGroup(summary.byPaymentMode, expense.mode, expense.amount),
+      byDate: addToGroup(summary.byDate, expense.date.getDate().toString(), expense.amount),
+    } as ExpenseSummary
+
+    function addToGroup(
+      group: Record<string, number>,
+      groupName: string,
+      amount: number,
+    ): Record<string, number> {
+      return {
+        ...group,
+        [groupName]: (group[groupName] ?? 0) + amount,
+      }
+    }
+    function getLargest(prev: Expense, next?: Expense): Expense {
+      return !next || prev.amount > next.amount ? prev : next
+    }
+  }, initialSummary)
 }
 
 const defaultPaymentModes = (): Record<string, PaymentMode> => ({

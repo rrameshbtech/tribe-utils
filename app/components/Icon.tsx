@@ -14,7 +14,7 @@ import {
   ViewStyle,
 } from "react-native"
 import { FontAwesome } from "@expo/vector-icons"
-import { colors, sizing, spacing } from "app/theme"
+import { colors, sizing } from "app/theme"
 
 interface CommonIconProps {
   color?: string
@@ -54,7 +54,7 @@ interface InitialsIconProps extends TouchableOpacityProps, CommonIconProps, Init
 type InitialsIconPropsWithOutWrapper = Omit<InitialsIconProps, "containerStyle" | "onPress">
 function InitialsIconComponent({
   name,
-  type,
+  type: _,
   size,
   color,
   style,

@@ -31,7 +31,8 @@ export type AppStackParamList = {
   // 🔥 Your screens go here
   ExpenseList: undefined
   ExpenseEditor: { expenseId: string }
-  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+  ExpenseReport: undefined
+	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
 /**
@@ -59,7 +60,8 @@ const AppStack = function AppStack() {
         component={Screens.ExpenseEditorScreen}
         initialParams={{ expenseId: "" }}
       />
-      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
+      <Stack.Screen name="ExpenseReport" component={Screens.ExpenseReportScreen} />
+			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
 }
