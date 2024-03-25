@@ -101,10 +101,15 @@ function CardExpenseSummary({
   function onDetailPress(detailName: ExpenseInput) {
     onExpenseDetailPress?.(detailName)
   }
+  const $modeAndCategoryContainerStyle: ViewStyle = {
+    flexWrap: "wrap",
+    flex: 1,
+    justifyContent: "flex-end",
+  }
   const ModeAndCategory = () => (
     <TrasWithComponents
       tx="expense.new.card.modeAndCategoryLabel"
-      containerStyles={{ flexWrap: "wrap", flex: 1, justifyContent: "flex-end" }}
+      containerStyles={$modeAndCategoryContainerStyle}
       txOptions={{
         category: (
           <CategoryLabel
@@ -124,23 +129,23 @@ function CardExpenseSummary({
     />
   )
 
+  const $headingStyle: ViewStyle = {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    columnGap: spacing.sm,
+  }
   const HeadingComponent = (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        columnGap: spacing.sm,
-      }}
-    >
+    <View style={$headingStyle}>
       <DateLabel date={expense.date} onPress={onDetailPress} isHighlighted={editField === "date"} />
       <ModeAndCategory />
     </View>
   )
 
+  const $payeeContainerStyle: ViewStyle = { flexWrap: "wrap", flex: 1, justifyContent: "flex-end" }
   const PayeeSummaryLabel = () => (
     <TrasWithComponents
       tx="expense.new.card.payeeLabel"
-      containerStyles={{ flexWrap: "wrap", flex: 1, justifyContent: "flex-end" }}
+      containerStyles={$payeeContainerStyle}
       txOptions={{
         payee: (
           <PayeeLabel
@@ -161,8 +166,9 @@ function CardExpenseSummary({
       }}
     />
   )
+  const $footerStyle:ViewStyle = { flexDirection: "row", justifyContent: "space-between", columnGap: spacing.sm }
   const FooterComponent = (
-    <View style={{ flexDirection: "row", justifyContent: "space-between", columnGap: spacing.sm }}>
+    <View style={$footerStyle}>
       <SpenderSummaryLabel />
       <PayeeSummaryLabel />
     </View>

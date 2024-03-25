@@ -24,6 +24,7 @@ export function ExpenseForm({
   onSave,
   onNext,
 }: Readonly<ExpenseFormProps>) {
+  const $saveIconStyle = { backgroundColor: colors.palette.secondary400, opacity: 0.9 }
   return (
     <View style={$formContainerStyles}>
       {renderVisibleField(visibleField, expense, onChange, onNext)}
@@ -34,7 +35,7 @@ export function ExpenseForm({
           shape="square"
           size={sizing.xl}
           color={colors.background}
-          containerStyle={{ backgroundColor: colors.palette.secondary400, opacity: 0.9 }}
+          containerStyle={$saveIconStyle}
           onPress={onSave}
         />
       </View>

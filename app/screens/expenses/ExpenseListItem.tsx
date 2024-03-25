@@ -20,7 +20,7 @@ export function ExpenseListItem({ expense, isExpanded, onPress }: Readonly<Expen
     <View style={[$expenseItemBoxStyle, isExpanded && $expandedExpenseListItemStyle]}>
       <ListItem
         LeftComponent={<ExpenseCategoryIcon category={expense.category} />}
-        style={[$expenseListItemStyle]}
+        style={$expenseListItemStyle}
         onPress={() => onPress?.(expense.id)}
       >
         <ExpenseDate date={expense.date} />
@@ -196,16 +196,17 @@ interface FlatIconButtonProps {
   onPress?: () => void
 }
 function FlatIconButton({ icon, tx, onPress }: Readonly<FlatIconButtonProps>) {
+  const $iconWrapperStyle: ViewStyle = {
+    flexDirection: "row",
+    alignItems: "center",
+    columnGap: spacing.xxxs,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+  }
   return (
     <Pressable
       accessibilityRole="button"
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        columnGap: spacing.xxxs,
-        paddingHorizontal: spacing.sm,
-        paddingVertical: spacing.xs,
-      }}
+      style={$iconWrapperStyle}
       android_ripple={{ color: colors.palette.neutral300 }}
       onPress={onPress}
     >
