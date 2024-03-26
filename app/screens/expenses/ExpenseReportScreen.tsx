@@ -1,52 +1,49 @@
 import React, { FC, useEffect, useState } from "react"
-import { observer } from "mobx-react-lite"
 import { Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps, goBack } from "app/navigators"
-import { Icon, Screen, Text } from "app/components"
+import { Icon, Screen, Text, TrasWithComponents } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
 import { Expense, getExpenseSummary, useRootStore } from "app/models"
 import { MoneyLabel } from "./MoneyLabel"
 import { ScrollView } from "react-native-gesture-handler"
 import { getDaysInMonth } from "date-fns"
-import { convertToLocaleAbbrevatedNumber } from "app/i18n"
+import { TxKeyPath, convertToLocaleAbbrevatedNumber } from "app/i18n"
 
 const CHART_WRAPPER_BACKGROUND_COLOR = colors.palette.secondary300
 const CONTENT_TEXT_COLOR = colors.text
 
 interface ExpenseReportScreenProps extends AppStackScreenProps<"ExpenseReport"> {}
-export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = observer(
-  function ExpenseReportScreen() {
-    const summary = useRootStore(getExpenseSummary)
-    return (
-      <Screen
-        style={$root}
-        contentContainerStyle={$screenContentContainer}
-        safeAreaEdges={["top", "bottom"]}
-        StatusBarProps={{ backgroundColor: colors.tint }}
-      >
-        <ScrollView>
-          <ReportHeader />
-          <ReportSummary total={summary.total} largestExpense={summary.largest} />
-          <PieChartByExpenseCategory data={summary.byCategory} />
-          <PieChartByPaymentMode data={summary.byPaymentMode} />
-          <PieChartByPayee data={summary.byPayee} />
-          <LineChartByDate data={summary.byDate} />
-        </ScrollView>
-      </Screen>
-    )
-  },
-)
+export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function ExpenseReportScreen() {
+  const summary = useRootStore(getExpenseSummary)
+  return (
+    <Screen
+      style={$root}
+      contentContainerStyle={$screenContentContainer}
+      safeAreaEdges={["top", "bottom"]}
+      StatusBarProps={{ backgroundColor: colors.tint }}
+    >
+      <ScrollView>
+        <ReportHeader />
+        <ReportSummary total={summary.total} largestExpense={summary.largest} />
+        <PieChartByExpenseCategory data={summary.byCategory} />
+        <PieChartByPaymentMode data={summary.byPaymentMode} />
+        <PieChartByPayee data={summary.byPayee} />
+        <LineChartByDate data={summary.byDate} />
+      </ScrollView>
+    </Screen>
+  )
+}
 
 interface ReportSummaryProps {
   total: number
   largestExpense?: Expense
 }
 function ReportSummary({ total, largestExpense }: Readonly<ReportSummaryProps>) {
-  const $rowStyle: ViewStyle = { flexDirection: "row", alignItems: "flex-start" }
+  const $rowStyle: ViewStyle = { flexDirection: "row", alignItems: "flex-start", flexWrap: "wrap" }
   const $totalLabelStyle = { flex: 1, marginLeft: spacing.xs }
   return (
-    <ChartWrapper title="Summary">
+    <ChartWrapper title="expense.report.summary">
       <View style={$rowStyle}>
         <Text preset="bold">Total expenses:</Text>
         <MoneyLabel amount={total} containerStyle={$totalLabelStyle} />
@@ -54,11 +51,19 @@ function ReportSummary({ total, largestExpense }: Readonly<ReportSummaryProps>) 
       <View style={$rowStyle}>
         <Text preset="bold">Largest expense:</Text>
         <View style={{ flex: 1, ...$rowStyle }}>
-          <MoneyLabel
-            amount={largestExpense?.amount ?? 0}
-            containerStyle={{ marginHorizontal: spacing.xs }}
+          <TrasWithComponents
+            tx="expense.report.summaryLargestExpenseText"
+            txOptions={{
+              payee: largestExpense?.payee ?? "",
+              amount: (
+                <MoneyLabel
+                  amount={largestExpense?.amount ?? 0}
+                  containerStyle={{ marginHorizontal: spacing.xs }}
+                />
+              ),
+              category: largestExpense?.category ?? "",
+            }}
           />
-          <Text>for {largestExpense?.category}</Text>
         </View>
       </View>
     </ChartWrapper>
@@ -85,7 +90,8 @@ function ReportHeader() {
         containerStyle={$iconContainerStyle}
       ></Icon>
       <Text
-        text="Analysis of current month"
+        tx="expense.report.title"
+        txOptions={{ month: new Date().toLocaleString("default", { month: "long" }) }}
         preset="subheading"
         style={{ color: colors.background }}
       />
@@ -98,19 +104,19 @@ type ChartDataType = {
 }
 
 function PieChartByExpenseCategory({ data }: ChartDataType) {
-  return <ExpensePieChartByGroup title="Expenses per category" data={data} />
+  return <ExpensePieChartByGroup title="expense.report.expenseByCategory" data={data} />
 }
 
 function PieChartByPaymentMode({ data }: ChartDataType) {
-  return <ExpensePieChartByGroup title="Expenses per Payment Mode" data={data} />
+  return <ExpensePieChartByGroup title="expense.report.expenseByPaymentMode" data={data} />
 }
 
 function PieChartByPayee({ data }: ChartDataType) {
-  return <ExpensePieChartByGroup title="Expenses per Payee" data={data} />
+  return <ExpensePieChartByGroup title="expense.report.expenseByPayee" data={data} />
 }
 
 interface ExpensePieChartByGroupProps {
-  title: string
+  title: TxKeyPath
   data: Record<string, number>
 }
 function ExpensePieChartByGroup({ title, data }: Readonly<ExpensePieChartByGroupProps>) {
@@ -245,7 +251,7 @@ function LineChartByDate({ data }: { data: Record<string, number> }) {
     })
 
   return (
-    <ChartWrapper title="Expenses per date">
+    <ChartWrapper title="expense.report.expenseByDate">
       <LineChart
         initialSpacing={0}
         noOfSections={3}
@@ -269,7 +275,7 @@ function LineChartByDate({ data }: { data: Record<string, number> }) {
 }
 
 interface ChartWrapperProps {
-  title: string
+  title: TxKeyPath
   children: any
 }
 
@@ -282,17 +288,16 @@ function ChartWrapper({ title, children }: Readonly<ChartWrapperProps>) {
     borderWidth: 1,
     borderRadius: sizing.xs,
     margin: spacing.xs,
-    marginVertical: spacing.md,
   }
 
   const $chartTitleStyle: TextStyle = {
     alignSelf: "flex-start",
-    marginBottom: spacing.lg,
+    marginBottom: spacing.sm,
     color: CONTENT_TEXT_COLOR,
   }
   return (
     <View style={$chartContainerStyle}>
-      <Text preset="subheading" text={title} style={$chartTitleStyle} />
+      <Text preset="subheading" tx={title} style={$chartTitleStyle} />
       {children}
     </View>
   )

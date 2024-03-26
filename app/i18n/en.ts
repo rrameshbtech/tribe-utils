@@ -84,9 +84,21 @@ const en = {
         title: "Oops! Forgot something?",
         amountZero: "Expense amount cannot be 0",
         forgotToSave: "You didn't save. Are you sure to cancel?",
-      }
+      },
+      savedMessage: "Expense added",
     },
-    paymentModes: {
+    report: {
+      title: "Report of {{month}}",
+      subtitle: "Choose your report format",
+      summaryLargestExpenseText: "{{amount}} for {{category}} in {{payee}}",
+      expenseByDate: "Expenses per date",
+      expenseByCategory: "Expenses per category",
+      expenseByPayee: "Expenses per payee",
+      expenseByPaymentMode: "Expenses per payment mode",
+      summary: "Summary",
+
+    }
+    ,paymentModes: {
       BankCard: "Bank Card",
       BankTransfer: "Bank Transfer",
     }

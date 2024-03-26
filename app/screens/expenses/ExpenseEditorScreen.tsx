@@ -84,6 +84,9 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
     }
     upsertExpense(expense)
     setFormState("saved")
+    Toast.show({
+      text1: translate("expense.new.savedMessage"),
+    })
   }
 
   function toggleEditingField() {
