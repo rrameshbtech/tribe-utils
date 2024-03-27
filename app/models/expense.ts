@@ -38,8 +38,11 @@ export interface Expense {
 export type FilterDuration = "Day" | "Week" | "Month"
 export type ExpenseSummaryCardMode = "card" | "details"
 
+export interface MonthlyExpenses {
+  data: Record<string, Expense>
+}
 export interface ExpenseSlice {
-  expenses: Record<string, Expense>
+  expenses: MonthlyExpenses
   expenseFilter: FilterDuration
   searchTerm: string
   expenseSummaryCardMode: ExpenseSummaryCardMode
@@ -72,13 +75,15 @@ export const initExpense = (): Expense => ({
 })
 
 export const createExpenseSlice: StateCreator<ExpenseSlice, [], [], ExpenseSlice> = (set, get) => ({
-  expenses: defaultExpenses(),
+  expenses: {
+    data: defaultExpenses(),
+  } as MonthlyExpenses,
   expenseFilter: "Day",
   searchTerm: "",
   expenseSummaryCardMode: "card",
 
   upsertExpense: upsertExpenseFn(set),
-  getExpense: (id: string) => get().expenses[id],
+  getExpense: (id: string) => get().expenses.data[id],
   removeExpense: removeExpenseFn(set),
   toggleExpenseFilter: toggleExpenseFilterFn(set),
   setSearchTerm: (searchTerm: string) => set({ searchTerm }),
@@ -116,14 +121,16 @@ const toggleExpenseFilterFn = (set: ExpenseSliceSetType) => () => {
 }
 const upsertExpenseFn = (set: ExpenseSliceSetType) => (expense: Expense) => {
   set((state) => {
-    return { expenses: { ...state.expenses, [expense.id]: expense } }
+    return {
+      expenses: { ...state.expenses, data: { ...state.expenses.data, [expense.id]: expense } },
+    }
   })
   upsertPayees(set)(expense)
 }
 const removeExpenseFn = (set: ExpenseSliceSetType) => (id: string) => {
   set((state) => {
-    const { [id]: _, ...remaingExpenses } = state.expenses
-    return { expenses: remaingExpenses }
+    const { [id]: _, ...remaingExpenses } = state.expenses.data
+    return { expenses: { ...state.expenses, data: remaingExpenses } }
   })
 }
 
@@ -135,8 +142,15 @@ const upsertPayees = (set: ExpenseSliceSetType) => (expense: Expense) => {
 }
 
 export const getVisibleExpenses = (state: ExpenseSlice) => {
-  const { expenses, expenseFilter, searchTerm } = state
-  return Object.values(expenses).filter(byDuration()).filter(byTerm()).sort(decendingByDate())
+  const {
+    expenses: { data: currentExpenses },
+    expenseFilter,
+    searchTerm,
+  } = state
+  return Object.values(currentExpenses)
+    .filter(byDuration())
+    .filter(byTerm())
+    .sort(decendingByDate())
 
   function decendingByDate(): ((a: Expense, b: Expense) => number) | undefined {
     return (prev, next) => next.date.getTime() - prev.date.getTime()
@@ -185,12 +199,12 @@ export const getExpenseSummary = (state: ExpenseSlice): ExpenseSummary => {
     byDate: {},
   }
 
-  return Object.values(state.expenses).reduce((summary, expense) => {
+  return Object.values(state.expenses.data).reduce((summary, expense) => {
     return {
       total: summary.total + expense.amount,
       largest: getLargest(expense, summary.largest),
-      byCategory:  addToGroup(summary.byCategory, expense.category, expense.amount),
-      byPayee:  addToGroup(summary.byPayee, expense.payee, expense.amount),
+      byCategory: addToGroup(summary.byCategory, expense.category, expense.amount),
+      byPayee: addToGroup(summary.byPayee, expense.payee, expense.amount),
       byPaymentMode: addToGroup(summary.byPaymentMode, expense.mode, expense.amount),
       byDate: addToGroup(summary.byDate, expense.date.getDate().toString(), expense.amount),
     } as ExpenseSummary
