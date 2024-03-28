@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react"
 import { Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps, goBack } from "app/navigators"
-import { Icon, Screen, Text, TrasWithComponents } from "app/components"
+import { EmptyState, Icon, Screen, Text, TrasWithComponents } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
 import { Expense, getExpenseSummary, useRootStore } from "app/models"
@@ -25,11 +25,16 @@ export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function Expens
     >
       <ScrollView>
         <ReportHeader />
-        <ReportSummary total={summary.total} largestExpense={summary.largest} />
-        <PieChartByExpenseCategory data={summary.byCategory} />
-        <PieChartByPaymentMode data={summary.byPaymentMode} />
-        <PieChartByPayee data={summary.byPayee} />
-        <LineChartByDate data={summary.byDate} />
+        {summary.total > 0 && (
+          <>
+            <ReportSummary total={summary.total} largestExpense={summary.largest} />
+            <PieChartByExpenseCategory data={summary.byCategory} />
+            <PieChartByPaymentMode data={summary.byPaymentMode} />
+            <PieChartByPayee data={summary.byPayee} />
+            <LineChartByDate data={summary.byDate} />
+          </>
+        )}
+        {summary.total === 0 && <EmptyState preset="noExpenses" />}
       </ScrollView>
     </Screen>
   )
@@ -133,7 +138,7 @@ function ExpensePieChartByGroup({ title, data }: Readonly<ExpensePieChartByGroup
       return chartItem
     }, [])
     .sort((a, b) => b.value - a.value)
-  useEffect(() => setSelected(chartData[0].text ?? ""), [])
+  useEffect(() => setSelected(chartData[0]?.text ?? ""), [])
 
   return (
     <ChartWrapper title={title}>

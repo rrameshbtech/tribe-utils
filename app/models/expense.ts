@@ -1,9 +1,9 @@
 import { StateCreator } from "zustand"
 import { Icon } from "./icon"
-import { startOfDay, startOfMonth, startOfWeek, sub } from "date-fns"
+import { format, startOfDay, startOfMonth, startOfWeek, sub } from "date-fns"
 
 export type ExpenseSource = "Self" | "OCR" | "SMS"
-
+export const EXPENSE_MONTH_IDENTIFIER_FORMAT = "yyyyMM"
 export interface PaymentMode {
   name: string
   aliases?: string[]
@@ -38,19 +38,29 @@ export interface Expense {
 export type FilterDuration = "Day" | "Week" | "Month"
 export type ExpenseSummaryCardMode = "card" | "details"
 
+type Year = `${number}${number}${number}${number}`
+type Month = "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12"
+export type MonthIdentifier = `${Year}${Month}`
+
 export interface MonthlyExpenses {
+  month: MonthIdentifier
   data: Record<string, Expense>
 }
+
 export interface ExpenseSlice {
-  expenses: MonthlyExpenses
+  expensesByMonth: Record<MonthIdentifier, MonthlyExpenses>
+
+  selectedMonth: MonthIdentifier
   expenseFilter: FilterDuration
   searchTerm: string
   expenseSummaryCardMode: ExpenseSummaryCardMode
 
+  selectedExpenses: () => MonthlyExpenses
   upsertExpense: (expense: Expense) => void
   getExpense: (id: string) => Expense | undefined
   removeExpense: (id: string) => void
   setSearchTerm: (searchTerm: string) => void
+  setSelectedMonth: (month: MonthIdentifier) => void
   setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) => void
   toggleExpenseFilter: () => void
 
@@ -59,7 +69,7 @@ export interface ExpenseSlice {
   payees: string[]
 }
 
-export const initExpense = (): Expense => ({
+export const newExpense = (): Expense => ({
   id: Math.random().toString(36).substring(2, 9),
   category: "Others",
   amount: 0,
@@ -73,20 +83,30 @@ export const initExpense = (): Expense => ({
   createdAt: new Date(),
   updatedAt: new Date(),
 })
-
+function getMonthId(date: Date) {
+  return format(Date.now(), EXPENSE_MONTH_IDENTIFIER_FORMAT) as MonthIdentifier
+}
 export const createExpenseSlice: StateCreator<ExpenseSlice, [], [], ExpenseSlice> = (set, get) => ({
-  expenses: {
-    data: defaultExpenses(),
-  } as MonthlyExpenses,
+  expensesByMonth: {
+    202402: {
+      month: getMonthId(new Date()),
+      data: defaultExpenses(),
+    } as MonthlyExpenses,
+  },
+
+  selectedMonth: getMonthId(new Date()),
   expenseFilter: "Day",
   searchTerm: "",
   expenseSummaryCardMode: "card",
 
+  selectedExpenses: () =>
+    get().expensesByMonth[get().selectedMonth] ?? ({ data: {} } as MonthlyExpenses),
   upsertExpense: upsertExpenseFn(set),
-  getExpense: (id: string) => get().expenses.data[id],
+  getExpense: (id: string) => get().selectedExpenses().data[id],
   removeExpense: removeExpenseFn(set),
   toggleExpenseFilter: toggleExpenseFilterFn(set),
   setSearchTerm: (searchTerm: string) => set({ searchTerm }),
+  setSelectedMonth: (month: MonthIdentifier) => set({ selectedMonth: month }),
   setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) =>
     set({ expenseSummaryCardMode: mode }),
 
@@ -122,15 +142,26 @@ const toggleExpenseFilterFn = (set: ExpenseSliceSetType) => () => {
 const upsertExpenseFn = (set: ExpenseSliceSetType) => (expense: Expense) => {
   set((state) => {
     return {
-      expenses: { ...state.expenses, data: { ...state.expenses.data, [expense.id]: expense } },
+      expensesByMonth: {
+        ...state.expensesByMonth,
+        [state.selectedMonth]: {
+          ...state.selectedExpenses(),
+          data: { ...state.selectedExpenses().data, [expense.id]: expense },
+        },
+      },
     }
   })
   upsertPayees(set)(expense)
 }
 const removeExpenseFn = (set: ExpenseSliceSetType) => (id: string) => {
   set((state) => {
-    const { [id]: _, ...remaingExpenses } = state.expenses.data
-    return { expenses: { ...state.expenses, data: remaingExpenses } }
+    const { [id]: _, ...remaingExpenses } = state.selectedExpenses().data
+    return {
+      expensesByMonth: {
+        ...state.expensesByMonth,
+        [state.selectedMonth]: { ...state.selectedExpenses(), data: remaingExpenses },
+      },
+    }
   })
 }
 
@@ -142,11 +173,9 @@ const upsertPayees = (set: ExpenseSliceSetType) => (expense: Expense) => {
 }
 
 export const getVisibleExpenses = (state: ExpenseSlice) => {
-  const {
-    expenses: { data: currentExpenses },
-    expenseFilter,
-    searchTerm,
-  } = state
+  const { expenseFilter, searchTerm } = state
+  const currentExpenses = state.selectedExpenses().data
+
   return Object.values(currentExpenses)
     .filter(byDuration())
     .filter(byTerm())
@@ -199,7 +228,7 @@ export const getExpenseSummary = (state: ExpenseSlice): ExpenseSummary => {
     byDate: {},
   }
 
-  return Object.values(state.expenses.data).reduce((summary, expense) => {
+  return Object.values(state.selectedExpenses().data).reduce((summary, expense) => {
     return {
       total: summary.total + expense.amount,
       largest: getLargest(expense, summary.largest),
