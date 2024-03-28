@@ -86,7 +86,12 @@ export const newExpense = (): Expense => ({
 function getMonthId(date: Date) {
   return format(Date.now(), EXPENSE_MONTH_IDENTIFIER_FORMAT) as MonthIdentifier
 }
-export const createExpenseSlice: StateCreator<ExpenseSlice, [], [], ExpenseSlice> = (set, get) => ({
+export const createExpenseSlice: StateCreator<
+  ExpenseSlice,
+  [["zustand/immer", never]],
+  [],
+  ExpenseSlice
+> = (set, get) => ({
   expensesByMonth: {
     202402: {
       month: getMonthId(new Date()),
@@ -119,7 +124,7 @@ type ExpenseSliceSetType = (
   partial:
     | ExpenseSlice
     | Partial<ExpenseSlice>
-    | ((state: ExpenseSlice) => ExpenseSlice | Partial<ExpenseSlice>),
+    | ((state: ExpenseSlice) => ExpenseSlice | Partial<ExpenseSlice> | void),
   replace?: boolean | undefined,
 ) => void
 
@@ -134,41 +139,32 @@ const toggleExpenseFilterFn = (set: ExpenseSliceSetType) => () => {
   }
 
   set((state) => {
-    return {
-      expenseFilter: getNextDuration(state.expenseFilter),
-    }
+    state.expenseFilter = getNextDuration(state.expenseFilter)
   })
 }
+
 const upsertExpenseFn = (set: ExpenseSliceSetType) => (expense: Expense) => {
   set((state) => {
-    return {
-      expensesByMonth: {
-        ...state.expensesByMonth,
-        [state.selectedMonth]: {
-          ...state.selectedExpenses(),
-          data: { ...state.selectedExpenses().data, [expense.id]: expense },
-        },
-      },
+    if (!state.expensesByMonth[state.selectedMonth]) {
+      state.expensesByMonth[state.selectedMonth] = {
+        month: state.selectedMonth,
+        data: {},
+      }
     }
+    state.expensesByMonth[state.selectedMonth].data[expense.id] = expense
   })
   upsertPayees(set)(expense)
 }
 const removeExpenseFn = (set: ExpenseSliceSetType) => (id: string) => {
   set((state) => {
     const { [id]: _, ...remaingExpenses } = state.selectedExpenses().data
-    return {
-      expensesByMonth: {
-        ...state.expensesByMonth,
-        [state.selectedMonth]: { ...state.selectedExpenses(), data: remaingExpenses },
-      },
-    }
+    state.expensesByMonth[state.selectedMonth].data = remaingExpenses
   })
 }
 
 const upsertPayees = (set: ExpenseSliceSetType) => (expense: Expense) => {
   set((state) => {
-    const payees = [...new Set([...state.payees, expense.payee])]
-    return { payees }
+    state.payees.push(expense.payee)
   })
 }
 
