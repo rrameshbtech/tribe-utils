@@ -154,6 +154,7 @@ function ExpenseItemControls({ expense }: Readonly<ExpenseItemControlsProps>) {
             removeExpense(expense.id)
             Toast.show({
               text1: translate("expense.delete.successMessage"),
+              position: "bottom",
             })
           },
           style: "destructive",

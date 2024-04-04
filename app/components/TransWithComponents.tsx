@@ -1,12 +1,12 @@
 import { TxKeyPath, translate } from "../i18n"
 import React, { isValidElement } from "react"
-import { Text } from "./Text"
+import { Text, TextProps } from "./Text"
 import { View, ViewStyle } from "react-native"
 
-export interface TrasWithComponentsProps {
+export interface TrasWithComponentsProps extends Omit<TextProps, "tx" | "txOptions" | "text"> {
   tx: TxKeyPath
   txOptions: Record<string, JSX.Element | string>
-  containerStyles?: ViewStyle
+  containerStyle?: ViewStyle
 }
 
 /**
@@ -27,7 +27,8 @@ export interface TrasWithComponentsProps {
 export function TrasWithComponents({
   tx,
   txOptions,
-  containerStyles: overrideContainerStyles,
+  containerStyle: overrideContainerStyles,
+  ...textOptions
 }: Readonly<TrasWithComponentsProps>): JSX.Element {
   const containerStyles = { ...$containerBaseStyles, ...overrideContainerStyles }
   const [optionsWithJsx, optionsWithOutJSX] = groupOptionsByType(txOptions)
@@ -36,9 +37,9 @@ export function TrasWithComponents({
   return (
     <View style={containerStyles}>
       {Object.keys(optionsWithJsx).length > 0 ? (
-        replacePlaceholders(translatedText, optionsWithJsx)
+        replacePlaceholders(translatedText, optionsWithJsx, textOptions)
       ) : (
-        <Text>{translatedText}</Text>
+        <Text {...textOptions}>{translatedText}</Text>
       )}
     </View>
   )
@@ -49,7 +50,7 @@ type Placeholder = Record<string, JSX.Element>
 function getFirstPlaceholder(text: string): string | null {
   const placeholderRegEx = /{{(\w+)}}/
   const matches = placeholderRegEx.exec(text)
-  if(!matches){
+  if (!matches) {
     return null
   }
 
@@ -57,19 +58,25 @@ function getFirstPlaceholder(text: string): string | null {
 }
 
 // recursively replace placeholders with components
-function replacePlaceholders(text: string, placeholders: Placeholder): JSX.Element[]{
+function replacePlaceholders(
+  text: string,
+  placeholders: Placeholder,
+  textOptions: TextProps = {}
+): JSX.Element[] {
   if (!text) {
     return []
   }
 
   const firstPlaceholder = getFirstPlaceholder(text)
   if (!firstPlaceholder) {
-    return [<Text key="end-text" text={text} />]
+    return [<Text {...textOptions} key="end-text" text={text} />]
   }
 
   const firstPlaceholderRegex = new RegExp(firstPlaceholder)
   const [beforeText, key, afterText] = text.split(firstPlaceholderRegex)
-  const beforeTextComponent = beforeText ? [<Text key={`${key}-before-text`} text={beforeText} />] : []
+  const beforeTextComponent = beforeText
+    ? [<Text {...textOptions} key={`${key}-before-text`} text={beforeText} />]
+    : []
   const placeholderComponent = <View key={key}>{placeholders[key]}</View>
 
   return [

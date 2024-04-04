@@ -52,7 +52,7 @@ const en = {
       confirmTitle: "Delete?",
       confirmMessage: "Are you sure you want to delete this expense for {{category}} in {{payee}}?",
       successTitle: "Deleted",
-      successMessage: "Expense deleted",
+      successMessage: "Expense deleted successfully",
     },
     new: {
       heading: "What's your spend?",
@@ -85,7 +85,7 @@ const en = {
         amountZero: "Expense amount cannot be 0",
         forgotToSave: "You didn't save. Are you sure to cancel?",
       },
-      savedMessage: "Expense added",
+      savedMessage: "Expense saved successfully",
     },
     report: {
       title: "Report of {{month}}",
@@ -96,7 +96,7 @@ const en = {
       expenseByPayee: "Expenses per payee",
       expenseByPaymentMode: "Expenses per payment mode",
       summary: "Summary",
-
+      selectMonthTitle: "Which month do you want to analyse?",
     }
     ,paymentModes: {
       BankCard: "Bank Card",

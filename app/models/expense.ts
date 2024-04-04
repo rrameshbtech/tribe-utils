@@ -56,11 +56,13 @@ export interface ExpenseSlice {
   expenseSummaryCardMode: ExpenseSummaryCardMode
 
   selectedExpenses: () => MonthlyExpenses
+  expensesOf: (month: MonthIdentifier) => MonthlyExpenses
   upsertExpense: (expense: Expense) => void
   getExpense: (id: string) => Expense | undefined
   removeExpense: (id: string) => void
   setSearchTerm: (searchTerm: string) => void
   setSelectedMonth: (month: MonthIdentifier) => void
+  resetSelectedMonth: () => void
   setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) => void
   toggleExpenseFilter: () => void
 
@@ -83,8 +85,8 @@ export const newExpense = (): Expense => ({
   createdAt: new Date(),
   updatedAt: new Date(),
 })
-function getMonthId(date: Date) {
-  return format(Date.now(), EXPENSE_MONTH_IDENTIFIER_FORMAT) as MonthIdentifier
+export function getMonthId(date: Date) {
+  return format(date, EXPENSE_MONTH_IDENTIFIER_FORMAT) as MonthIdentifier
 }
 export const createExpenseSlice: StateCreator<
   ExpenseSlice,
@@ -94,8 +96,12 @@ export const createExpenseSlice: StateCreator<
 > = (set, get) => ({
   expensesByMonth: {
     202402: {
-      month: getMonthId(new Date()),
-      data: defaultExpenses(),
+      month: "202402",
+      data: defaultExpenses1(),
+    } as MonthlyExpenses,
+    202401: {
+      month: "202401",
+      data: defaultExpenses2(),
     } as MonthlyExpenses,
   },
 
@@ -104,14 +110,16 @@ export const createExpenseSlice: StateCreator<
   searchTerm: "",
   expenseSummaryCardMode: "card",
 
-  selectedExpenses: () =>
-    get().expensesByMonth[get().selectedMonth] ?? ({ data: {} } as MonthlyExpenses),
+  selectedExpenses: () => get().expensesOf(get().selectedMonth),
+  expensesOf: (month: MonthIdentifier) =>
+    get().expensesByMonth[month] ?? ({ data: {} } as MonthlyExpenses),
   upsertExpense: upsertExpenseFn(set),
   getExpense: (id: string) => get().selectedExpenses().data[id],
   removeExpense: removeExpenseFn(set),
   toggleExpenseFilter: toggleExpenseFilterFn(set),
   setSearchTerm: (searchTerm: string) => set({ searchTerm }),
   setSelectedMonth: (month: MonthIdentifier) => set({ selectedMonth: month }),
+  resetSelectedMonth: () => set({ selectedMonth: getMonthId(new Date()) }),
   setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) =>
     set({ expenseSummaryCardMode: mode }),
 
@@ -214,7 +222,7 @@ export interface ExpenseSummary {
   byPayee: Record<string, number>
   byDate: Record<string, number>
 }
-export const getExpenseSummary = (state: ExpenseSlice): ExpenseSummary => {
+export const getExpenseSummary = (month = getMonthId(new Date())) => (state: ExpenseSlice): ExpenseSummary => {
   const initialSummary: ExpenseSummary = {
     total: 0,
     largest: undefined,
@@ -224,7 +232,7 @@ export const getExpenseSummary = (state: ExpenseSlice): ExpenseSummary => {
     byDate: {},
   }
 
-  return Object.values(state.selectedExpenses().data).reduce((summary, expense) => {
+  return Object.values(state.expensesOf(month).data).reduce((summary, expense) => {
     return {
       total: summary.total + expense.amount,
       largest: getLargest(expense, summary.largest),
@@ -359,7 +367,7 @@ const defaultPayees = (): string[] => [
   "Local Cafe",
 ]
 
-const defaultExpenses = (): Record<string, Expense> => ({
+const defaultExpenses1 = (): Record<string, Expense> => ({
   "1": {
     id: "1",
     amount: 2300.4,
@@ -420,6 +428,8 @@ const defaultExpenses = (): Record<string, Expense> => ({
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+})
+const defaultExpenses2 = (): Record<string, Expense> => ({
   "6": {
     id: "6",
     amount: 15000,

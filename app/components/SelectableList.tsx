@@ -1,7 +1,7 @@
 import React from "react"
 import { Icon, InitialsIcon } from "app/models/icon"
 import { colors, sizing, spacing } from "app/theme"
-import { ViewStyle } from "react-native"
+import { StyleProp, ViewStyle } from "react-native"
 import { ListView } from "./ListView"
 import { ListItem } from "./ListItem"
 import { Icon as IconComponent } from "./Icon"
@@ -10,7 +10,8 @@ import { Text } from "./Text"
 import { t } from "i18n-js"
 
 export interface SelectableListOption {
-  name: string
+  value: string
+  name?: string
   icon?: Icon
 }
 export interface SelectableListProps {
@@ -18,20 +19,23 @@ export interface SelectableListProps {
   onChange: (value: string) => void
   options: SelectableListOption[]
   translationScope?: string
+  style?: StyleProp<ViewStyle>
 }
 export function SelectableList({
   value,
   onChange,
   options,
+  style,
   translationScope = "",
 }: Readonly<SelectableListProps>) {
   const renderSelectableItem = getRenderSelectableItemFn(value, onChange, translationScope)
   return (
     <ListView
       data={options}
+      style={style}
       estimatedItemSize={options.length}
       renderItem={renderSelectableItem}
-      keyExtractor={(item) => item.name}
+      keyExtractor={(item) => item.value}
     />
   )
 }
@@ -39,31 +43,33 @@ export function SelectableList({
 const getRenderSelectableItemFn =
   (value: string, onChange: (value: string) => void, translationScope = "") =>
   ({ item }: { item: SelectableListOption }) => {
-    const nameInitialsIcon: InitialsIcon = { type: "initials", name: item.name }
-    const isSelected = item.name === value
+    const nameInitialsIcon: InitialsIcon = { type: "initials", name: item.name ?? item.value }
+    const isSelected = item.value === value || item.name === value
     return (
       <ListItem
         style={[$selectableItemStyles, isSelected && $selectedItemStyle]}
-        onPress={() => onChange(item.name)}
+        onPress={() => onChange(item.value)}
         LeftComponent={<OptionIcon icon={item.icon ?? nameInitialsIcon} />}
         RightComponent={<OptionSelector {...{ isSelected }} />}
       >
-        <Text style={{ lineHeight: spacing.xxl }}>
-          {t(`${translationScope}.${item.name}`, { defaultValue: item.name })}
-        </Text>
+        <Text style={{ lineHeight: spacing.xxl }}>{getDisplayText()}</Text>
       </ListItem>
     )
+
+    function getDisplayText() {
+      return item.name ?? t(`${translationScope}.${item.value}`, { defaultValue: item.value })
+    }
   }
 
-  const $selectableItemStyles: ViewStyle = {
-    flex: 1,
-    alignContent: "center",
-    padding: spacing.xs,
-  }
-  const $selectedItemStyle: ViewStyle = {
-    backgroundColor: colors.palette.neutral300,
-    borderRadius: sizing.xxs
-  }
+const $selectableItemStyles: ViewStyle = {
+  flex: 1,
+  alignContent: "center",
+  padding: spacing.xs,
+}
+const $selectedItemStyle: ViewStyle = {
+  backgroundColor: colors.palette.neutral300,
+  borderRadius: sizing.xxs,
+}
 
 interface OptionIconProps {
   icon: Icon

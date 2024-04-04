@@ -45,7 +45,7 @@ function VerboseExpenseSummary({
   const verboseSummary = (
     <View>
       <TrasWithComponents
-        containerStyles={{ padding: spacing.sm }}
+        containerStyle={{ padding: spacing.sm }}
         tx="expense.new.verbose"
         txOptions={{
           payee: (
@@ -109,7 +109,7 @@ function CardExpenseSummary({
   const ModeAndCategory = () => (
     <TrasWithComponents
       tx="expense.new.card.modeAndCategoryLabel"
-      containerStyles={$modeAndCategoryContainerStyle}
+      containerStyle={$modeAndCategoryContainerStyle}
       txOptions={{
         category: (
           <CategoryLabel
@@ -145,7 +145,7 @@ function CardExpenseSummary({
   const PayeeSummaryLabel = () => (
     <TrasWithComponents
       tx="expense.new.card.payeeLabel"
-      containerStyles={$payeeContainerStyle}
+      containerStyle={$payeeContainerStyle}
       txOptions={{
         payee: (
           <PayeeLabel

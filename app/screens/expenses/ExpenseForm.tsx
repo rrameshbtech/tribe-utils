@@ -3,12 +3,13 @@ import { View, ViewStyle, TextInput, AppState, Platform } from "react-native"
 import { AutoComplete, TextField, Icon, Text } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { ExpenseInput } from "./ExpenseEditorScreen"
-import { Expense, useRootStore } from "app/models"
+import { Expense, ExpenseCategory, PaymentMode, useRootStore } from "app/models"
 import MoneyInput from "./MoneyInput"
 import DatePicker from "react-native-date-picker"
 import { useLocale } from "app/utils/useLocale"
-import { SelectableList } from "app/components/SelectableList"
+import { SelectableList, SelectableListOption } from "app/components/SelectableList"
 import { TxKeyPath } from "app/i18n"
+import { pipe } from "app/utils/fns"
 
 interface ExpenseFormProps {
   visibleField: ExpenseInput
@@ -222,7 +223,7 @@ function PaymentModeInput({ value, onChange }: Readonly<PaymentModeInputProps>) 
     <>
       <InputLabel tx="expense.new.label.mode" />
       <SelectableList
-        options={paymentModes}
+        options={pipe(Object.values, convertToSelectableListOptions)(paymentModes)}
         value={value}
         onChange={handlePaymentModeChange}
         translationScope="expense.paymentModes"
@@ -249,9 +250,20 @@ function ExpenseCategoryInput({
       <SelectableList
         value={selectedCategory}
         onChange={handleCategorySelection}
-        options={expenseCategories}
+        options={pipe(Object.values, convertToSelectableListOptions)(expenseCategories)}
       />
     </>
+  )
+}
+
+function convertToSelectableListOptions(items: PaymentMode[] | ExpenseCategory[]) {
+  return items.map(
+    (mode) =>
+      ({
+        value: mode.name,
+        name: mode.name,
+        icon: mode.icon,
+      } as SelectableListOption),
   )
 }
 

@@ -100,7 +100,7 @@ function App(props: AppProps) {
               initialState={initialNavigationState}
               onStateChange={onNavigationStateChange}
             />
-            <Toast />
+            <Toast position="bottom" />
         </GestureHandlerRootView>
       </ErrorBoundary>
     </SafeAreaProvider>
