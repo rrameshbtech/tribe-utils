@@ -129,8 +129,12 @@ function ReportMonthSelector({reportMonth, onReportMonthChange} : ReportMonthSel
   const availableMonthListItems = availableMonthsNumbers.map((month) => {
     const date = new Date(month.replace(/\B(?=(\d{4})*(\d{2})(?!\d))/g, "-"))
     return {
-      name: format(date, "MMM-yy"),
+      name: format(date, "MMMM''yy"),
       value: month,
+      icon: {
+        type: "initials",
+        name: format(date, "MMM"),
+      }
     } as SelectableListOption
   })
   return (
