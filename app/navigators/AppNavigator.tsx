@@ -7,11 +7,13 @@
 import { DarkTheme, DefaultTheme, NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import React from "react"
-import { useColorScheme } from "react-native"
+import { ViewStyle, useColorScheme } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
-import { colors } from "app/theme"
+import { colors, spacing } from "app/theme"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { Icon } from "app/components"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -26,13 +28,13 @@ import { colors } from "app/theme"
  *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
  *   https://reactnavigation.org/docs/typescript/#organizing-types
  */
-export type AppStackParamList = {
-  Welcome: undefined
-  // 🔥 Your screens go here
+
+export type ExpenseScreensParamList = {
   ExpenseList: undefined
-  ExpenseEditor: { expenseId: string }
   ExpenseReport: undefined
-	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+  ExpenseEditor: { expenseId: string }
+  ExpenseTabs: undefined
+  ExpenseSettings: undefined
 }
 
 /**
@@ -41,27 +43,73 @@ export type AppStackParamList = {
  */
 const exitRoutes = Config.exitRoutes
 
-export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStackScreenProps<
-  AppStackParamList,
+export type AppStackScreenProps<T extends keyof ExpenseScreensParamList> = NativeStackScreenProps<
+  ExpenseScreensParamList,
   T
 >
 
-// Documentation: https://reactnavigation.org/docs/stack-navigator/
-const Stack = createNativeStackNavigator<AppStackParamList>()
+const Tab = createBottomTabNavigator<ExpenseScreensParamList>()
+const Stack = createNativeStackNavigator<ExpenseScreensParamList>()
+
+const ExpenseTabs = function ExpenseTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          const containerStyle:ViewStyle = {
+            opacity: focused ? 1 : 0.5,
+            backgroundColor: focused ? colors.palette.primary400 : colors.tint,
+            borderRadius: size / 2,
+            paddingVertical: spacing.xxs,
+            paddingHorizontal: spacing.md,
+          }
+          const tabIcons: Record<string, string> = {
+            ExpenseList: "list",
+            ExpenseReport: "pie-chart",
+            ExpenseSettings: "gear",
+          }
+          return (
+            <Icon
+              type="FontAwesome"
+              name={tabIcons[route.name]}
+              color={color}
+              size={size}
+              containerStyle={containerStyle}
+            />
+          )
+        },
+        tabBarActiveTintColor: colors.background,
+        tabBarInactiveTintColor: colors.background,
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: { backgroundColor: colors.tint },
+      })}
+    >
+      <Tab.Screen
+        name="ExpenseList"
+        component={Screens.ExpenseListScreen}
+      />
+      <Tab.Screen
+        name="ExpenseReport"
+        component={Screens.ExpenseReportScreen}
+      />
+      <Tab.Screen
+        name="ExpenseSettings"
+        component={Screens.ExpenseSettingsScreen}
+      />
+    </Tab.Navigator>
+  )
+}
 
 const AppStack = function AppStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, navigationBarColor: colors.background }}>
-      {/* <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} /> */}
-      {/** 🔥 Your screens go here */}
-      <Stack.Screen name="ExpenseList" component={Screens.ExpenseListScreen} />
+      <Stack.Screen name="ExpenseTabs" component={ExpenseTabs} />
       <Stack.Screen
         name="ExpenseEditor"
         component={Screens.ExpenseEditorScreen}
         initialParams={{ expenseId: "" }}
       />
-      <Stack.Screen name="ExpenseReport" component={Screens.ExpenseReportScreen} />
-			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
 }

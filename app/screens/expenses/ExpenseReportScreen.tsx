@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react"
 import { Modal, Pressable, TextStyle, View, ViewStyle } from "react-native"
-import { AppStackScreenProps, goBack } from "app/navigators"
+import { AppStackScreenProps } from "app/navigators"
 import { EmptyState, Icon, Screen, Text, TrasWithComponents } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
@@ -92,16 +92,8 @@ function ReportHeader({ reportMonth, onReportMonthChange }: ReportHeaderProps) {
     columnGap: spacing.sm,
     marginBottom: spacing.md,
   }
-  const $iconContainerStyle: ViewStyle = { justifyContent: "center" }
   return (
     <View style={$headerStyle}>
-      <Icon
-        type="Material"
-        name="arrow-left"
-        onPress={goBack}
-        color={colors.background}
-        containerStyle={$iconContainerStyle}
-      ></Icon>
       <TrasWithComponents
         tx="expense.report.title"
         preset="subheading"

@@ -86,13 +86,6 @@ function ExpenseListHeader() {
           value={searchTerm}
           containerStyle={$expenseSearchBarStyle}
         />
-        <Icon
-          type="FontAwesome"
-          name="area-chart"
-          color={colors.tint}
-          containerStyle={$expenseReportIconContainerStyle}
-          onPress={()=> navigate("ExpenseReport")}
-        />
       </View>
       <ExpenseSummary />
     </View>
