@@ -1,10 +1,9 @@
 import React, { FC } from "react"
 import { ViewStyle, View, FlatList, TouchableOpacity } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
-import { EmptyState, Icon, Screen, Text, TextField } from "app/components"
+import { EmptyState, Icon, Screen, Text, TextField, MoneyLabel } from "app/components"
 import { ExpenseListItem } from "./ExpenseListItem"
 import { colors, sizing, spacing } from "app/theme"
-import { MoneyLabel } from "./MoneyLabel"
 import { useRootStore, getVisibleExpenses, Expense, getVisibleExpenseTotal } from "app/models"
 
 interface ExpenseListScreenProps extends AppStackScreenProps<"ExpenseList"> {}

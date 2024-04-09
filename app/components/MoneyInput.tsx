@@ -17,7 +17,7 @@ import {
 
 const DEFAULT_FONT_SIZE = 36
 const DEFAULT_PLACEHOLDER = "0"
-interface MoneyInputProps extends TextInputProps {
+export interface MoneyInputProps extends TextInputProps {
   value: string
   styles?: TextStyle
   containerStyles?: ViewStyle
@@ -197,7 +197,7 @@ const MoneyInput = forwardRef(
   },
 )
 MoneyInput.displayName = "MoneyInput"
-export default MoneyInput
+export { MoneyInput }
 
 const $textStyles: TextStyle = {
   fontSize: DEFAULT_FONT_SIZE,

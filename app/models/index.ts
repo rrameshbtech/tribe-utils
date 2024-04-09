@@ -10,3 +10,4 @@ export const useRootStore = create<UserSlice & ExpenseSlice>()(immer((...a) => (
 
 export * from "./expense"
 export * from "./user"
+export * from "./icon"

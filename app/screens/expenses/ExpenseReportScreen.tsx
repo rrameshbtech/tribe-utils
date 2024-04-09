@@ -1,15 +1,13 @@
 import React, { FC, useEffect, useState } from "react"
 import { Modal, Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { EmptyState, Icon, Screen, Text, TrasWithComponents } from "app/components"
+import { EmptyState, Icon, Screen, Text, TrasWithComponents, MoneyLabel, SelectableList, SelectableListOption } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
 import { Expense, MonthIdentifier, getExpenseSummary, getMonthId, useRootStore } from "app/models"
-import { MoneyLabel } from "./MoneyLabel"
 import { ScrollView } from "react-native-gesture-handler"
 import { format, getDaysInMonth } from "date-fns"
 import { TxKeyPath, convertToLocaleAbbrevatedNumber } from "app/i18n"
-import { SelectableList, SelectableListOption } from "app/components/SelectableList"
 
 const CHART_WRAPPER_BACKGROUND_COLOR = colors.palette.secondary300
 const CONTENT_TEXT_COLOR = colors.text
