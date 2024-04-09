@@ -33,6 +33,10 @@ const en = {
     }
   },
   expense: {
+    settings: {
+      title: "Expense Settings",
+      location: "Capture location",
+    },
     list: {
       spentAt: "{{spentAt}}",
       unknownSpentAt: "unknown",
