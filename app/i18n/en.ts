@@ -28,29 +28,34 @@ const en = {
     },
     noExpenses: {
       heading: "Oops! No expenses yet",
-      content: "Have n't opened your wallet or is it empty already? Ignore my bad joke. If you missed any don't forget to add.",
+      content:
+        "Have n't opened your wallet or is it empty already? Ignore my bad joke. If you missed any don't forget to add.",
       button: "Add an expense",
-    }
+    },
   },
   expense: {
     settings: {
       title: "Expense Settings",
       location: "Capture location",
+      defaultPaymentMode: "Payment mode",
+      defaultCategory: "Category",
+      defaultPayee: "Payee",
+      defaultValueSectionTitle: "Expense default choices"
     },
     list: {
       spentAt: "{{spentAt}}",
       unknownSpentAt: "unknown",
       totalExpenses: "Total Expenses",
-      searchPlaceholder:{
+      searchPlaceholder: {
         Day: "Today's expenses",
         Week: "Current week's expenses",
         Month: "Current month's expenses",
-      } ,
+      },
       filter: {
         Day: "Day",
         Week: "Week",
         Month: "Month",
-      }
+      },
     },
     delete: {
       confirmTitle: "Delete?",
@@ -74,7 +79,8 @@ const en = {
         payeeLabel: "at {{payee}}",
         spenderLabel: "by {{spender}}",
       },
-      verbose: "{{spender}} spent {{amount}} for {{category}} in {{payee}} using {{mode}} on {{date}}",
+      verbose:
+        "{{spender}} spent {{amount}} for {{category}} in {{payee}} using {{mode}} on {{date}}",
       label: {
         amount: "how much did you spend?",
         payee: "whom did you pay to?",
@@ -101,12 +107,12 @@ const en = {
       expenseByPaymentMode: "Expenses per payment mode",
       summary: "Summary",
       selectMonthTitle: "Which month do you want to analyse?",
-    }
-    ,paymentModes: {
+    },
+    paymentModes: {
       BankCard: "Bank Card",
       BankTransfer: "Bank Transfer",
-    }
-  }
+    },
+  },
 }
 
 export default en

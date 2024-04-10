@@ -3,7 +3,7 @@ import { Alert, View, ViewStyle } from "react-native"
 import { AppStackScreenProps, goBack } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
-import { Expense, newExpense, useRootStore } from "app/models"
+import { Expense, createExpense, useRootStore } from "app/models"
 import { ExpenseSummaryCard } from "./ExpenseSummary"
 import { ExpenseForm } from "./ExpenseForm"
 import { TouchableOpacity } from "react-native-gesture-handler"
@@ -27,10 +27,11 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
 }) {
   const getExpense = useRootStore((state) => state.getExpense)
   const upsertExpense = useRootStore((state) => state.upsertExpense)
+  const newExpense = useRootStore(createExpense)
 
   const { expenseId } = route.params
   const [editField, setEditField] = useState<ExpenseInput>("amount")
-  const [expense, setExpense] = useState<Expense>(getExpense(expenseId) ?? newExpense())
+  const [expense, setExpense] = useState<Expense>(getExpense(expenseId) ?? newExpense)
   const [formState, setFormState] = useState<FormState>("fresh")
   const navigation = useNavigation()
 

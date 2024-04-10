@@ -50,14 +50,16 @@ const getRenderSelectableItemFn =
         style={[$selectableItemStyles, isSelected && $selectedItemStyle]}
         onPress={() => onChange(item.value)}
         LeftComponent={<OptionIcon icon={item.icon ?? nameInitialsIcon} />}
-        RightComponent={<OptionSelector {...{ isSelected }} />}
+        RightComponent={<OptionSelector {...{ isSelected }} onPress={() => onChange(item.value)} />}
       >
         <Text style={{ lineHeight: spacing.xxl }}>{getDisplayText()}</Text>
       </ListItem>
     )
 
     function getDisplayText() {
-      return item.name ?? t(`${translationScope}.${item.value}`, { defaultValue: item.value })
+      return item.name
+        ? t(`${translationScope}.${item.name}`, { defaultValue: item.name })
+        : t(`${translationScope}.${item.value}`, { defaultValue: item.value })
     }
   }
 
@@ -88,13 +90,15 @@ function OptionIcon({ icon }: Readonly<OptionIconProps>) {
 
 interface OptionSelectorProps {
   isSelected: boolean
+  onPress: () => void
 }
-function OptionSelector({ isSelected }: Readonly<OptionSelectorProps>) {
+function OptionSelector({ isSelected, onPress }: Readonly<OptionSelectorProps>) {
   return (
     <Toggle
       variant="radio"
       value={isSelected}
       containerStyle={{ flex: 0, alignSelf: "center" }}
+      onPress={onPress}
     ></Toggle>
   )
 }

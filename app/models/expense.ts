@@ -37,6 +37,9 @@ export interface Expense {
 
 export interface ExpenseConfigs {
   captureLocation: boolean
+  defaultPaymentMode: string
+  defaultCategory: string
+  defaultPayee: string
 }
 
 export type FilterDuration = "Day" | "Week" | "Month"
@@ -77,16 +80,16 @@ export interface ExpenseSlice {
   payees: string[]
 }
 
-export const newExpense = (): Expense => ({
+export const createExpense = (state: ExpenseSlice): Expense => ({
   id: Math.random().toString(36).substring(2, 9),
-  category: "Others",
+  category: state.configs.defaultCategory,
   amount: 0,
   date: new Date(),
   spender: "Ramesh Ramalingam",
   source: "Self",
-  mode: "Cash",
+  mode: state.configs.defaultPaymentMode,
   location: "",
-  payee: "Local Store",
+  payee: state.configs.defaultPayee,
   notes: "",
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -117,6 +120,9 @@ export const createExpenseSlice: StateCreator<
   expenseSummaryCardMode: "card",
   configs: {
     captureLocation: false,
+    defaultPaymentMode: "Cash",
+    defaultCategory: "Others",
+    defaultPayee: "Local Store",
   },
 
   selectedExpenses: () => get().expensesOf(get().selectedMonth),
@@ -183,7 +189,7 @@ const removeExpenseFn = (set: ExpenseSliceSetType) => (id: string) => {
 
 const upsertPayees = (set: ExpenseSliceSetType) => (expense: Expense) => {
   set((state) => {
-    state.payees.push(expense.payee)
+    state.payees.includes(expense.payee) || state.payees.push(expense.payee)
   })
 }
 

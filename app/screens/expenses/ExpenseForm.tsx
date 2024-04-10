@@ -187,8 +187,8 @@ function ExpensePayeeInput({
   useEffect(() => {
     ref.current?.focus()
   }, [])
-  function handleLocationChange(newLocation: string) {
-    onChange({ payee: newLocation })
+  function handlePayeeChange(payee: string) {
+    onChange({ payee })
   }
   function updateAndMoveToNext(selectedPayee: string) {
     onChange({ payee: selectedPayee })
@@ -200,7 +200,7 @@ function ExpensePayeeInput({
       <InputLabel tx="expense.new.label.payee" />
       <AutoComplete
         {...{ value, ref }}
-        onChangeText={handleLocationChange}
+        onChangeText={handlePayeeChange}
         onSelection={updateAndMoveToNext}
         onSubmitEditing={onSubmitEditing}
         options={payees}
