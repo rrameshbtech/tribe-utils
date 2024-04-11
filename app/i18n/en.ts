@@ -40,7 +40,14 @@ const en = {
       defaultPaymentMode: "Payment mode",
       defaultCategory: "Category",
       defaultPayee: "Payee",
-      defaultValueSectionTitle: "Expense default choices"
+      defaultValueSectionTitle: "Expense default choices",
+      locationPermissionTitle: "Location permission",
+      locationPermissionMessage: "We need your location to show you the nearest expenses",
+      locationPermissionButtonNeutral: "Ask me later",
+      locationPermissionButtonNegative: "No",
+      locationPermissionButtonPositive: "Yes",
+      locationPermissionDeniedTitle: "Location permission denied",
+      locationPermissionDeniedMessage: "Please enable location access in your app settings to capture expense location",
     },
     list: {
       spentAt: "{{spentAt}}",

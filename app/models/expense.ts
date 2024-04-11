@@ -19,6 +19,11 @@ export interface ExpenseCategory {
   createdAt: Date
   updatedAt: Date
 }
+export interface BasicGeoLocation {
+  latitude: number
+  longitude: number
+}
+export type ExpenseLocation = string | BasicGeoLocation
 
 export interface Expense {
   id: string
@@ -28,7 +33,7 @@ export interface Expense {
   spender: string
   source: ExpenseSource
   mode: string
-  location?: string
+  location?: ExpenseLocation
   payee: string
   notes?: string
   createdAt: Date
@@ -211,7 +216,6 @@ export const getVisibleExpenses = (state: ExpenseSlice) => {
       expense.payee.toLowerCase().includes(searchTerm) ||
       expense.category.toLowerCase().includes(searchTerm) ||
       expense.mode.toLowerCase().includes(searchTerm) ||
-      expense.location?.toLowerCase().includes(searchTerm) ||
       expense.notes?.toLowerCase().includes(searchTerm)
   }
 

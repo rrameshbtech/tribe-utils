@@ -1,6 +1,14 @@
 import React, { FC, useEffect } from "react"
 
-import { Modal, Pressable, TextStyle, View, ViewStyle } from "react-native"
+import {
+  Modal,
+  PermissionsAndroid,
+  Platform,
+  Pressable,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import {
   AutoComplete,
@@ -16,6 +24,7 @@ import { ExpenseCategory, ExpenseConfigs, PaymentMode, useRootStore } from "app/
 import { pipe } from "app/utils/fns"
 import { TextInput } from "react-native-gesture-handler"
 import { t } from "i18n-js"
+import Toast from "react-native-toast-message"
 
 interface ExpenseSettingsScreenProps extends AppStackScreenProps<"ExpenseSettings"> {}
 
@@ -70,10 +79,38 @@ interface LocationToggleProps {
 }
 
 function LocationToggle({ value, onChange }: LocationToggleProps) {
+  function handleChange(value: boolean) {
+    if (!value || Platform.OS !== "android") {
+      onChange?.(value)
+      return
+    }
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+      title: t("expense.settings.locationPermissionTitle"),
+      message: t("expense.settings.locationPermissionMessage"),
+      buttonNeutral: t("expense.settings.locationPermissionButtonNeutral"),
+      buttonNegative: t("expense.settings.locationPermissionButtonNegative"),
+      buttonPositive: t("expense.settings.locationPermissionButtonPositive"),
+    })
+      .then((result) => {
+        if (result === PermissionsAndroid.RESULTS.GRANTED) {
+          onChange?.(value)
+        } else {
+          Toast.show({
+            type: "error",
+            text1: t("expense.settings.locationPermissionDeniedTitle"),
+            text2: t("expense.settings.locationPermissionDeniedMessage"),
+          })
+        }
+      })
+      .catch((err) => {
+        onChange?.(false)
+        console.warn("Unexpected error when requesting location permission", err)
+      })
+  }
   return (
     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
       <Text tx="expense.settings.location" />
-      <Toggle value={value} variant="switch" onValueChange={onChange}></Toggle>
+      <Toggle value={value} variant="switch" onValueChange={handleChange}></Toggle>
     </View>
   )
 }

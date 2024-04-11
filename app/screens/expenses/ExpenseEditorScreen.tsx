@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react"
-import { Alert, View, ViewStyle } from "react-native"
+import { Alert, PermissionsAndroid, View, ViewStyle } from "react-native"
 import { AppStackScreenProps, goBack } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
@@ -10,6 +10,7 @@ import { TouchableOpacity } from "react-native-gesture-handler"
 import { translate } from "app/i18n"
 import Toast from "react-native-toast-message"
 import { useNavigation } from "@react-navigation/native"
+import Geolocation from "@react-native-community/geolocation"
 
 interface ExpenseEditorScreenProps extends AppStackScreenProps<"ExpenseEditor"> {}
 export type ExpenseInput =
@@ -28,6 +29,7 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
   const getExpense = useRootStore((state) => state.getExpense)
   const upsertExpense = useRootStore((state) => state.upsertExpense)
   const newExpense = useRootStore(createExpense)
+  const captureLocation = useRootStore((state) => state.configs.captureLocation)
 
   const { expenseId } = route.params
   const [editField, setEditField] = useState<ExpenseInput>("amount")
@@ -83,6 +85,31 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
       setEditField("amount")
       return
     }
+    if (expense.location || !captureLocation) {
+      saveExpense(expense)
+      return
+    }
+
+    PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(
+      (locationAllowed) => {
+        if (locationAllowed) {
+          Geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords
+              expense.location = { latitude, longitude }
+              saveExpense(expense)
+            },
+            (error) => {
+              console.warn("Unexpected error when getting location for expense", error)
+              saveExpense(expense)
+            },
+          )
+        }
+      },
+    )
+  }
+
+  function saveExpense(expense: Expense) {
     upsertExpense(expense)
     setFormState("saved")
     Toast.show({

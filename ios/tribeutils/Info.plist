@@ -55,6 +55,10 @@
         </dict>
       </dict>
     </dict>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	  <string>Capture expense location</string>
+	  <key>NSLocationWhenInUseUsageDescription</key>
+	  <string>Capture expense location</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
