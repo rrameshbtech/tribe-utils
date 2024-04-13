@@ -45,6 +45,7 @@ export interface ExpenseConfigs {
   defaultPaymentMode: string
   defaultCategory: string
   defaultPayee: string
+  defaultSpender: string
 }
 
 export type FilterDuration = "Day" | "Week" | "Month"
@@ -128,6 +129,7 @@ export const createExpenseSlice: StateCreator<
     defaultPaymentMode: "Cash",
     defaultCategory: "Others",
     defaultPayee: "Local Store",
+    defaultSpender: "",
   },
 
   selectedExpenses: () => get().expensesOf(get().selectedMonth),

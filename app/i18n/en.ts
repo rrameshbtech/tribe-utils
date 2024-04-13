@@ -7,6 +7,7 @@ const en = {
     no: "No",
     delete: "Delete",
     edit: "Edit",
+    notSelected: "Not selected",
   },
   welcomeScreen: {
     postscript:
@@ -40,6 +41,7 @@ const en = {
       defaultPaymentMode: "Payment mode",
       defaultCategory: "Category",
       defaultPayee: "Payee",
+      defaultSpender: "Spender",
       defaultValueSectionTitle: "Expense default choices",
       locationPermissionTitle: "Location permission",
       locationPermissionMessage: "We need your location to show you the nearest expenses",

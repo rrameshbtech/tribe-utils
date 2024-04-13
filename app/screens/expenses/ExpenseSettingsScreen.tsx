@@ -20,7 +20,7 @@ import {
   Toggle,
 } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
-import { ExpenseCategory, ExpenseConfigs, PaymentMode, useRootStore } from "app/models"
+import { ExpenseCategory, ExpenseConfigs, Member, PaymentMode, useRootStore } from "app/models"
 import { pipe } from "app/utils/fns"
 import { TextInput } from "react-native-gesture-handler"
 import { t } from "i18n-js"
@@ -125,9 +125,11 @@ function ExpenseDefaultValues({ configs, onChange }: ExpenseDefaultValuesProps) 
     defaultPaymentMode: paymentMode,
     defaultCategory: category,
     defaultPayee: payee,
+    defaultSpender: spenderId,
   } = configs
+  const spender = useRootStore((state) => state.allMembers[spenderId])
   const [activeSelector, setActiveSelector] = React.useState<
-    "paymentMode" | "category" | "payee" | null
+    "paymentMode" | "category" | "payee" | "spender" | null
   >("paymentMode")
   const $formRowStyle: ViewStyle = { flexDirection: "row", justifyContent: "space-between" }
 
@@ -135,7 +137,6 @@ function ExpenseDefaultValues({ configs, onChange }: ExpenseDefaultValuesProps) 
     onChange({ defaultPaymentMode: value })
     setActiveSelector(null)
   }
-
   function updateCategory(value: string) {
     onChange({ defaultCategory: value })
     setActiveSelector(null)
@@ -143,12 +144,25 @@ function ExpenseDefaultValues({ configs, onChange }: ExpenseDefaultValuesProps) 
   function updatePayee(value: string) {
     onChange({ defaultPayee: value })
   }
+  function updateSpender(value: string) {
+    onChange({ defaultSpender: value })
+    setActiveSelector(null)
+  }
 
   function onChangeEnd() {
     setActiveSelector(null)
   }
   return (
     <>
+      <View style={$formRowStyle}>
+        <Text tx="expense.settings.defaultSpender" />
+        <EditLabel value={spender?.name} onPress={() => setActiveSelector("spender")} />
+        <SpenderSelector
+          visible={activeSelector === "spender"}
+          value={spenderId}
+          onChange={updateSpender}
+        />
+      </View>
       <View style={$formRowStyle}>
         <Text tx="expense.settings.defaultPaymentMode" />
         <EditLabel value={paymentMode} onPress={() => setActiveSelector("paymentMode")} />
@@ -182,7 +196,7 @@ function ExpenseDefaultValues({ configs, onChange }: ExpenseDefaultValuesProps) 
 }
 
 interface EditLabelProps {
-  value: string
+  value?: string
   onPress: () => void
 }
 function EditLabel({ value, onPress }: EditLabelProps) {
@@ -193,7 +207,10 @@ function EditLabel({ value, onPress }: EditLabelProps) {
   }
   return (
     <Pressable style={$valueContainerStyle} onPress={onPress}>
-      <Text text={value} />
+      <Text
+        text={value ?? `[${t("common.notSelected")}]`}
+        style={{ color: value ? colors.text : colors.textDim }}
+      />
       <Icon type="FontAwesome" name="pencil" size={sizing.md} />
     </Pressable>
   )
@@ -239,6 +256,25 @@ function CategorySelector({ value, onChange, visible }: Readonly<CategorySelecto
   )
 }
 
+interface SpenderSelectorProps {
+  onChange: (changed: string) => void
+  value: string
+  visible?: boolean
+}
+function SpenderSelector({ value, onChange, visible }: Readonly<SpenderSelectorProps>) {
+  const tribeMembers = useRootStore((state) => Object.values(state.allMembers))
+
+  return (
+    <Modal visible={visible} animationType="slide">
+      <SelectableList
+        options={pipe(Object.values, convertToSelectableListOptions)(tribeMembers)}
+        value={value}
+        onChange={onChange}
+      />
+    </Modal>
+  )
+}
+
 interface PayeeSelectorProps {
   onChange: (changed: string) => void
   onSubmitEditing?: () => void
@@ -278,13 +314,13 @@ function PayeeSelector({
   )
 }
 
-function convertToSelectableListOptions(items: PaymentMode[] | ExpenseCategory[]) {
+function convertToSelectableListOptions(items: PaymentMode[] | ExpenseCategory[] | Member[]) {
   return items.map(
-    (mode) =>
+    (item) =>
       ({
-        value: mode.name,
-        name: mode.name,
-        icon: mode.icon,
+        value: "id" in item ? item.id : item.name,
+        name: item.name,
+        icon: "icon" in item ? item.icon : null,
       } as SelectableListOption),
   )
 }

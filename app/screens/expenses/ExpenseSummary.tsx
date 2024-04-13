@@ -239,7 +239,7 @@ interface SpenderLabelProps extends PressableLabelProps {
   value: string
 }
 function SpenderLabel({ value, onPress }: Readonly<SpenderLabelProps>) {
-  const spender = useRootStore((state) => state.all[value] ?? { name: value })
+  const spender = useRootStore((state) => state.allMembers[value] ?? { name: value })
   return (
     <Pressable onPress={() => onPress?.("spender")}>
       <Text text={spender.name} preset="bold" />

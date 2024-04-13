@@ -10,12 +10,12 @@ export interface Member {
 
 export interface MemberSlice {
   self: string
-  all: Record<string, Member>
+  allMembers: Record<string, Member>
 }
 
 export const createMemberSlice: StateCreator<MemberSlice, [], [], MemberSlice> = (set) => ({
   self: "1",
-  all: {
+  allMembers: {
     "1": {
       id: "1",
       name: "Ramesh",
@@ -26,4 +26,4 @@ export const createMemberSlice: StateCreator<MemberSlice, [], [], MemberSlice> =
   },
 })
 
-export const getSelf = (state: MemberSlice) => state.all[state.self]
+export const getSelf = (state: MemberSlice) => state.allMembers[state.self]
