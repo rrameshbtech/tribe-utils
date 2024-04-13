@@ -85,12 +85,12 @@ export interface ExpenseSlice {
   payees: string[]
 }
 
-export const createExpense = (state: ExpenseSlice): Expense => ({
+export const getCreateExpenseFnFor = (spender: string) => (state: ExpenseSlice): Expense => ({
   id: Math.random().toString(36).substring(2, 9),
   category: state.configs.defaultCategory,
   amount: 0,
   date: new Date(),
-  spender: "Ramesh Ramalingam",
+  spender,
   source: "Self",
   mode: state.configs.defaultPaymentMode,
   location: "",

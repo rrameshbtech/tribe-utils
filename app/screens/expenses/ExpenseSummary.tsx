@@ -2,7 +2,7 @@ import React from "react"
 import { Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { Card, Text, TrasWithComponents, MoneyLabel } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
-import { Expense, useRootStore } from "app/models"
+import { Expense, ExpenseLocation, useRootStore } from "app/models"
 import { ExpenseInput } from "./ExpenseEditorScreen"
 import { t } from "i18n-js"
 
@@ -61,7 +61,7 @@ function VerboseExpenseSummary({
               isHighlighted={editField === "amount"}
             />
           ),
-          spender: <SpenderLabel name={expense.spender} />,
+          spender: <SpenderLabel value={expense.spender} />,
           category: (
             <CategoryLabel
               name={expense.category}
@@ -161,7 +161,7 @@ function CardExpenseSummary({
     <TrasWithComponents
       tx="expense.new.card.spenderLabel"
       txOptions={{
-        spender: <SpenderLabel name={expense.spender.split(" ")[0]} />,
+        spender: <SpenderLabel value={expense.spender.split(" ")[0]} />,
       }}
     />
   )
@@ -236,12 +236,13 @@ function ExpenseAmountLabel({
 }
 
 interface SpenderLabelProps extends PressableLabelProps {
-  name: string
+  value: string
 }
-function SpenderLabel({ name, onPress }: Readonly<SpenderLabelProps>) {
+function SpenderLabel({ value, onPress }: Readonly<SpenderLabelProps>) {
+  const spender = useRootStore((state) => state.all[value] ?? { name: value })
   return (
     <Pressable onPress={() => onPress?.("spender")}>
-      <Text text={name} preset="bold" />
+      <Text text={spender.name} preset="bold" />
     </Pressable>
   )
 }
@@ -305,12 +306,12 @@ function DateLabel({ date, onPress, isHighlighted }: Readonly<DateLabelProps>) {
 }
 
 interface LocationLabelProps extends PressableLabelProps {
-  location?: string
+  location?: ExpenseLocation
 }
 function LocationLabel({ location, onPress }: Readonly<LocationLabelProps>) {
   return (
     <Pressable onPress={() => onPress?.("location")}>
-      <Text text={location} preset="bold" />
+      <Text text={location?.toString()} preset="bold" />
     </Pressable>
   )
 }
