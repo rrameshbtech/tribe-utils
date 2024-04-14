@@ -175,7 +175,7 @@ function ExpenseEditorHeader({ onClose }: { onClose?: () => void }) {
         </TouchableOpacity>
         <Text
           preset="subheading"
-          style={{ color: colors.palette.neutral200 }}
+          style={{ color: colors.background }}
           tx="expense.new.heading"
         />
       </View>

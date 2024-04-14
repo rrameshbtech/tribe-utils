@@ -14,6 +14,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors, spacing } from "app/theme"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { Icon } from "app/components"
+import { useIsSignedIn } from "app/screens/auth"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -37,26 +38,33 @@ export type ExpenseScreensParamList = {
   ExpenseSettings: undefined
 }
 
+export type AppScreensParamList = {
+  Welcome: undefined
+  Settings: undefined
+}
+
+export type AllScreensParamList = AppScreensParamList & ExpenseScreensParamList
 /**
  * This is a list of all the route names that will exit the app if the back button
  * is pressed while in that screen. Only affects Android.
  */
 const exitRoutes = Config.exitRoutes
 
-export type AppStackScreenProps<T extends keyof ExpenseScreensParamList> = NativeStackScreenProps<
-  ExpenseScreensParamList,
+export type AppStackScreenProps<T extends keyof AllScreensParamList> = NativeStackScreenProps<
+  AllScreensParamList,
   T
 >
 
 const Tab = createBottomTabNavigator<ExpenseScreensParamList>()
-const Stack = createNativeStackNavigator<ExpenseScreensParamList>()
+const Stack = createNativeStackNavigator<AllScreensParamList>()
 
 const ExpenseTabs = function ExpenseTabs() {
   return (
     <Tab.Navigator
+      initialRouteName="ExpenseList"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          const containerStyle:ViewStyle = {
+          const containerStyle: ViewStyle = {
             opacity: focused ? 1 : 0.5,
             backgroundColor: focused ? colors.palette.primary400 : colors.tint,
             borderRadius: size / 2,
@@ -85,31 +93,50 @@ const ExpenseTabs = function ExpenseTabs() {
         tabBarStyle: { backgroundColor: colors.tint },
       })}
     >
-      <Tab.Screen
-        name="ExpenseList"
-        component={Screens.ExpenseListScreen}
-      />
-      <Tab.Screen
-        name="ExpenseReport"
-        component={Screens.ExpenseReportScreen}
-      />
-      <Tab.Screen
-        name="ExpenseSettings"
-        component={Screens.ExpenseSettingsScreen}
-      />
+      <Tab.Screen name="ExpenseList" component={Screens.ExpenseListScreen} />
+      <Tab.Screen name="ExpenseReport" component={Screens.ExpenseReportScreen} />
+      <Tab.Screen name="ExpenseSettings" component={Screens.ExpenseSettingsScreen} />
     </Tab.Navigator>
   )
 }
 
-const AppStack = function AppStack() {
+function renderSignedInStack() {
+  const isSignedIn = useIsSignedIn()
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false, navigationBarColor: colors.background }}>
+    <Stack.Group>
       <Stack.Screen name="ExpenseTabs" component={ExpenseTabs} />
       <Stack.Screen
         name="ExpenseEditor"
         component={Screens.ExpenseEditorScreen}
         initialParams={{ expenseId: "" }}
       />
+      <Stack.Screen
+        name="Settings"
+        component={Screens.SettingsScreen}
+        navigationKey={isSignedIn ? "user" : "guest"}
+      />
+    </Stack.Group>
+  )
+}
+
+function renderSignedOutStack() {
+  const isSignedIn = useIsSignedIn()
+  return (
+    <Stack.Group navigationKey={isSignedIn ? "user" : "guest"}>
+      <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
+      <Stack.Screen name="Settings" component={Screens.SettingsScreen} />
+    </Stack.Group>
+  )
+}
+
+const AppStack = function AppStack() {
+  const isSignedIn = useIsSignedIn()
+  return (
+    <Stack.Navigator
+      initialRouteName="Welcome"
+      screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
+    >
+      {isSignedIn ? renderSignedInStack() : renderSignedOutStack()}
     </Stack.Navigator>
   )
 }

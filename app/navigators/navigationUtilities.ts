@@ -8,7 +8,7 @@ import {
 import Config from "../config"
 import type { PersistNavigationConfig } from "../config/config.base"
 import { useIsMounted } from "../utils/useIsMounted"
-import type { AppStackParamList, NavigationProps } from "./AppNavigator"
+import type { AllScreensParamList, NavigationProps } from "./AppNavigator"
 
 import * as storage from "../utils/storage"
 
@@ -24,7 +24,7 @@ type Storage = typeof storage
  * The types on this reference will only let you reference top level navigators. If you have
  * nested navigators, you'll need to use the `useNavigation` with the stack navigator's ParamList type.
  */
-export const navigationRef = createNavigationContainerRef<AppStackParamList>()
+export const navigationRef = createNavigationContainerRef<AllScreensParamList>()
 
 /**
  * Gets the current screen from any navigation state.
@@ -35,10 +35,10 @@ export function getActiveRouteName(state: NavigationState | PartialState<Navigat
   const route = state.routes[state.index ?? 0]
 
   // Found the active route -- return the name
-  if (!route.state) return route.name as keyof AppStackParamList
+  if (!route.state) return route.name as keyof AllScreensParamList
 
   // Recursive call to deal with nested routers
-  return getActiveRouteName(route.state as NavigationState<AppStackParamList>)
+  return getActiveRouteName(route.state as NavigationState<AllScreensParamList>)
 }
 
 /**
@@ -123,7 +123,7 @@ export function useNavigationPersistence(storage: Storage, persistenceKey: strin
   const initNavState = navigationRestoredDefaultState(Config.persistNavigation)
   const [isRestored, setIsRestored] = useState(initNavState)
 
-  const routeNameRef = useRef<keyof AppStackParamList | undefined>()
+  const routeNameRef = useRef<keyof AllScreensParamList | undefined>()
 
   const onNavigationStateChange = (state: NavigationState | undefined) => {
     const previousRouteName = routeNameRef.current
@@ -138,7 +138,7 @@ export function useNavigationPersistence(storage: Storage, persistenceKey: strin
       }
 
       // Save the current route name for later comparison
-      routeNameRef.current = currentRouteName as keyof AppStackParamList
+      routeNameRef.current = currentRouteName as keyof AllScreensParamList
 
       // Persist state to storage
       storage.save(persistenceKey, state)

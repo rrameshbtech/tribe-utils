@@ -89,7 +89,7 @@ function App(props: AppProps) {
     prefixes: [prefix],
     config,
   }
-
+  
   // otherwise, we're ready to render the app
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>

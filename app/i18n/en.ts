@@ -8,12 +8,25 @@ const en = {
     delete: "Delete",
     edit: "Edit",
     notSelected: "Not selected",
+    getStarted: "Get started",
   },
   welcomeScreen: {
     postscript:
-      "psst  — This probably isn't what your app looks like. (Unless your designer handed you these screens, and in that case, ship it!)",
-    readyForLaunch: "Your app, almost ready for launch!",
-    exciting: "(ohh, this is exciting!)",
+      "Follow simple steps to get started.",
+    welcomeTitle: "Welcome to the Tribe!",
+    privateSpace: "No crap! Just a secure space for tracking your chores",
+  },
+  settingsScreen: {
+    title: "Setup your Tribe",
+    authUser: {
+      title: "Your details",
+      name: "Name",
+      namePlaceholder: "Your name",
+      email: "Email",
+      emailPlaceholder: "Your email",
+      emailHelper: "We'll use email for unique identification only.",
+    },
+    finishSetup: "Save & Continue",
   },
   errorScreen: {
     title: "Something went wrong!",
