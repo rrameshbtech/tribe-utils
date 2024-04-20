@@ -1,4 +1,4 @@
-import { create } from "zustand"
+import { UseBoundStore, create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import { MemberSlice, createMemberSlice } from "./member"
 import { ExpenseSlice, createExpenseSlice } from "./expense"
@@ -6,13 +6,12 @@ import { SettingsSlice, createSettingsSlice } from "./settings"
 import { immer } from "zustand/middleware/immer"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { pipe } from "app/utils/fns"
 
-export const useRootStore = create<MemberSlice & ExpenseSlice & SettingsSlice>()(
+export const useExpenseStore = create<ExpenseSlice>()(
   persist(
     immer((...a) => ({
-      ...createMemberSlice(...a),
       ...createExpenseSlice(...a),
-      ...createSettingsSlice(...a),
     })),
     {
       name: "root-store",
@@ -33,25 +32,54 @@ export const useRootStore = create<MemberSlice & ExpenseSlice & SettingsSlice>()
   ),
 )
 
+export const useSettingsStore = create<SettingsSlice>()(
+  persist(
+    immer((...a) => createSettingsSlice(...a)),
+    {
+      name: "settings-store",
+      storage: createJSONStorage(() => AsyncStorage),
+    },
+  ),
+)
+
+export const useMemberStore = create<MemberSlice>()(
+  persist(
+    immer((...a) => createMemberSlice(...a)),
+    {
+      name: "member-store",
+      storage: createJSONStorage(() => AsyncStorage),
+    },
+  ),
+)
+
 export const useHydration = () => {
-  const [hydrated, setHydrated] = useState(false)
+  const [expenseStoreHydrated, setExpenseStoreHydrated] = useState(false)
+  const [settingsStoreHydrated, setSettingsStoreHydrated] = useState(false)
+  const [memberStoreHydrated, setMemberStoreHydrated] = useState(false)
 
   useEffect(() => {
-    // Note: This is just in case you want to take into account manual rehydration.
-    // You can remove the following line if you don't need it.
-    const unsubHydrate = useRootStore.persist.onHydrate(() => setHydrated(false))
+    function handleStoreHydration(
+      useStore: UseBoundStore<any>,
+      setStoreHydrated: React.Dispatch<React.SetStateAction<boolean>>,
+    ) {
+      const unsubHydrate = useStore.persist.onHydrate(() => setStoreHydrated(false))
+      const unsubFinishHydration = useStore.persist.onFinishHydration(() => setStoreHydrated(true))
+      setStoreHydrated(useStore.persist.hasHydrated())
+      return [unsubHydrate, unsubFinishHydration]
+    }
 
-    const unsubFinishHydration = useRootStore.persist.onFinishHydration(() => setHydrated(true))
-
-    setHydrated(useRootStore.persist.hasHydrated())
+    const expenseUnsubscribers = handleStoreHydration(useExpenseStore, setExpenseStoreHydrated)
+    const settingsUnsubscribers = handleStoreHydration(useSettingsStore, setSettingsStoreHydrated)
+    const memberUnsubscribers = handleStoreHydration(useMemberStore, setMemberStoreHydrated)
 
     return () => {
-      unsubHydrate()
-      unsubFinishHydration()
+      pipe(...expenseUnsubscribers)
+      pipe(...settingsUnsubscribers)
+      pipe(...memberUnsubscribers)
     }
   }, [])
 
-  return hydrated
+  return expenseStoreHydrated && settingsStoreHydrated && memberStoreHydrated
 }
 
 export * from "./expense"

@@ -11,22 +11,14 @@ export interface Member {
 export interface MemberSlice {
   self: string
   allMembers: Record<string, Member>
-  
+
   updateSelf: (self: string) => void
   upsertMember: (member: Member) => void
 }
 
 export const createMemberSlice: StateCreator<MemberSlice, [], [], MemberSlice> = (set) => ({
   self: "",
-  allMembers: {
-    "1": {
-      id: "1",
-      name: "Ramesh",
-      email: "rrameshbtech@gmail.com",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  },
+  allMembers: {},
   updateSelf: (self: string) => set({ self }),
   upsertMember: (member: Member) =>
     set((state) => ({ allMembers: { ...state.allMembers, [member.id]: member } })),

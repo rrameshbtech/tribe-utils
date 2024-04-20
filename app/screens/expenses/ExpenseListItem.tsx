@@ -3,7 +3,7 @@ import { Icon as IconComponent, ListItem, Text, MoneyLabel } from "app/component
 import { format } from "date-fns"
 import { Alert, Pressable, View, ViewStyle } from "react-native"
 import { colors, sizing, spacing } from "app/theme"
-import { Expense, useRootStore, Icon } from "app/models"
+import { Expense, useExpenseStore, Icon } from "app/models"
 import { TxKeyPath, translate } from "app/i18n"
 import Toast from "react-native-toast-message"
 import { navigate } from "app/navigators"
@@ -53,7 +53,7 @@ interface ExpenseCategoryIconProps {
   category: string
 }
 function ExpenseCategoryIcon({ category }: Readonly<ExpenseCategoryIconProps>) {
-  const expenseCategories = useRootStore((state) => state.expenseCategories)
+  const expenseCategories = useExpenseStore((state) => state.expenseCategories)
   const categoryIcon = expenseCategories[category]?.icon || {
     name: "question",
     type: "FontAwesome",
@@ -113,7 +113,7 @@ interface PaymentModeIconProps {
   mode: string
 }
 function PaymentModeIcon({ mode }: Readonly<PaymentModeIconProps>) {
-  const paymentModes = useRootStore((state) => state.paymentModes)
+  const paymentModes = useExpenseStore((state) => state.paymentModes)
   const color = colors.palette.neutral500
   const size = sizing.md
   const icon = paymentModes[mode]?.icon || { name: mode, type: "initials" }
@@ -133,7 +133,7 @@ interface ExpenseItemControlsProps {
   expense: Expense
 }
 function ExpenseItemControls({ expense }: Readonly<ExpenseItemControlsProps>) {
-  const removeExpense = useRootStore((state) => state.removeExpense)
+  const removeExpense = useExpenseStore((state) => state.removeExpense)
   function deleteExpense() {
     Alert.alert(
       translate("expense.delete.confirmTitle"),

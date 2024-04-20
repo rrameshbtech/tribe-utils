@@ -4,11 +4,11 @@ import { AppStackScreenProps, navigate } from "app/navigators"
 import { EmptyState, Icon, Screen, Text, TextField, MoneyLabel } from "app/components"
 import { ExpenseListItem } from "./ExpenseListItem"
 import { colors, sizing, spacing } from "app/theme"
-import { useRootStore, getVisibleExpenses, Expense, getVisibleExpenseTotal } from "app/models"
+import { useExpenseStore, getVisibleExpenses, Expense, getVisibleExpenseTotal } from "app/models"
 
 interface ExpenseListScreenProps extends AppStackScreenProps<"ExpenseList"> {}
 export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseListScreen() {
-  const expenses = useRootStore(getVisibleExpenses)
+  const expenses = useExpenseStore(getVisibleExpenses)
   const [expandedItem, setExpandedItem] = React.useState<string | null>(null)
   const toggleExpandedItem = (id: string) => {
     if (expandedItem === id) {
@@ -60,9 +60,9 @@ const $listView: ViewStyle = {
 
 function ExpenseListHeader() {
   // Todo - search should have cancel button & filter should have a dropdown
-  const setSearchTerm = useRootStore((state) => state.setSearchTerm)
-  const searchTerm = useRootStore((state) => state.searchTerm)
-  const durationFilter = useRootStore((state) => state.expenseFilter)
+  const setSearchTerm = useExpenseStore((state) => state.setSearchTerm)
+  const searchTerm = useExpenseStore((state) => state.searchTerm)
+  const durationFilter = useExpenseStore((state) => state.expenseFilter)
 
   const $expenseSearchBarContainerStyle: ViewStyle = { flexDirection: "row" }
   const $expenseSearchBarStyle = { flex: 1 }
@@ -112,8 +112,8 @@ interface ExpenseFilterIconProps {
   containerStyle?: ViewStyle
 }
 function ExpenseFilterIcon({ containerStyle }: Readonly<ExpenseFilterIconProps>) {
-  const durationFilter = useRootStore((state) => state.expenseFilter)
-  const toggleFilter = useRootStore((state) => state.toggleExpenseFilter)
+  const durationFilter = useExpenseStore((state) => state.expenseFilter)
+  const toggleFilter = useExpenseStore((state) => state.toggleExpenseFilter)
 
   const $filterIconWrapperStyles: ViewStyle = {
     ...containerStyle,
@@ -141,7 +141,7 @@ const $expenseSummaryStyles: ViewStyle = {
   padding: spacing.xs,
 }
 function ExpenseSummary() {
-  const totalExpenses = useRootStore(getVisibleExpenseTotal)
+  const totalExpenses = useExpenseStore(getVisibleExpenseTotal)
   return (
     <View style={$expenseSummaryStyles}>
       <Text style={{ color: colors.palette.neutral200 }} tx="expense.list.totalExpenses" />

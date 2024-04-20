@@ -14,7 +14,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors, spacing } from "app/theme"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { Icon } from "app/components"
-import { useIsSignedIn } from "app/screens/auth"
+import { useSettingsStore } from "app/models"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -101,7 +101,7 @@ const ExpenseTabs = function ExpenseTabs() {
 }
 
 function renderSignedInStack() {
-  const isSignedIn = useIsSignedIn()
+  const isInitialSetupComplete = useSettingsStore((state) => state.isInitialSetupComplete)
   return (
     <Stack.Group>
       <Stack.Screen name="ExpenseTabs" component={ExpenseTabs} />
@@ -113,16 +113,16 @@ function renderSignedInStack() {
       <Stack.Screen
         name="Settings"
         component={Screens.SettingsScreen}
-        navigationKey={isSignedIn ? "user" : "guest"}
+        navigationKey={isInitialSetupComplete ? "user" : "guest"}
       />
     </Stack.Group>
   )
 }
 
 function renderSignedOutStack() {
-  const isSignedIn = useIsSignedIn()
+  const isInitialSetupComplete = useSettingsStore((state) => state.isInitialSetupComplete)
   return (
-    <Stack.Group navigationKey={isSignedIn ? "user" : "guest"}>
+    <Stack.Group navigationKey={isInitialSetupComplete ? "user" : "guest"}>
       <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
       <Stack.Screen name="Settings" component={Screens.SettingsScreen} />
     </Stack.Group>
@@ -130,13 +130,13 @@ function renderSignedOutStack() {
 }
 
 const AppStack = function AppStack() {
-  const isSignedIn = useIsSignedIn()
+  const isInitialSetupComplete = useSettingsStore((state) => state.isInitialSetupComplete)
   return (
     <Stack.Navigator
       initialRouteName="Welcome"
       screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
     >
-      {isSignedIn ? renderSignedInStack() : renderSignedOutStack()}
+      {isInitialSetupComplete ? renderSignedInStack() : renderSignedOutStack()}
     </Stack.Navigator>
   )
 }

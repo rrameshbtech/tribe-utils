@@ -3,7 +3,7 @@ import { View, ViewStyle } from "react-native"
 import { Button, Screen, Text, TextField } from "app/components"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
-import { Member, getSelf, useRootStore } from "app/models"
+import { Member, getSelf, useMemberStore, useSettingsStore } from "app/models"
 import { getUniqueId } from "app/utils/generators"
 
 interface SettingsScreenProps extends AppStackScreenProps<"Settings"> {}
@@ -37,9 +37,10 @@ function SettingsHeader() {
 }
 
 function AuthUserConfiguration() {
-  const upsertAuthUser = useRootStore((state) => state.upsertMember)
-  const updateSelf = useRootStore((state) => state.updateSelf)
-  const [user, setUser] = useState((useRootStore(getSelf) ?? { id: getUniqueId() }) as Member)
+  const upsertAuthUser = useMemberStore((state) => state.upsertMember)
+  const updateSelf = useMemberStore((state) => state.updateSelf)
+  const setIsInitialSetupComplete = useSettingsStore((state) => state.setIsInitialSetupComplete)
+  const [user, setUser] = useState((useMemberStore(getSelf) ?? { id: getUniqueId() }) as Member)
 
   function onUserNameChange(name: string) {
     setUser({ ...user, name })
@@ -50,6 +51,7 @@ function AuthUserConfiguration() {
   function saveAuthUser() {
     upsertAuthUser(user)
     updateSelf(user.id)
+    setIsInitialSetupComplete(true)
   }
   function isValidEmail(email: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -87,12 +89,12 @@ function AuthUserConfiguration() {
         onSubmitEditing={saveAuthUser}
       />
       <Button
-          tx="settingsScreen.finishSetup"
-          onPress={saveAuthUser}
-          style={{ marginTop: spacing.xl, marginHorizontal: spacing.sm }}
-          disabled={!isValidName(user.name) || !isValidEmail(user.email)}
-          preset={"filled"}
-        />
+        tx="settingsScreen.finishSetup"
+        onPress={saveAuthUser}
+        style={{ marginTop: spacing.xl, marginHorizontal: spacing.sm }}
+        disabled={!isValidName(user.name) || !isValidEmail(user.email)}
+        preset={"filled"}
+      />
     </View>
   )
 }

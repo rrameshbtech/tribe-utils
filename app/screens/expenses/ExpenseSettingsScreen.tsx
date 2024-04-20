@@ -20,7 +20,7 @@ import {
   Toggle,
 } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
-import { ExpenseCategory, ExpenseConfigs, Member, PaymentMode, useRootStore } from "app/models"
+import { ExpenseCategory, ExpenseConfigs, Member, PaymentMode, useExpenseStore, useMemberStore } from "app/models"
 import { pipe } from "app/utils/fns"
 import { TextInput } from "react-native-gesture-handler"
 import { t } from "i18n-js"
@@ -29,8 +29,8 @@ import Toast from "react-native-toast-message"
 interface ExpenseSettingsScreenProps extends AppStackScreenProps<"ExpenseSettings"> {}
 
 export const ExpenseSettingsScreen: FC<ExpenseSettingsScreenProps> = function SettingsScreen() {
-  const configs = useRootStore((s) => s.configs)
-  const updateConfigs = useRootStore((s) => s.updateConfigs)
+  const configs = useExpenseStore((s) => s.configs)
+  const updateConfigs = useExpenseStore((s) => s.updateConfigs)
 
   function updateCaptureLocation(value: boolean) {
     updateConfigs({ captureLocation: value })
@@ -127,7 +127,7 @@ function ExpenseDefaultValues({ configs, onChange }: ExpenseDefaultValuesProps) 
     defaultPayee: payee,
     defaultSpender: spenderId,
   } = configs
-  const spender = useRootStore((state) => state.allMembers[spenderId])
+  const spender = useMemberStore((state) => state.allMembers[spenderId])
   const [activeSelector, setActiveSelector] = React.useState<
     "paymentMode" | "category" | "payee" | "spender" | null
   >(null)
@@ -222,7 +222,7 @@ interface PaymentModeSelectorProps {
   visible?: boolean
 }
 function PaymentModeSelector({ value, onChange, visible }: Readonly<PaymentModeSelectorProps>) {
-  const paymentModes = useRootStore((state) => Object.values(state.paymentModes))
+  const paymentModes = useExpenseStore((state) => Object.values(state.paymentModes))
 
   return (
     <Modal visible={visible} animationType="slide">
@@ -242,7 +242,7 @@ interface CategorySelectorProps {
   visible?: boolean
 }
 function CategorySelector({ value, onChange, visible }: Readonly<CategorySelectorProps>) {
-  const categories = useRootStore((state) => Object.values(state.expenseCategories))
+  const categories = useExpenseStore((state) => Object.values(state.expenseCategories))
 
   return (
     <Modal visible={visible} animationType="slide">
@@ -262,7 +262,7 @@ interface SpenderSelectorProps {
   visible?: boolean
 }
 function SpenderSelector({ value, onChange, visible }: Readonly<SpenderSelectorProps>) {
-  const tribeMembers = useRootStore((state) => Object.values(state.allMembers))
+  const tribeMembers = useMemberStore((state) => Object.values(state.allMembers))
 
   return (
     <Modal visible={visible} animationType="slide">
@@ -287,7 +287,7 @@ function PayeeSelector({
   visible,
   onSubmitEditing,
 }: Readonly<PayeeSelectorProps>) {
-  const payees = useRootStore((state) => state.payees)
+  const payees = useExpenseStore((state) => state.payees)
   const ref = React.useRef<TextInput>(null)
   useEffect(() => {
     ref.current?.focus()

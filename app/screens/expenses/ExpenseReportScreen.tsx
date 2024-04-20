@@ -13,18 +13,19 @@ import {
 } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
-import { Expense, MonthIdentifier, getExpenseSummary, getMonthId, useRootStore } from "app/models"
+import { Expense, MonthIdentifier, getExpenseSummary, getMonthId, useExpenseStore } from "app/models"
 import { ScrollView } from "react-native-gesture-handler"
 import { format, getDaysInMonth } from "date-fns"
 import { TxKeyPath, convertToLocaleAbbrevatedNumber } from "app/i18n"
 
 const CHART_WRAPPER_BACKGROUND_COLOR = colors.palette.secondary300
 const CONTENT_TEXT_COLOR = colors.text
+const MAX_MONEY_DECIMALS = 2
 
 interface ExpenseReportScreenProps extends AppStackScreenProps<"ExpenseReport"> {}
 export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function ExpenseReportScreen() {
   const [reportMonth, setReportMonth] = useState<MonthIdentifier>(getMonthId(new Date()))
-  const summary = useRootStore(getExpenseSummary(reportMonth))
+  const summary = useExpenseStore(getExpenseSummary(reportMonth))
 
   return (
     <Screen
@@ -125,7 +126,7 @@ function ReportMonthSelector({
   onReportMonthChange,
 }: ReportMonthSelectorProps): JSX.Element {
   const [isMonthSelectorVisible, setIsMonthSelectorVisible] = useState(false)
-  const availableMonthsNumbers = useRootStore((state) => Object.keys(state.expensesByMonth))
+  const availableMonthsNumbers = useExpenseStore((state) => Object.keys(state.expensesByMonth))
   const availableMonthsNumbersWithCurrentMonth = new Set([
     ...availableMonthsNumbers,
     getMonthId(new Date()),
@@ -306,7 +307,7 @@ function PieChartInnerCircle({
   return (
     <View style={$pieChartInnerCircleStyle}>
       <Text preset="bold" style={{ fontSize: sizing.lg, color: CONTENT_TEXT_COLOR }}>
-        ${expensesByCategory[selected]}
+        ${expensesByCategory[selected].toFixed(MAX_MONEY_DECIMALS)}
       </Text>
       <Text style={$subTextStyle}>{selected}</Text>
     </View>

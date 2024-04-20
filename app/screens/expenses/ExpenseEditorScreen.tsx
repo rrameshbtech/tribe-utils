@@ -3,7 +3,7 @@ import { Alert, PermissionsAndroid, View, ViewStyle } from "react-native"
 import { AppStackScreenProps, goBack } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
-import { Expense, getCreateExpenseFnFor, getSelf, useRootStore } from "app/models"
+import { Expense, getCreateExpenseFnFor, getSelf, useExpenseStore, useMemberStore } from "app/models"
 import { ExpenseSummaryCard } from "./ExpenseSummary"
 import { ExpenseForm } from "./ExpenseForm"
 import { TouchableOpacity } from "react-native-gesture-handler"
@@ -26,11 +26,11 @@ type FormState = "fresh" | "changed" | "saved"
 export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function ExpenseEditorScreen({
   route,
 }) {
-  const getExpense = useRootStore((state) => state.getExpense)
-  const upsertExpense = useRootStore((state) => state.upsertExpense)
-  const currentMember = useRootStore(getSelf)
-  const newExpense = useRootStore(getCreateExpenseFnFor(currentMember.id))
-  const captureLocation = useRootStore((state) => state.configs.captureLocation)
+  const getExpense = useExpenseStore((state) => state.getExpense)
+  const upsertExpense = useExpenseStore((state) => state.upsertExpense)
+  const currentMember = useMemberStore(getSelf)
+  const newExpense = useExpenseStore(getCreateExpenseFnFor(currentMember.id))
+  const captureLocation = useExpenseStore((state) => state.configs.captureLocation)
 
   const { expenseId } = route.params
   const [editField, setEditField] = useState<ExpenseInput>("amount")
@@ -218,8 +218,8 @@ const $pageContentStyles: ViewStyle = {
 }
 
 function ExpenseSummaryModeToggle() {
-  const mode = useRootStore((state) => state.expenseSummaryCardMode)
-  const setExpenseSummaryCardMode = useRootStore((state) => state.setExpenseSummaryCardMode)
+  const mode = useExpenseStore((state) => state.expenseSummaryCardMode)
+  const setExpenseSummaryCardMode = useExpenseStore((state) => state.setExpenseSummaryCardMode)
 
   if (mode === "details") {
     return (

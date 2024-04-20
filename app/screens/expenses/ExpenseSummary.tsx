@@ -2,7 +2,7 @@ import React from "react"
 import { Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { Card, Text, TrasWithComponents, MoneyLabel } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
-import { Expense, ExpenseLocation, useRootStore } from "app/models"
+import { Expense, ExpenseLocation, useExpenseStore, useMemberStore } from "app/models"
 import { ExpenseInput } from "./ExpenseEditorScreen"
 import { t } from "i18n-js"
 
@@ -16,7 +16,7 @@ export function ExpenseSummaryCard({
   editField,
   onExpenseDetailPress,
 }: Readonly<ExpenseSummaryCardProps>) {
-  const expenseSummaryCardMode = useRootStore((state) => state.expenseSummaryCardMode)
+  const expenseSummaryCardMode = useExpenseStore((state) => state.expenseSummaryCardMode)
 
   return expenseSummaryCardMode === "card" ? (
     <CardExpenseSummary {...{ expense, onExpenseDetailPress, editField }} />
@@ -239,7 +239,7 @@ interface SpenderLabelProps extends PressableLabelProps {
   value: string
 }
 function SpenderLabel({ value, onPress }: Readonly<SpenderLabelProps>) {
-  const spender = useRootStore((state) => state.allMembers[value] ?? { name: value })
+  const spender = useMemberStore((state) => state.allMembers[value] ?? { name: value })
   return (
     <Pressable onPress={() => onPress?.("spender")}>
       <Text text={spender.name} preset="bold" />

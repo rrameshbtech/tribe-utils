@@ -11,7 +11,7 @@ import {
 } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { ExpenseInput } from "./ExpenseEditorScreen"
-import { Expense, ExpenseCategory, PaymentMode, useRootStore } from "app/models"
+import { Expense, ExpenseCategory, PaymentMode, useExpenseStore } from "app/models"
 import DatePicker from "react-native-date-picker"
 import { useLocale } from "app/utils/useLocale"
 import { TxKeyPath } from "app/i18n"
@@ -182,7 +182,7 @@ function ExpensePayeeInput({
   onChange,
   onSubmitEditing,
 }: Readonly<ExpenseLocationInputProps>) {
-  const payees = useRootStore((state) => state.payees)
+  const payees = useExpenseStore((state) => state.payees)
   const ref = React.useRef<TextInput>(null)
   useEffect(() => {
     ref.current?.focus()
@@ -221,7 +221,7 @@ interface PaymentModeInputProps {
   value: string
 }
 function PaymentModeInput({ value, onChange }: Readonly<PaymentModeInputProps>) {
-  const paymentModes = useRootStore((state) => Object.values(state.paymentModes))
+  const paymentModes = useExpenseStore((state) => Object.values(state.paymentModes))
   const handlePaymentModeChange = (newMode: string) => {
     onChange({ mode: newMode })
   }
@@ -249,7 +249,7 @@ function ExpenseCategoryInput({
   const handleCategorySelection = (newCategory: string) => {
     onChange({ category: newCategory })
   }
-  const expenseCategories = useRootStore((state) => Object.values(state.expenseCategories))
+  const expenseCategories = useExpenseStore((state) => Object.values(state.expenseCategories))
   return (
     <>
       <InputLabel tx="expense.new.label.category" />
