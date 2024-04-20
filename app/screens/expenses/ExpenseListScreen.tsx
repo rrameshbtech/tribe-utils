@@ -64,13 +64,6 @@ function ExpenseListHeader() {
   const searchTerm = useRootStore((state) => state.searchTerm)
   const durationFilter = useRootStore((state) => state.expenseFilter)
 
-  const $expenseReportIconContainerStyle: ViewStyle = {
-    alignSelf: "center",
-    padding: sizing.xxs,
-    marginLeft: sizing.xs,
-    borderRadius: sizing.xxs,
-    backgroundColor: colors.background
-  }
   const $expenseSearchBarContainerStyle: ViewStyle = { flexDirection: "row" }
   const $expenseSearchBarStyle = { flex: 1 }
   return (

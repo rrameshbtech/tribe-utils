@@ -60,8 +60,12 @@ export interface MonthlyExpenses {
   data: Record<string, Expense>
 }
 
+type ExpensesByMonth = {
+  [month: MonthIdentifier]: MonthlyExpenses
+}
+
 export interface ExpenseSlice {
-  expensesByMonth: Record<MonthIdentifier, MonthlyExpenses>
+  expensesByMonth: ExpensesByMonth
 
   selectedMonth: MonthIdentifier
   expenseFilter: FilterDuration
@@ -86,20 +90,22 @@ export interface ExpenseSlice {
   payees: string[]
 }
 
-export const getCreateExpenseFnFor = (spender: string) => (state: ExpenseSlice): Expense => ({
-  id: Math.random().toString(36).substring(2, 9),
-  category: state.configs.defaultCategory,
-  amount: 0,
-  date: new Date(),
-  spender,
-  source: "Self",
-  mode: state.configs.defaultPaymentMode,
-  location: "",
-  payee: state.configs.defaultPayee,
-  notes: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-})
+export const getCreateExpenseFnFor =
+  (spender: string) =>
+  (state: ExpenseSlice): Expense => ({
+    id: Math.random().toString(36).substring(2, 9),
+    category: state.configs.defaultCategory,
+    amount: 0,
+    date: new Date(),
+    spender,
+    source: "Self",
+    mode: state.configs.defaultPaymentMode,
+    location: "",
+    payee: state.configs.defaultPayee,
+    notes: "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  })
 export function getMonthId(date: Date) {
   return format(date, EXPENSE_MONTH_IDENTIFIER_FORMAT) as MonthIdentifier
 }
@@ -109,16 +115,7 @@ export const createExpenseSlice: StateCreator<
   [],
   ExpenseSlice
 > = (set, get) => ({
-  expensesByMonth: {
-    202402: {
-      month: "202402",
-      data: defaultExpenses1(),
-    } as MonthlyExpenses,
-    202401: {
-      month: "202401",
-      data: defaultExpenses2(),
-    } as MonthlyExpenses,
-  },
+  expensesByMonth: {},
 
   selectedMonth: getMonthId(new Date()),
   expenseFilter: "Day",
@@ -133,8 +130,9 @@ export const createExpenseSlice: StateCreator<
   },
 
   selectedExpenses: () => get().expensesOf(get().selectedMonth),
-  expensesOf: (month: MonthIdentifier) =>
-    get().expensesByMonth[month] ?? ({ data: {} } as MonthlyExpenses),
+  expensesOf: (month: MonthIdentifier) => {
+    return get().expensesByMonth[month] ?? ({ data: {} } as MonthlyExpenses)
+  },
   upsertExpense: upsertExpenseFn(set),
   getExpense: (id: string) => get().selectedExpenses().data[id],
   removeExpense: removeExpenseFn(set),
@@ -210,7 +208,7 @@ export const getVisibleExpenses = (state: ExpenseSlice) => {
     .sort(decendingByDate())
 
   function decendingByDate(): ((a: Expense, b: Expense) => number) | undefined {
-    return (prev, next) => next.date.getTime() - prev.date.getTime()
+    return (prev, next) => next.date.getTime() - new Date(prev.date).getTime()
   }
 
   function byTerm(): (value: Expense, index: number, array: Expense[]) => unknown {

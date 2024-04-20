@@ -1,16 +1,14 @@
 import React, { FC, useState } from "react"
 import { View, ViewStyle } from "react-native"
 import { Button, Screen, Text, TextField } from "app/components"
-import { AppStackScreenProps, navigate } from "../navigators"
+import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 import { Member, getSelf, useRootStore } from "app/models"
 import { getUniqueId } from "app/utils/generators"
-import { useIsSignedIn } from "./auth"
 
 interface SettingsScreenProps extends AppStackScreenProps<"Settings"> {}
 
 export const SettingsScreen: FC<SettingsScreenProps> = function SettingsScreen() {
-  const isSignedIn = useIsSignedIn()
   return (
     <Screen
       style={$container}

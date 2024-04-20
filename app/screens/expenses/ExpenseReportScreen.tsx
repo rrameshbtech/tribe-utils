@@ -1,7 +1,16 @@
 import React, { FC, useEffect, useState } from "react"
 import { Modal, Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { EmptyState, Icon, Screen, Text, TrasWithComponents, MoneyLabel, SelectableList, SelectableListOption } from "app/components"
+import {
+  EmptyState,
+  Icon,
+  Screen,
+  Text,
+  TrasWithComponents,
+  MoneyLabel,
+  SelectableList,
+  SelectableListOption,
+} from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
 import { Expense, MonthIdentifier, getExpenseSummary, getMonthId, useRootStore } from "app/models"
@@ -16,7 +25,7 @@ interface ExpenseReportScreenProps extends AppStackScreenProps<"ExpenseReport"> 
 export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function ExpenseReportScreen() {
   const [reportMonth, setReportMonth] = useState<MonthIdentifier>(getMonthId(new Date()))
   const summary = useRootStore(getExpenseSummary(reportMonth))
-  
+
   return (
     <Screen
       style={$root}
@@ -111,22 +120,32 @@ interface ReportMonthSelectorProps {
   onReportMonthChange: (month: MonthIdentifier) => void
   reportMonth: MonthIdentifier
 }
-function ReportMonthSelector({reportMonth, onReportMonthChange} : ReportMonthSelectorProps): JSX.Element {
+function ReportMonthSelector({
+  reportMonth,
+  onReportMonthChange,
+}: ReportMonthSelectorProps): JSX.Element {
   const [isMonthSelectorVisible, setIsMonthSelectorVisible] = useState(false)
-  
   const availableMonthsNumbers = useRootStore((state) => Object.keys(state.expensesByMonth))
-  const selectedMonth = new Date(reportMonth.replace(/\B(?=(\d{4})*(\d{2})(?!\d))/g, "-"))
-  const availableMonthListItems = availableMonthsNumbers.map((month) => {
-    const date = new Date(month.replace(/\B(?=(\d{4})*(\d{2})(?!\d))/g, "-"))
-    return {
-      name: format(date, "MMMM''yy"),
-      value: month,
-      icon: {
-        type: "initials",
-        name: format(date, "MMM"),
-      }
-    } as SelectableListOption
-  })
+  const availableMonthsNumbersWithCurrentMonth = new Set([
+    ...availableMonthsNumbers,
+    getMonthId(new Date()),
+  ])
+
+  const formatMonthId = (month: string) => month.replace(/\B(?=(\d{4})*(\d{2})(?!\d))/g, "-")
+  const selectedMonth = new Date(formatMonthId(reportMonth))
+  const availableMonthListItems = Array.from(availableMonthsNumbersWithCurrentMonth).map(
+    (month) => {
+      const date = new Date(formatMonthId(month))
+      return {
+        name: format(date, "MMMM''yy"),
+        value: month,
+        icon: {
+          type: "initials",
+          name: format(date, "MMM"),
+        },
+      } as SelectableListOption
+    },
+  )
   return (
     <>
       <Pressable

@@ -130,7 +130,7 @@ function ExpenseDefaultValues({ configs, onChange }: ExpenseDefaultValuesProps) 
   const spender = useRootStore((state) => state.allMembers[spenderId])
   const [activeSelector, setActiveSelector] = React.useState<
     "paymentMode" | "category" | "payee" | "spender" | null
-  >("paymentMode")
+  >(null)
   const $formRowStyle: ViewStyle = { flexDirection: "row", justifyContent: "space-between" }
 
   function updatePaymentMode(value: string) {
