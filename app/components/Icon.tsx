@@ -16,7 +16,7 @@ import {
 import { FontAwesome } from "@expo/vector-icons"
 import { colors, sizing } from "app/theme"
 
-interface CommonIconProps {
+export interface CommonIconProps {
   color?: string
   size?: number
   shape?: "circle" | "square"

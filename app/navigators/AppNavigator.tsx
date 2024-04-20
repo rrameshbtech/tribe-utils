@@ -41,6 +41,7 @@ export type ExpenseScreensParamList = {
 export type AppScreensParamList = {
   Welcome: undefined
   Settings: undefined
+  Home: undefined
 }
 
 export type AllScreensParamList = AppScreensParamList & ExpenseScreensParamList
@@ -104,6 +105,11 @@ function renderSignedInStack() {
   const isInitialSetupComplete = useSettingsStore((state) => state.isInitialSetupComplete)
   return (
     <Stack.Group>
+      <Stack.Screen
+        name="Home"
+        component={Screens.HomeScreen}
+        navigationKey={isInitialSetupComplete ? "user" : "guest"}
+      />
       <Stack.Screen name="ExpenseTabs" component={ExpenseTabs} />
       <Stack.Screen
         name="ExpenseEditor"
@@ -133,7 +139,7 @@ const AppStack = function AppStack() {
   const isInitialSetupComplete = useSettingsStore((state) => state.isInitialSetupComplete)
   return (
     <Stack.Navigator
-      initialRouteName="Welcome"
+      initialRouteName={isInitialSetupComplete ? "Home" : "Welcome"}
       screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
     >
       {isInitialSetupComplete ? renderSignedInStack() : renderSignedOutStack()}

@@ -9,10 +9,14 @@ const en = {
     edit: "Edit",
     notSelected: "Not selected",
     getStarted: "Get started",
+    save: "Save",
+  },
+  homeScreen: {
+    expenses: "Expenses",
+    settings: "Settings",
   },
   welcomeScreen: {
-    postscript:
-      "Follow simple steps to get started.",
+    postscript: "Follow simple steps to get started.",
     welcomeTitle: "Welcome to the Tribe!",
     privateSpace: "No crap! Just a secure space for tracking your chores",
   },
@@ -62,7 +66,8 @@ const en = {
       locationPermissionButtonNegative: "No",
       locationPermissionButtonPositive: "Yes",
       locationPermissionDeniedTitle: "Location permission denied",
-      locationPermissionDeniedMessage: "Please enable location access in your app settings to capture expense location",
+      locationPermissionDeniedMessage:
+        "Please enable location access in your app settings to capture expense location",
     },
     list: {
       spentAt: "{{spentAt}}",

@@ -17,7 +17,8 @@ export const imageIconRegistry = {
   mobilePay: require("../../assets/icons/mobilePay.png"),
   mobileWallet: require("../../assets/icons/mobileWallet.png"),
   calendarFilter: require("../../assets/icons/calendarFilter.png"),
-  loan: require("../../assets/icons/loan.png"),  
+  loan: require("../../assets/icons/loan.png"),
+  expense: require("../../assets/icons/expense.png"),
 }
 
 export type FontIconType = "FontAwesome" | "FontAwesome5" | "Ionicons" | "Material"

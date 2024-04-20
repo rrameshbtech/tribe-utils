@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react"
 import { View, ViewStyle } from "react-native"
-import { Button, Screen, Text, TextField } from "app/components"
-import { AppStackScreenProps } from "../navigators"
+import { Button, Icon, Screen, Text, TextField } from "app/components"
+import { AppStackScreenProps, goBack } from "../navigators"
 import { colors, spacing } from "../theme"
 import { Member, getSelf, useMemberStore, useSettingsStore } from "app/models"
 import { getUniqueId } from "app/utils/generators"
@@ -26,7 +26,15 @@ export const SettingsScreen: FC<SettingsScreenProps> = function SettingsScreen()
 
 function SettingsHeader() {
   return (
-    <View style={{ backgroundColor: colors.tint }}>
+    <View
+      style={{
+        backgroundColor: colors.tint,
+        flexDirection: "row",
+        padding: spacing.sm,
+        alignItems: "center",
+      }}
+    >
+      <Icon type="image" name="back" onPress={() => goBack()} color={colors.background}></Icon>
       <Text
         tx="settingsScreen.title"
         preset="subheading"
@@ -89,7 +97,7 @@ function AuthUserConfiguration() {
         onSubmitEditing={saveAuthUser}
       />
       <Button
-        tx="settingsScreen.finishSetup"
+        tx="common.save"
         onPress={saveAuthUser}
         style={{ marginTop: spacing.xl, marginHorizontal: spacing.sm }}
         disabled={!isValidName(user.name) || !isValidEmail(user.email)}
