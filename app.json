@@ -27,7 +27,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.rrameshbtech.tribeutils"
+      "bundleIdentifier": "com.rrameshbtech.tribeutils",
+      "deploymentTarget": "14.0"
     },
     "web": {
       "favicon": "./assets/images/app-icon-web-favicon.png",
