@@ -67,7 +67,7 @@ const ExpenseTabs = function ExpenseTabs() {
         tabBarIcon: ({ focused, color, size }) => {
           const containerStyle: ViewStyle = {
             opacity: focused ? 1 : 0.5,
-            backgroundColor: focused ? colors.palette.primary400 : colors.tint,
+            backgroundColor: focused ? colors.palette.primary500 : colors.tint,
             borderRadius: size / 2,
             paddingVertical: spacing.xxs,
             paddingHorizontal: spacing.md,
@@ -88,7 +88,7 @@ const ExpenseTabs = function ExpenseTabs() {
           )
         },
         tabBarActiveTintColor: colors.background,
-        tabBarInactiveTintColor: colors.background,
+        tabBarInactiveTintColor: colors.text,
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: { backgroundColor: colors.tint },

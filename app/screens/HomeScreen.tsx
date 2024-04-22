@@ -38,13 +38,13 @@ interface IconButtonProps {
 }
 function BigIconButton({ tx, renderIcon, onPress }: IconButtonProps) {
   const Icon = renderIcon({
-    color: colors.palette.primary400,
+    color: colors.palette.primary500,
     size: sizing.xxxl,
   })
   return (
     <Pressable style={$buttonContainer} onPress={onPress}>
       {Icon}
-      <Text tx={tx} style={{ color: colors.palette.primary500 }} />
+      <Text tx={tx} style={{ color: colors.palette.primary600 }} />
     </Pressable>
   )
 }
@@ -55,6 +55,9 @@ const $buttonContainer: ViewStyle = {
   alignItems: "center",
   flexDirection: "column",
   backgroundColor: colors.palette.primary100,
+  borderRadius: sizing.md,
+  borderWidth: 1,
+  borderColor: colors.palette.primary200,
   padding: spacing.sm,
 }
 const $container: ViewStyle = {

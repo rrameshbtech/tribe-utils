@@ -1,48 +1,40 @@
 // TODO: write documentation for colors and palette in own markdown file and add links from here
 
 const palette = {
-  neutral100: "#FFFFFF",
+  neutral100: "#F5F5F5",
   neutral200: "#F4F2F1",
   neutral300: "#ede8e6",
   neutral400: "#D7CEC9",
-  // neutral400: "#B6ACA6",
   neutral500: "#978F8A",
   neutral600: "#564E4A",
   neutral700: "#3C3836",
   neutral800: "#191015",
   neutral900: "#000000",
 
-  primary100: "#E8E1F0",
-  primary200: "#C3ADDB",
-  primary300: "#9F7AC6",
-  primary400: "#7B47B1",
-  primary500: "#56229C",
-  primary600: "#421A7E",
+  primary100: "#E8F6E9",
+  primary200: "#C8E6C9",
+  primary300: "#A5D6A7",
+  primary400: "#81C784",
+  primary500: "#4CAF50", // #8dd69c
+  primary600: "#388E3C",
 
-  secondary100: "#E2F0E8",
-  secondary200: "#ADD8BF",
-  secondary300: "#79C196",
-  secondary400: "#44996D",
-  secondary500: "#006144",
+  secondary100: "#F9DED9",
+  secondary200: "#F3B9C3",
+  secondary300: "#EE94AD",
+  secondary400: "#E96988",
+  secondary500: "#D34B80", // #d34b80
 
   accent100: "#FFEED4",
   accent200: "#FFE1B2",
   accent300: "#FDD495",
   accent400: "#FBC878",
   accent500: "#FFBB50",
-
-  purple100: "#E8E1F0",
-  purple200: "#C3ADDB",
-  purple300: "#9F7AC6",
-  purple400: "#7B47B1",
-  purple500: "#56229C",
-
   angry100: "#F2D6CD",
   angry500: "#C03403",
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
-} as const
+} as const;
 
 // Todo: Make colors refered from the named ones and not directly from palate. where ever possile
 export const colors = {
@@ -75,7 +67,7 @@ export const colors = {
   /**
    * The main tinting color.
    */
-  tint: palette.primary500,
+  tint: palette.primary400,
   /**
    * A subtle color used for lines.
    */

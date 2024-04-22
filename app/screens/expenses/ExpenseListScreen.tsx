@@ -88,7 +88,7 @@ const $expenseListHeaderStyles: ViewStyle = {
   flex: 1,
   flexDirection: "column",
   justifyContent: "space-between",
-  backgroundColor: colors.palette.primary500,
+  backgroundColor: colors.tint,
   padding: spacing.xs,
   marginBottom: spacing.xxs,
 }
@@ -122,11 +122,11 @@ function ExpenseFilterIcon({ containerStyle }: Readonly<ExpenseFilterIconProps>)
     alignItems: "center",
     justifyContent: "center",
   }
-  const $iconTextStyles = { color: colors.palette.neutral600, lineHeight: 8 }
+  const $iconTextStyles = { color: colors.textDim, lineHeight: 8 }
 
   return (
     <TouchableOpacity onPress={() => toggleFilter()} style={$filterIconWrapperStyles}>
-      <Icon type="image" name="calendarFilter" size={24} color={colors.palette.neutral600} />
+      <Icon type="image" name="calendarFilter" size={24} color={colors.textDim} />
       <Text size="xxxs" style={$iconTextStyles} tx={`expense.list.filter.${durationFilter}`} />
     </TouchableOpacity>
   )
@@ -137,15 +137,15 @@ const $expenseSummaryStyles: ViewStyle = {
   flexDirection: "row",
   columnGap: spacing.xs,
   justifyContent: "flex-end",
-  backgroundColor: colors.palette.primary500,
-  padding: spacing.xs,
+  backgroundColor: colors.tint,
+  padding: spacing.xxs,
 }
 function ExpenseSummary() {
   const totalExpenses = useExpenseStore(getVisibleExpenseTotal)
   return (
     <View style={$expenseSummaryStyles}>
-      <Text style={{ color: colors.palette.neutral200 }} tx="expense.list.totalExpenses" />
-      <MoneyLabel amount={totalExpenses} style={{ color: colors.palette.neutral200 }} />
+      <Text style={{ color: colors.textDim }} tx="expense.list.totalExpenses" />
+      <MoneyLabel amount={totalExpenses} style={{ color: colors.textDim }} />
     </View>
   )
 }
@@ -153,7 +153,7 @@ function ExpenseSummary() {
 function AddExpenseButton() {
   const $rightBottomStyles: ViewStyle = {
     position: "absolute",
-    bottom: spacing.xl,
+    bottom: spacing.sm,
     right: spacing.xl,
   }
 
@@ -161,7 +161,7 @@ function AddExpenseButton() {
     navigate("ExpenseEditor")
   }
 
-  const $addExpenseButtonContainerStyle: ViewStyle = { backgroundColor: colors.tint, opacity: 0.9 }
+  const $addExpenseButtonContainerStyle: ViewStyle = { backgroundColor: colors.palette.primary500, opacity: 0.9 }
   return (
     <TouchableOpacity
       style={$rightBottomStyles}

@@ -13,12 +13,20 @@ import {
 } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
-import { Expense, MonthIdentifier, getExpenseSummary, getMonthId, useExpenseStore } from "app/models"
+import {
+  Expense,
+  MonthIdentifier,
+  getExpenseSummary,
+  getMonthId,
+  useExpenseStore,
+} from "app/models"
 import { ScrollView } from "react-native-gesture-handler"
 import { format, getDaysInMonth } from "date-fns"
 import { TxKeyPath, convertToLocaleAbbrevatedNumber } from "app/i18n"
 
-const CHART_WRAPPER_BACKGROUND_COLOR = colors.palette.secondary300
+const HEADER_TEXT_COLOR = colors.background
+const CHART_WRAPPER_BACKGROUND_COLOR = colors.palette.secondary100
+const CHART_WRAPPER_BORDER_COLOR = colors.palette.secondary200
 const CONTENT_TEXT_COLOR = colors.text
 const MAX_MONEY_DECIMALS = 2
 
@@ -105,7 +113,7 @@ function ReportHeader({ reportMonth, onReportMonthChange }: ReportHeaderProps) {
       <TrasWithComponents
         tx="expense.report.title"
         preset="subheading"
-        style={{ color: colors.background }}
+        style={{ color: HEADER_TEXT_COLOR }}
         txOptions={{
           month: <ReportMonthSelector {...{ reportMonth, onReportMonthChange }} />,
         }}
@@ -155,10 +163,10 @@ function ReportMonthSelector({
       >
         <Text
           preset="subheading"
-          style={{ color: colors.background }}
+          style={{ color: HEADER_TEXT_COLOR }}
           text={format(selectedMonth, "MMMM yy")}
         ></Text>
-        <Icon type="FontAwesome" name="caret-down" color={colors.background} />
+        <Icon type="FontAwesome" name="caret-down" color={HEADER_TEXT_COLOR} />
       </Pressable>
       <Modal
         visible={isMonthSelectorVisible}
@@ -364,7 +372,7 @@ function ChartWrapper({ title, children }: Readonly<ChartWrapperProps>) {
     alignItems: "center",
     backgroundColor: CHART_WRAPPER_BACKGROUND_COLOR,
     padding: spacing.sm,
-    borderColor: CHART_WRAPPER_BACKGROUND_COLOR,
+    borderColor: CHART_WRAPPER_BORDER_COLOR,
     borderWidth: 1,
     borderRadius: sizing.xs,
     margin: spacing.xs,
