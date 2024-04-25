@@ -91,6 +91,7 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
       return
     }
 
+    // Todo: Move this logic to a hook and in editor and make it async
     PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(
       (locationAllowed) => {
         if (locationAllowed) {
@@ -115,7 +116,7 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
     setFormState("saved")
     Toast.show({
       text1: translate("expense.new.savedMessage"),
-      position: "bottom",
+      position: "top",
     })
   }
 

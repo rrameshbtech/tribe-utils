@@ -88,7 +88,7 @@ const ExpenseTabs = function ExpenseTabs() {
           )
         },
         tabBarActiveTintColor: colors.background,
-        tabBarInactiveTintColor: colors.text,
+        tabBarInactiveTintColor: colors.palette.neutral900,
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: { backgroundColor: colors.tint },

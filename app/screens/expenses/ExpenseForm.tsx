@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { View, ViewStyle, TextInput, AppState, Platform } from "react-native"
+import { View, ViewStyle, TextInput, AppState, Platform, Pressable } from "react-native"
 import {
   AutoComplete,
   TextField,
@@ -36,6 +36,7 @@ export function ExpenseForm({
     <View style={$formContainerStyles}>
       {renderVisibleField(visibleField, expense, onChange, onNext)}
       <View style={$controlBarStyles}>
+        <Pressable onPressIn={onSave} >
         <Icon
           type="FontAwesome"
           name="check"
@@ -43,8 +44,8 @@ export function ExpenseForm({
           size={sizing.xl}
           color={colors.background}
           containerStyle={$saveIconStyle}
-          onPress={onSave}
         />
+        </Pressable>
       </View>
     </View>
   )

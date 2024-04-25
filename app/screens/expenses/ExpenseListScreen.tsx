@@ -161,15 +161,18 @@ function AddExpenseButton() {
     navigate("ExpenseEditor")
   }
 
-  const $addExpenseButtonContainerStyle: ViewStyle = { backgroundColor: colors.palette.primary500, opacity: 0.9 }
+  const $addExpenseButtonContainerStyle: ViewStyle = {
+    backgroundColor: colors.palette.primary500,
+    opacity: 0.9,
+  }
   return (
     <TouchableOpacity
       style={$rightBottomStyles}
       accessibilityRole="button"
-      onPress={goToAddExpenseScreen}
+      onPressIn={goToAddExpenseScreen}
     >
       <Icon
-        type="FontAwesome5"
+        type="FontAwesome"
         name="plus"
         shape="circle"
         size={sizing.xl}

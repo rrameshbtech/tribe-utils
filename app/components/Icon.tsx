@@ -147,7 +147,6 @@ const $containerStyle = (size: number): ViewStyle => ({
   justifyContent: "center",
   minWidth: size * 2,
   minHeight: size * 2,
-  padding: size / 2,
   backgroundColor: colors.palette.primary100,
   borderColor: colors.palette.primary200,
   borderWidth: 1,
