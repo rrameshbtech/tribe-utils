@@ -23,11 +23,13 @@ import {
 import { ScrollView } from "react-native-gesture-handler"
 import { format, getDaysInMonth } from "date-fns"
 import { TxKeyPath, convertToLocaleAbbrevatedNumber } from "app/i18n"
+import { useLocale } from "app/utils/useLocale"
 
 const HEADER_TEXT_COLOR = colors.background
 const CHART_WRAPPER_BACKGROUND_COLOR = colors.palette.secondary100
 const CHART_WRAPPER_BORDER_COLOR = colors.palette.secondary200
 const CONTENT_TEXT_COLOR = colors.text
+const CONTENT_HIGHLIGHT_TEXT_COLOR = colors.palette.primary600
 const MAX_MONEY_DECIMALS = 2
 
 interface ExpenseReportScreenProps extends AppStackScreenProps<"ExpenseReport"> {}
@@ -307,22 +309,34 @@ interface PieChartInnerCircleProps {
   selected: string
 }
 function PieChartInnerCircle({
-  data: expensesByCategory,
+  data: totalByGroup,
   selected,
 }: Readonly<PieChartInnerCircleProps>): React.JSX.Element {
+  const { currencySymbol } = useLocale()
+
+  const getFontSize = (content: string) => (content.length <= 8 ? sizing.md : sizing.sm)
+  // TODO: format using formatLocaleMoney
+  const total = totalByGroup[selected].toFixed(MAX_MONEY_DECIMALS)
+  const totalTextSize = getFontSize(total)
+  const groupTextSize = getFontSize(selected)
+
   const $pieChartInnerCircleStyle: ViewStyle = { justifyContent: "center", alignItems: "center" }
-  const $subTextStyle = { fontSize: sizing.md, color: CONTENT_TEXT_COLOR }
+  const $groupTextStyle = { fontSize: groupTextSize, color: CONTENT_HIGHLIGHT_TEXT_COLOR }
+  const $totalTextStyle = { fontSize: totalTextSize, color: CONTENT_HIGHLIGHT_TEXT_COLOR }
+
   return (
     <View style={$pieChartInnerCircleStyle}>
-      <Text preset="bold" style={{ fontSize: sizing.lg, color: CONTENT_TEXT_COLOR }}>
-        ${expensesByCategory[selected].toFixed(MAX_MONEY_DECIMALS)}
+      <Text style={$totalTextStyle}>
+        {currencySymbol}
+        {total}
       </Text>
-      <Text style={$subTextStyle}>{selected}</Text>
+      <Text style={$groupTextStyle}>{selected}</Text>
     </View>
   )
 }
 
 function LineChartByDate({ data }: { data: Record<string, number> }) {
+  const { currencySymbol } = useLocale()
   const chartData = Array(getDaysInMonth(new Date()))
     .fill(1)
     .map((_, index) => {
@@ -356,7 +370,12 @@ function LineChartByDate({ data }: { data: Record<string, number> }) {
         hideDataPoints1
         yAxisTextStyle={{ fontSize: sizing.sm, color: CONTENT_TEXT_COLOR }}
         xAxisColor={CONTENT_TEXT_COLOR}
-        formatYLabel={(label) => "$ " + convertToLocaleAbbrevatedNumber(parseFloat(label))}
+        xAxisTextNumberOfLines={1}
+        xAxisLabelsHeight={50}
+        rotateLabel
+        formatYLabel={(label) =>
+          `${currencySymbol}${convertToLocaleAbbrevatedNumber(parseFloat(label))}`
+        }
       />
     </ChartWrapper>
   )

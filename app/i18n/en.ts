@@ -128,7 +128,7 @@ const en = {
       title: "Report of {{month}}",
       subtitle: "Choose your report format",
       summaryLargestExpenseText: "{{amount}} for {{category}} in {{payee}}",
-      expenseByDate: "Expenses per date",
+      expenseByDate: "Expenses per day",
       expenseByCategory: "Expenses per category",
       expenseByPayee: "Expenses per payee",
       expenseByPaymentMode: "Expenses per payment mode",

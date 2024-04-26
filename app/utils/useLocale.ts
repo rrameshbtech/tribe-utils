@@ -8,11 +8,15 @@ export function useLocale() {
     locales[0].regionCode && INDIAN_SUBCONTINENT_REGION_CODES.includes(locales[0].regionCode)
       ? "Indian"
       : "International"
-  const digitGroupingRegex = numberingSystem=== "Indian" ? /\B(?=(\d{2})*(\d{3})(?!\d))/g : /\B(?=(\d{3})+(?!\d))/g
-  
+  const digitGroupingRegex =
+    numberingSystem === "Indian" ? /\B(?=(\d{2})*(\d{3})(?!\d))/g : /\B(?=(\d{3})+(?!\d))/g
+  const formatLocaleMoney = (value: number) => {
+    return value.toString().replace(digitGroupingRegex, locales[0].digitGroupingSeparator ?? ",")
+  }
   return {
     ...locales[0],
     numberingSystem,
-    digitGroupingRegex
+    digitGroupingRegex,
+    formatLocaleMoney,
   }
 }
