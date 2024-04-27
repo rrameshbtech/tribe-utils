@@ -171,39 +171,47 @@ function ExpenseDefaultValues({ configs, onChange }: ExpenseDefaultValuesProps) 
   }
   return (
     <>
-      <View style={$formRowStyle}>
-        <Text tx="expense.settings.defaultSpender" />
-        <EditLabel value={spender?.name} onPress={() => setActiveSelector("spender")} />
+      <SelectorRow
+        labelTx="expense.settings.defaultSpender"
+        value={spender.name}
+        onEdit={() => setActiveSelector("spender")}
+      >
         <SpenderSelector
           visible={activeSelector === "spender"}
           value={spenderId}
           onClose={onChangeEnd}
           onChange={updateSpender}
         />
-      </View>
-      <View style={$formRowStyle}>
-        <Text tx="expense.settings.defaultPaymentMode" />
-        <EditLabel value={paymentMode} onPress={() => setActiveSelector("paymentMode")} />
+      </SelectorRow>
+      <SelectorRow
+        labelTx="expense.settings.defaultPaymentMode"
+        value={paymentMode}
+        onEdit={() => setActiveSelector("paymentMode")}
+      >
         <PaymentModeSelector
           visible={activeSelector === "paymentMode"}
           value={paymentMode}
           onClose={onChangeEnd}
           onChange={updatePaymentMode}
         />
-      </View>
-      <View style={$formRowStyle}>
-        <Text tx="expense.settings.defaultCategory" />
-        <EditLabel value={category} onPress={() => setActiveSelector("category")} />
+      </SelectorRow>
+      <SelectorRow
+        labelTx="expense.settings.defaultCategory"
+        value={category}
+        onEdit={() => setActiveSelector("category")}
+      >
         <CategorySelector
           visible={activeSelector === "category"}
           value={category}
           onChange={updateCategory}
           onClose={onChangeEnd}
         />
-      </View>
-      <View style={$formRowStyle}>
-        <Text tx="expense.settings.defaultPayee" />
-        <EditLabel value={payee} onPress={() => setActiveSelector("payee")} />
+      </SelectorRow>
+      <SelectorRow
+        labelTx="expense.settings.defaultPayee"
+        value={payee}
+        onEdit={() => setActiveSelector("payee")}
+      >
         <PayeeSelector
           visible={activeSelector === "payee"}
           value={payee}
@@ -211,14 +219,31 @@ function ExpenseDefaultValues({ configs, onChange }: ExpenseDefaultValuesProps) 
           onClose={onChangeEnd}
           onSubmitEditing={onChangeEnd}
         />
-      </View>
+      </SelectorRow>
     </>
+  )
+}
+
+interface SelectorRowProps {
+  children: React.ReactNode
+  labelTx: TxKeyPath
+  value?: string
+  onEdit?: () => void
+}
+function SelectorRow({ children, labelTx, value, onEdit }: SelectorRowProps) {
+  const $formRowStyle: ViewStyle = { flexDirection: "row", justifyContent: "space-between" }
+  return (
+    <View style={$formRowStyle}>
+      <Text tx={labelTx} />
+      <EditLabel value={value} onPress={onEdit} />
+      {children}
+    </View>
   )
 }
 
 interface EditLabelProps {
   value?: string
-  onPress: () => void
+  onPress?: () => void
 }
 function EditLabel({ value, onPress }: EditLabelProps) {
   const $valueContainerStyle: ViewStyle = {
@@ -243,7 +268,12 @@ interface PaymentModeSelectorProps {
   value: string
   visible?: boolean
 }
-function PaymentModeSelector({ value, onChange, visible, onClose }: Readonly<PaymentModeSelectorProps>) {
+function PaymentModeSelector({
+  value,
+  onChange,
+  visible,
+  onClose,
+}: Readonly<PaymentModeSelectorProps>) {
   const paymentModes = useExpenseStore((state) => Object.values(state.paymentModes))
 
   return (
@@ -328,8 +358,8 @@ function SelectorModalHeader({ tx, onClose }: SelectorModalHeaderProps) {
   }
   return (
     <View style={$selectorHeaderStyle}>
-      <Text preset="subheading" tx={tx} style={{ color: colors.tint, flex:1 }} />
-      <Icon type="Ionicons" name="close" onPress={onClose} size={sizing.lg} ></Icon>
+      <Text preset="subheading" tx={tx} style={{ color: colors.tint, flex: 1 }} />
+      <Icon type="Ionicons" name="close" onPress={onClose} size={sizing.lg}></Icon>
     </View>
   )
 }
