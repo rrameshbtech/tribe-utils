@@ -1,23 +1,23 @@
 import React, { FC } from "react"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
-import {
-  Button,
-  Text,
-} from "app/components"
+import { Button, Screen, Text } from "app/components"
 import { AppStackScreenProps, navigate } from "../navigators"
 import { colors, spacing } from "../theme"
 import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 
-const welcomeLogo = require("../../assets/images/logo.png")
+const welcomeLogo = require("../../assets/images/tribal-women-celebrate.png")
 
 interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> {}
 
-export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen(
-) {
+export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen() {
   const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])
 
   return (
-    <View style={$container}>
+    <Screen
+      contentContainerStyle={$container}
+      safeAreaEdges={["top"]}
+      StatusBarProps={{ backgroundColor: colors.backgroundHighlight }}
+    >
       <View style={$topContainer}>
         <Image style={$welcomeLogo} source={welcomeLogo} resizeMode="contain" />
         <Text
@@ -31,9 +31,15 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen(
 
       <View style={[$bottomContainer, $bottomContainerInsets]}>
         <Text tx="welcomeScreen.postscript" size="md" />
-        <Button tx="common.getStarted" onPress={() => {navigate("Settings")}} preset="reversed" />
+        <Button
+          tx="common.getStarted"
+          onPress={() => {
+            navigate("Settings")
+          }}
+          preset="reversed"
+        />
       </View>
-    </View>
+    </Screen>
   )
 }
 
@@ -54,16 +60,15 @@ const $bottomContainer: ViewStyle = {
   flexShrink: 1,
   flexGrow: 0,
   flexBasis: "43%",
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundHighlight,
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,
   paddingHorizontal: spacing.lg,
   justifyContent: "space-around",
 }
 const $welcomeLogo: ImageStyle = {
-  height: 88,
+  height: 150,
   width: "100%",
-  marginBottom: spacing.xxl,
 }
 
 const $welcomeHeading: TextStyle = {

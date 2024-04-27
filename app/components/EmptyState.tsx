@@ -5,8 +5,7 @@ import { spacing } from "../theme"
 import { Button, ButtonProps } from "./Button"
 import { Text, TextProps } from "./Text"
 
-const sadFace = require("../../assets/images/sad-face.png")
-const welcomeFace = require("../../assets/images/welcome-face.png")
+const tribalWomenDoNotKnow = require("../../assets/images/tribal-women-do-not-know.png")
 
 interface EmptyStateProps {
   /**
@@ -111,13 +110,13 @@ interface EmptyStatePresetItem {
 
 const EmptyStatePresets = {
   generic: {
-    imageSource: sadFace,
+    imageSource: tribalWomenDoNotKnow,
     heading: translate("emptyStateComponent.generic.heading"),
     content: translate("emptyStateComponent.generic.content"),
     button: translate("emptyStateComponent.generic.button"),
   } as EmptyStatePresetItem,
   noExpenses: {
-    imageSource: welcomeFace,
+    imageSource: tribalWomenDoNotKnow,
     heading: translate("emptyStateComponent.noExpenses.heading"),
     content: translate("emptyStateComponent.noExpenses.content"),
   } as EmptyStatePresetItem,
@@ -167,6 +166,7 @@ export function EmptyState(props: EmptyStateProps) {
     (isHeadingPresent || isContentPresent || isButtonPresent) && { marginBottom: spacing.xxxs },
     $imageStyleOverride,
     ImageProps?.style,
+    { width: 200, height:200 },
   ]
   const $headingStyles = [
     $heading,
