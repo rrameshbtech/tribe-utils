@@ -60,6 +60,8 @@ export const colors = {
    * The default color of the screen background.
    */
   background: palette.neutral200,
+
+  backgroundHighlight: palette.neutral300,
   /**
    * The default border color.
    */
@@ -67,7 +69,7 @@ export const colors = {
   /**
    * The main tinting color.
    */
-  tint: palette.primary400,
+  tint: palette.primary500,
   /**
    * A subtle color used for lines.
    */

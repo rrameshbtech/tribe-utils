@@ -63,7 +63,7 @@ function ExpenseCategoryIcon({ category }: Readonly<ExpenseCategoryIconProps>) {
     <IconComponent
       {...categoryIcon}
       size={sizing.lg}
-      color={colors.palette.primary500}
+      color={colors.tint}
       shape="circle"
     />
   )

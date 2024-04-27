@@ -30,7 +30,7 @@ export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseLis
       style={$root}
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top"]}
-      StatusBarProps={{ backgroundColor: colors.tint }}
+      StatusBarProps={{ backgroundColor: colors.backgroundHighlight }}
     >
       <View style={$listView}>
         <FlatList<Expense>
@@ -79,9 +79,11 @@ const $expenseListHeaderStyles: ViewStyle = {
   flex: 1,
   flexDirection: "column",
   justifyContent: "space-between",
-  backgroundColor: colors.tint,
+  backgroundColor: colors.backgroundHighlight,
   padding: spacing.xs,
   marginBottom: spacing.xxs,
+  borderBottomColor: colors.border,
+  borderBottomWidth: 1,
 }
 
 interface SearchIconProps {
@@ -173,7 +175,6 @@ const $expenseSummaryStyles: ViewStyle = {
   flexDirection: "row",
   columnGap: spacing.xs,
   justifyContent: "flex-end",
-  backgroundColor: colors.tint,
   padding: spacing.xxs,
 }
 function ExpenseSummary() {

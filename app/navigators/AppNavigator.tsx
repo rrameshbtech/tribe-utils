@@ -69,7 +69,7 @@ const ExpenseTabs = function ExpenseTabs() {
         tabBarInactiveTintColor: colors.palette.neutral900,
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: { backgroundColor: colors.tint },
+        tabBarStyle: { backgroundColor: colors.backgroundHighlight, borderTopColor: colors.border, borderTopWidth: 1 },
       })}
     >
       <Tab.Screen name="ExpenseList" component={Screens.ExpenseListScreen} />
@@ -90,7 +90,7 @@ const ExpenseTabs = function ExpenseTabs() {
     return ({ focused, color, size }) => {
       const iconStyle: ViewStyle = {
         opacity: focused ? 1 : 0.5,
-        backgroundColor: focused ? colors.palette.primary500 : colors.tint,
+        backgroundColor: focused ? colors.tint : colors.backgroundHighlight,
         borderRadius: size / 2,
         paddingVertical: spacing.xxs,
         paddingHorizontal: spacing.md,
@@ -152,7 +152,7 @@ const AppStack = function AppStack() {
   return (
     <Stack.Navigator
       initialRouteName={isInitialSetupComplete ? "Home" : "Welcome"}
-      screenOptions={{ headerShown: false, navigationBarColor: colors.tint }}
+      screenOptions={{ headerShown: false, navigationBarColor: colors.backgroundHighlight }}
     >
       {isInitialSetupComplete ? renderSignedInStack() : renderSignedOutStack()}
     </Stack.Navigator>

@@ -25,9 +25,9 @@ import { format, getDaysInMonth } from "date-fns"
 import { TxKeyPath, convertToLocaleAbbrevatedNumber } from "app/i18n"
 import { useLocale } from "app/utils/useLocale"
 
-const HEADER_TEXT_COLOR = colors.background
-const CHART_WRAPPER_BACKGROUND_COLOR = colors.palette.secondary100
-const CHART_WRAPPER_BORDER_COLOR = colors.palette.secondary200
+const HEADER_TEXT_COLOR = colors.tint
+const CHART_WRAPPER_BACKGROUND_COLOR = colors.backgroundHighlight
+const CHART_WRAPPER_BORDER_COLOR = colors.border
 const CONTENT_TEXT_COLOR = colors.text
 const CONTENT_HIGHLIGHT_TEXT_COLOR = colors.palette.primary600
 
@@ -41,7 +41,7 @@ export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function Expens
       style={$root}
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top"]}
-      StatusBarProps={{ backgroundColor: colors.tint }}
+      StatusBarProps={{ backgroundColor: colors.backgroundHighlight }}
     >
       <ScrollView>
         <ReportHeader reportMonth={reportMonth} onReportMonthChange={setReportMonth} />
@@ -105,7 +105,9 @@ function ReportHeader({ reportMonth, onReportMonthChange }: ReportHeaderProps) {
     flex: 1,
     flexDirection: "row",
     padding: spacing.sm,
-    backgroundColor: colors.tint,
+    backgroundColor: colors.backgroundHighlight,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
     columnGap: spacing.sm,
     marginBottom: spacing.md,
   }
@@ -390,11 +392,11 @@ function ChartWrapper({ title, children }: Readonly<ChartWrapperProps>) {
   const $chartTitleStyle: TextStyle = {
     alignSelf: "flex-start",
     marginBottom: spacing.sm,
-    color: CONTENT_TEXT_COLOR,
+    color: colors.tint,
   }
   return (
     <View style={$chartContainerStyle}>
-      <Text preset="subheading" tx={title} style={$chartTitleStyle} />
+      <Text preset="bold" tx={title} style={$chartTitleStyle} />
       {children}
     </View>
   )

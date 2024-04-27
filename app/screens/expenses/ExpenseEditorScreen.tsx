@@ -3,7 +3,13 @@ import { Alert, PermissionsAndroid, View, ViewStyle } from "react-native"
 import { AppStackScreenProps, goBack } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
-import { Expense, getCreateExpenseFnFor, getSelf, useExpenseStore, useMemberStore } from "app/models"
+import {
+  Expense,
+  getCreateExpenseFnFor,
+  getSelf,
+  useExpenseStore,
+  useMemberStore,
+} from "app/models"
 import { ExpenseSummaryCard } from "./ExpenseSummary"
 import { ExpenseForm } from "./ExpenseForm"
 import { TouchableOpacity } from "react-native-gesture-handler"
@@ -137,7 +143,7 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
       style={$root}
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["top", "bottom"]}
-      StatusBarProps={{ backgroundColor: colors.tint }}
+      StatusBarProps={{ backgroundColor: colors.backgroundHighlight }}
     >
       <ExpenseEditorHeader onClose={goBack} />
       <View style={$pageContentStyles}>
@@ -166,19 +172,9 @@ function ExpenseEditorHeader({ onClose }: { onClose?: () => void }) {
     <View style={$headerContainerStyles}>
       <View style={$titleContainerStyles}>
         <TouchableOpacity accessibilityRole="button" onPress={onClose}>
-          <Icon
-            name="close"
-            type="Material"
-            style={{ marginLeft: spacing.xs }}
-            size={24}
-            color={colors.palette.neutral300}
-          />
+          <Icon name="close" type="Material" size={sizing.lg} />
         </TouchableOpacity>
-        <Text
-          preset="subheading"
-          style={{ color: colors.background }}
-          tx="expense.new.heading"
-        />
+        <Text preset="subheading" tx="expense.new.heading" style={{ color: colors.tint }} />
       </View>
       <View>
         <ExpenseSummaryModeToggle />
@@ -190,7 +186,9 @@ const $headerContainerStyles: ViewStyle = {
   flex: 0,
   flexDirection: "row",
   justifyContent: "space-between",
-  backgroundColor: colors.tint,
+  backgroundColor: colors.backgroundHighlight,
+  borderBottomColor: colors.border,
+  borderBottomWidth: 1,
   alignItems: "center",
   alignContent: "space-between",
   flexBasis: "auto",
@@ -201,7 +199,7 @@ const $titleContainerStyles: ViewStyle = {
   flexDirection: "row",
   alignContent: "flex-start",
   alignItems: "center",
-  gap: spacing.sm,
+  gap: spacing.xxs,
   flexBasis: "auto",
 }
 
@@ -226,8 +224,8 @@ function ExpenseSummaryModeToggle() {
       <Icon
         type="FontAwesome"
         name="align-left"
-        size={sizing.md}
-        color={colors.palette.neutral300}
+        size={sizing.lg}
+        color={colors.text}
         onPress={() => setExpenseSummaryCardMode("card")}
       />
     )
@@ -236,8 +234,8 @@ function ExpenseSummaryModeToggle() {
     <Icon
       type="FontAwesome"
       name="vcard-o"
-      size={sizing.md}
-      color={colors.palette.neutral300}
+      size={sizing.lg}
+      color={colors.text}
       onPress={() => setExpenseSummaryCardMode("details")}
     />
   )

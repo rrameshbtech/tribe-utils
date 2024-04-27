@@ -68,6 +68,10 @@ const en = {
       locationPermissionDeniedTitle: "Location permission denied",
       locationPermissionDeniedMessage:
         "Please enable location access in your app settings to capture expense location",
+      spenderSelectionTitle: "Who spends often?",
+      payeeSelectionTitle: "Where do you spend often?",
+      categorySelectionTitle: "What do you spend for often?",
+      paymentModeSelectionTitle: "How do you pay oftem?",
     },
     list: {
       spentAt: "{{spentAt}}",
