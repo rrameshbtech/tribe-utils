@@ -30,7 +30,6 @@ const CHART_WRAPPER_BACKGROUND_COLOR = colors.palette.secondary100
 const CHART_WRAPPER_BORDER_COLOR = colors.palette.secondary200
 const CONTENT_TEXT_COLOR = colors.text
 const CONTENT_HIGHLIGHT_TEXT_COLOR = colors.palette.primary600
-const MAX_MONEY_DECIMALS = 2
 
 interface ExpenseReportScreenProps extends AppStackScreenProps<"ExpenseReport"> {}
 export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function ExpenseReportScreen() {
@@ -41,7 +40,7 @@ export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function Expens
     <Screen
       style={$root}
       contentContainerStyle={$screenContentContainer}
-      safeAreaEdges={["top", "bottom"]}
+      safeAreaEdges={["top"]}
       StatusBarProps={{ backgroundColor: colors.tint }}
     >
       <ScrollView>
@@ -312,12 +311,9 @@ function PieChartInnerCircle({
   data: totalByGroup,
   selected,
 }: Readonly<PieChartInnerCircleProps>): React.JSX.Element {
-  const { currencySymbol } = useLocale()
-
-  const getFontSize = (content: string) => (content.length <= 8 ? sizing.md : sizing.sm)
-  // TODO: format using formatLocaleMoney
-  const total = totalByGroup[selected].toFixed(MAX_MONEY_DECIMALS)
-  const totalTextSize = getFontSize(total)
+  const MAX_TEXT_LENGTH = 8
+  const getFontSize = (content: string) => (content.length <= MAX_TEXT_LENGTH ? sizing.md : sizing.sm)
+  const totalTextSize = getFontSize(totalByGroup[selected].toString())
   const groupTextSize = getFontSize(selected)
 
   const $pieChartInnerCircleStyle: ViewStyle = { justifyContent: "center", alignItems: "center" }
@@ -326,10 +322,7 @@ function PieChartInnerCircle({
 
   return (
     <View style={$pieChartInnerCircleStyle}>
-      <Text style={$totalTextStyle}>
-        {currencySymbol}
-        {total}
-      </Text>
+      <MoneyLabel amount={totalByGroup[selected]} style={$totalTextStyle} />
       <Text style={$groupTextStyle}>{selected}</Text>
     </View>
   )
@@ -370,9 +363,9 @@ function LineChartByDate({ data }: { data: Record<string, number> }) {
         hideDataPoints1
         yAxisTextStyle={{ fontSize: sizing.sm, color: CONTENT_TEXT_COLOR }}
         xAxisColor={CONTENT_TEXT_COLOR}
-        xAxisTextNumberOfLines={1}
-        xAxisLabelsHeight={50}
-        rotateLabel
+        // xAxisTextNumberOfLines={1}
+        // xAxisLabelsHeight={50}
+        // rotateLabel
         formatYLabel={(label) =>
           `${currencySymbol}${convertToLocaleAbbrevatedNumber(parseFloat(label))}`
         }

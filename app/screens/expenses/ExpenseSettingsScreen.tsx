@@ -46,7 +46,7 @@ export const ExpenseSettingsScreen: FC<ExpenseSettingsScreenProps> = function Se
     <Screen
       style={$root}
       contentContainerStyle={$screenContentContainerStyle}
-      safeAreaEdges={["top", "bottom"]}
+      safeAreaEdges={["top"]}
       StatusBarProps={{ backgroundColor: colors.tint }}
     >
       <ExpenseSettingsHeader />

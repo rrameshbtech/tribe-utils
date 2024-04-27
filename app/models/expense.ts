@@ -213,10 +213,10 @@ export const getVisibleExpenses = (state: ExpenseSlice) => {
 
   function byTerm(): (value: Expense, index: number, array: Expense[]) => unknown {
     return (expense) =>
-      expense.payee.toLowerCase().includes(searchTerm) ||
-      expense.category.toLowerCase().includes(searchTerm) ||
-      expense.mode.toLowerCase().includes(searchTerm) ||
-      expense.notes?.toLowerCase().includes(searchTerm)
+      expense.payee.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+      expense.category.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+      expense.mode.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+      expense.notes?.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())
   }
 
   function byDuration(): (value: Expense, index: number, array: Expense[]) => unknown {

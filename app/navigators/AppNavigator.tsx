@@ -4,7 +4,7 @@
  * Generally speaking, it will contain an auth flow (registration, login, forgot password)
  * and a "main" flow which the user will use once logged in.
  */
-import { DarkTheme, DefaultTheme, NavigationContainer } from "@react-navigation/native"
+import { DarkTheme, DefaultTheme, NavigationContainer, RouteProp } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import React from "react"
 import { ViewStyle, useColorScheme } from "react-native"
@@ -64,29 +64,7 @@ const ExpenseTabs = function ExpenseTabs() {
     <Tab.Navigator
       initialRouteName="ExpenseList"
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          const containerStyle: ViewStyle = {
-            opacity: focused ? 1 : 0.5,
-            backgroundColor: focused ? colors.palette.primary500 : colors.tint,
-            borderRadius: size / 2,
-            paddingVertical: spacing.xxs,
-            paddingHorizontal: spacing.md,
-          }
-          const tabIcons: Record<string, string> = {
-            ExpenseList: "list",
-            ExpenseReport: "pie-chart",
-            ExpenseSettings: "gear",
-          }
-          return (
-            <Icon
-              type="FontAwesome"
-              name={tabIcons[route.name]}
-              color={color}
-              size={size}
-              containerStyle={containerStyle}
-            />
-          )
-        },
+        tabBarIcon: createExpenseTabIcon(route),
         tabBarActiveTintColor: colors.background,
         tabBarInactiveTintColor: colors.palette.neutral900,
         headerShown: false,
@@ -99,6 +77,40 @@ const ExpenseTabs = function ExpenseTabs() {
       <Tab.Screen name="ExpenseSettings" component={Screens.ExpenseSettingsScreen} />
     </Tab.Navigator>
   )
+
+  type TabBarIconProps = {
+    focused: boolean
+    color: string
+    size: number
+  }
+
+  function createExpenseTabIcon(
+    route: RouteProp<ExpenseScreensParamList, keyof ExpenseScreensParamList>,
+  ): (props: TabBarIconProps) => React.ReactNode {
+    return ({ focused, color, size }) => {
+      const iconStyle: ViewStyle = {
+        opacity: focused ? 1 : 0.5,
+        backgroundColor: focused ? colors.palette.primary500 : colors.tint,
+        borderRadius: size / 2,
+        paddingVertical: spacing.xxs,
+        paddingHorizontal: spacing.md,
+      }
+      const tabIcons: Record<string, string> = {
+        ExpenseList: "list",
+        ExpenseReport: "pie-chart",
+        ExpenseSettings: "gear",
+      }
+      return (
+        <Icon
+          type="FontAwesome"
+          name={tabIcons[route.name]}
+          color={color}
+          size={size}
+          containerStyle={iconStyle}
+        />
+      )
+    }
+  }
 }
 
 function renderSignedInStack() {
@@ -140,7 +152,7 @@ const AppStack = function AppStack() {
   return (
     <Stack.Navigator
       initialRouteName={isInitialSetupComplete ? "Home" : "Welcome"}
-      screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
+      screenOptions={{ headerShown: false, navigationBarColor: colors.tint }}
     >
       {isInitialSetupComplete ? renderSignedInStack() : renderSignedOutStack()}
     </Stack.Navigator>

@@ -1,7 +1,15 @@
 import React, { FC } from "react"
 import { ViewStyle, View, FlatList, TouchableOpacity } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
-import { EmptyState, Icon, Screen, Text, TextField, MoneyLabel } from "app/components"
+import {
+  EmptyState,
+  Icon,
+  Screen,
+  Text,
+  TextField,
+  MoneyLabel,
+  TextFieldAccessoryProps,
+} from "app/components"
 import { ExpenseListItem } from "./ExpenseListItem"
 import { colors, sizing, spacing } from "app/theme"
 import { useExpenseStore, getVisibleExpenses, Expense, getVisibleExpenseTotal } from "app/models"
@@ -21,7 +29,7 @@ export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseLis
     <Screen
       style={$root}
       contentContainerStyle={$screenContentContainer}
-      safeAreaEdges={["top", "bottom"]}
+      safeAreaEdges={["top"]}
       StatusBarProps={{ backgroundColor: colors.tint }}
     >
       <View style={$listView}>
@@ -59,26 +67,9 @@ const $listView: ViewStyle = {
 }
 
 function ExpenseListHeader() {
-  // Todo - search should have cancel button & filter should have a dropdown
-  const setSearchTerm = useExpenseStore((state) => state.setSearchTerm)
-  const searchTerm = useExpenseStore((state) => state.searchTerm)
-  const durationFilter = useExpenseStore((state) => state.expenseFilter)
-
-  const $expenseSearchBarContainerStyle: ViewStyle = { flexDirection: "row" }
-  const $expenseSearchBarStyle = { flex: 1 }
   return (
     <View style={$expenseListHeaderStyles}>
-      <View style={$expenseSearchBarContainerStyle}>
-        <TextField
-          placeholderTx={`expense.list.searchPlaceholder.${durationFilter}`}
-          LeftAccessory={(props) => <SearchIcon containerStyle={props.style} />}
-          RightAccessory={(props) => <ExpenseFilterIcon containerStyle={props.style} />}
-          inputWrapperStyle={$expenseSearchInputWrapperStyles}
-          onChangeText={(text) => setSearchTerm(text)}
-          value={searchTerm}
-          containerStyle={$expenseSearchBarStyle}
-        />
-      </View>
+      <ExpenseListSearchInput />
       <ExpenseSummary />
     </View>
   )
@@ -96,13 +87,58 @@ const $expenseListHeaderStyles: ViewStyle = {
 interface SearchIconProps {
   containerStyle?: ViewStyle
 }
+function ExpenseListSearchInput() {
+  // TODO: filter should have a dropdown
+  const setSearchTerm = useExpenseStore((state) => state.setSearchTerm)
+  const searchTerm = useExpenseStore((state) => state.searchTerm)
+  const durationFilter = useExpenseStore((state) => state.expenseFilter)
+
+  const $expenseSearchBarContainerStyle: ViewStyle = { flexDirection: "row" }
+  const $expenseSearchBarStyle = { flex: 1 }
+  return (
+    <View style={$expenseSearchBarContainerStyle}>
+      <TextField
+        placeholderTx={`expense.list.searchPlaceholder.${durationFilter}`}
+        LeftAccessory={(props) => <SearchIcon containerStyle={props.style} />}
+        RightAccessory={(props) => <RightsideAction props={props} />}
+        inputWrapperStyle={$expenseSearchInputWrapperStyles}
+        onChangeText={(text) => setSearchTerm(text)}
+        value={searchTerm}
+        containerStyle={$expenseSearchBarStyle}
+        inputMode="search"
+      />
+    </View>
+  )
+  function ClearSearchIcon({ containerStyle }: Readonly<SearchIconProps> = {}) {
+    return (
+      <TouchableOpacity onPress={() => setSearchTerm("")} style={containerStyle}>
+        <Icon
+          type="FontAwesome5"
+          name="times"
+          size={sizing.lg}
+          color={colors.textDim}
+          containerStyle={containerStyle}
+        />
+      </TouchableOpacity>
+    )
+  }
+
+  function RightsideAction({ props }: { props: TextFieldAccessoryProps }) {
+    return searchTerm ? (
+      <ClearSearchIcon containerStyle={props.style} />
+    ) : (
+      <ExpenseFilterIcon containerStyle={props.style} />
+    )
+  }
+}
+
 function SearchIcon({ containerStyle }: Readonly<SearchIconProps>) {
   return (
     <Icon
       type="FontAwesome5"
       name="search-dollar"
-      size={24}
-      color={colors.palette.neutral600}
+      size={sizing.lg}
+      color={colors.textDim}
       containerStyle={containerStyle}
     />
   )
@@ -122,11 +158,11 @@ function ExpenseFilterIcon({ containerStyle }: Readonly<ExpenseFilterIconProps>)
     alignItems: "center",
     justifyContent: "center",
   }
-  const $iconTextStyles = { color: colors.textDim, lineHeight: 8 }
+  const $iconTextStyles = { color: colors.textDim, lineHeight: sizing.xs }
 
   return (
-    <TouchableOpacity onPress={() => toggleFilter()} style={$filterIconWrapperStyles}>
-      <Icon type="image" name="calendarFilter" size={24} color={colors.textDim} />
+    <TouchableOpacity onPress={toggleFilter} style={$filterIconWrapperStyles}>
+      <Icon type="image" name="calendarFilter" size={sizing.lg} color={colors.textDim} />
       <Text size="xxxs" style={$iconTextStyles} tx={`expense.list.filter.${durationFilter}`} />
     </TouchableOpacity>
   )
