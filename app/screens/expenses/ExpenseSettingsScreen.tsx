@@ -174,7 +174,7 @@ function ExpenseDefaultValues({ configs, onChange }: ExpenseDefaultValuesProps) 
     <>
       <SelectorRow
         labelTx="expense.settings.defaultSpender"
-        value={spender.name}
+        value={spender?.name ?? `[${t("common.notSelected")}]`}
         onEdit={() => setActiveSelector("spender")}
       >
         <SpenderSelector
