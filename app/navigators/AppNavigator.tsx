@@ -120,7 +120,7 @@ const ExpenseTabs = function ExpenseTabs() {
             tx={tabNames[route.name]}
             preset={focused ? "bold" : "default"}
             size="xxs"
-            style={{ textAlign: "center", color: colors.textDim }}
+            style={{ textAlign: "center", color:colors.textDim }}
           />
         </View>
       )
@@ -166,11 +166,10 @@ const AppStack = function AppStack() {
   const isInitialSetupComplete = useSettingsStore((state) => state.isInitialSetupComplete)
   return (
     <Stack.Navigator
-      initialRouteName={"Welcome"}
+      initialRouteName={isInitialSetupComplete ? "Home" : "Welcome"}
       screenOptions={{ headerShown: false, navigationBarColor: colors.backgroundHighlight }}
     >
-      {/* {isInitialSetupComplete ? renderSignedInStack() : renderSignedOutStack()} */}
-      {renderSignedOutStack()}
+      {isInitialSetupComplete ? renderSignedInStack() : renderSignedOutStack()}
     </Stack.Navigator>
   )
 }
