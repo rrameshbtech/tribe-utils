@@ -189,8 +189,8 @@ function ExpenseSummary() {
 function AddExpenseButton() {
   const $rightBottomStyles: ViewStyle = {
     position: "absolute",
-    bottom: spacing.sm,
-    right: spacing.xl,
+    bottom: spacing.lg,
+    right: spacing.lg,
   }
 
   function goToAddExpenseScreen() {
@@ -205,7 +205,7 @@ function AddExpenseButton() {
     <TouchableOpacity
       style={$rightBottomStyles}
       accessibilityRole="button"
-      onPressIn={goToAddExpenseScreen}
+      onPress={goToAddExpenseScreen}
     >
       <Icon
         type="FontAwesome"

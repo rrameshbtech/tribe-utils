@@ -194,7 +194,6 @@ const $headerContainerStyles: ViewStyle = {
   alignItems: "center",
   alignContent: "space-between",
   flexBasis: "auto",
-  height: 64,
   padding: spacing.md,
 }
 const $titleContainerStyles: ViewStyle = {

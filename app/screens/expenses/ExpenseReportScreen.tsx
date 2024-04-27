@@ -338,7 +338,7 @@ function LineChartByDate({ data }: { data: Record<string, number> }) {
         value: data[date] ?? 0,
         labelComponent: () =>
           index === 0 || ((index ?? 0) + 1) % 5 === 0 ? (
-            <Text style={{ fontSize: sizing.sm, color: CONTENT_TEXT_COLOR }}>{date}</Text>
+           <Text style={{ fontSize: sizing.sm, color: CONTENT_TEXT_COLOR, width: sizing.lg }}>{date}</Text>
           ) : (
             <></>
           ),
@@ -362,10 +362,7 @@ function LineChartByDate({ data }: { data: Record<string, number> }) {
         areaChart
         hideDataPoints1
         yAxisTextStyle={{ fontSize: sizing.sm, color: CONTENT_TEXT_COLOR }}
-        xAxisColor={CONTENT_TEXT_COLOR}
-        // xAxisTextNumberOfLines={1}
-        // xAxisLabelsHeight={50}
-        // rotateLabel
+        xAxisTextNumberOfLines={2}
         formatYLabel={(label) =>
           `${currencySymbol}${convertToLocaleAbbrevatedNumber(parseFloat(label))}`
         }
