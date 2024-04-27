@@ -4,8 +4,8 @@ import * as SplashScreen from "expo-splash-screen"
 
 SplashScreen.preventAutoHideAsync()
 
-function IgniteApp() {
+function TribeApp() {
   return <App hideSplashScreen={SplashScreen.hideAsync} />
 }
 
-export default IgniteApp
+export default TribeApp
