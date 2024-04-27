@@ -34,9 +34,9 @@ export function ExpenseListItem({ expense, isExpanded, onPress }: Readonly<Expen
 const $expenseItemBoxStyle: ViewStyle = {
   marginBottom: spacing.xs,
   marginHorizontal: spacing.xxs,
-  borderWidth: 1,
-  borderRadius: sizing.xs,
-  borderColor: colors.background,
+  borderBottomWidth: 1,
+  borderBottomColor: colors.backgroundHighlight,
+  borderStyle: "dashed"
 }
 const $expenseListItemStyle = {
   paddingVertical: spacing.xs,
@@ -46,6 +46,10 @@ const $expenseListItemStyle = {
 const $expandedExpenseListItemStyle: ViewStyle = {
   backgroundColor: colors.palette.neutral100,
   borderColor: colors.palette.neutral400,
+  borderWidth: 1,
+  borderRadius: sizing.xs,
+  borderStyle: "solid",
+  overflow: "hidden",
 }
 const $expenseContentStyle: ViewStyle = { justifyContent: "space-between", flexDirection: "row" }
 
@@ -152,7 +156,7 @@ function ExpenseItemControls({ expense }: Readonly<ExpenseItemControlsProps>) {
             removeExpense(expense.id)
             Toast.show({
               text1: translate("expense.delete.successMessage"),
-              position: "bottom",
+              position: "top",
             })
           },
           style: "destructive",

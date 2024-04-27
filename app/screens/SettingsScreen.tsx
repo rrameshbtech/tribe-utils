@@ -14,7 +14,7 @@ export const SettingsScreen: FC<SettingsScreenProps> = function SettingsScreen()
       style={$container}
       preset="scroll"
       safeAreaEdges={["top", "bottom"]}
-      StatusBarProps={{ backgroundColor: colors.tint }}
+      StatusBarProps={{ backgroundColor: colors.backgroundHighlight }}
     >
       <View>
         <SettingsHeader />
@@ -28,17 +28,17 @@ function SettingsHeader() {
   return (
     <View
       style={{
-        backgroundColor: colors.tint,
+        backgroundColor: colors.backgroundHighlight,
         flexDirection: "row",
         padding: spacing.sm,
         alignItems: "center",
       }}
     >
-      <Icon type="image" name="back" onPress={() => goBack()} color={colors.background}></Icon>
+      <Icon type="image" name="back" onPress={() => goBack()} />
       <Text
         tx="settingsScreen.title"
         preset="subheading"
-        style={{ color: colors.background, padding: spacing.xs }}
+        style={{ color: colors.tint, padding: spacing.xs }}
       ></Text>
     </View>
   )
@@ -101,7 +101,7 @@ function AuthUserConfiguration() {
         onPress={saveAuthUser}
         style={{ marginTop: spacing.xl, marginHorizontal: spacing.sm }}
         disabled={!isValidName(user.name) || !isValidEmail(user.email)}
-        preset={"filled"}
+        preset="reversed"
       />
     </View>
   )

@@ -12,6 +12,7 @@ const en = {
     save: "Save",
   },
   homeScreen: {
+    title: "The Tribe",
     expenses: "Expenses",
     settings: "Settings",
   },

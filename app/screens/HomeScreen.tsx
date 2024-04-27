@@ -10,12 +10,14 @@ interface HomeScreenProps extends AppStackScreenProps<"Home"> {}
 export const HomeScreen: FC<HomeScreenProps> = function HomeScreen() {
   return (
     <Screen
-      style={$container}
       contentContainerStyle={$contentContainer}
-      safeAreaEdges={["top", "bottom"]}
-      StatusBarProps={{ backgroundColor: colors.tint }}
+      safeAreaEdges={["top"]}
+      StatusBarProps={{ backgroundColor: colors.backgroundHighlight }}
     >
-      <View style={$container}>
+      <View style={{ backgroundColor: colors.backgroundHighlight, padding: spacing.sm }}>
+        <Text preset="subheading" style={{ color: colors.tint }} tx="homeScreen.title" />
+      </View>
+      <View style={$toolsContainerStyle}>
         <BigIconButton
           renderIcon={(props) => <Icon type="image" name="expense" {...props} />}
           onPress={() => navigate("ExpenseTabs")}
@@ -38,13 +40,13 @@ interface IconButtonProps {
 }
 function BigIconButton({ tx, renderIcon, onPress }: IconButtonProps) {
   const Icon = renderIcon({
-    color: colors.palette.primary500,
+    color: colors.tint,
     size: sizing.xxxl,
   })
   return (
     <Pressable style={$buttonContainer} onPress={onPress}>
       {Icon}
-      <Text tx={tx} style={{ color: colors.palette.primary600 }} />
+      <Text tx={tx} style={{ color: colors.tint }} />
     </Pressable>
   )
 }
@@ -54,13 +56,13 @@ const $buttonContainer: ViewStyle = {
   justifyContent: "center",
   alignItems: "center",
   flexDirection: "column",
-  backgroundColor: colors.palette.primary100,
+  backgroundColor: colors.backgroundHighlight,
   borderRadius: sizing.md,
   borderWidth: 1,
-  borderColor: colors.palette.primary200,
+  borderColor: colors.border,
   padding: spacing.sm,
 }
-const $container: ViewStyle = {
+const $toolsContainerStyle: ViewStyle = {
   flex: 1,
   flexDirection: "row",
   flexWrap: "wrap",

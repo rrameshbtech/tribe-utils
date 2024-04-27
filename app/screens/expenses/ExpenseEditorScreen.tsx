@@ -85,6 +85,7 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
   function onSave() {
     if (expense.amount === 0) {
       Toast.show({
+        position: "top",
         text1: translate("expense.new.error.title"),
         text2: translate("expense.new.error.amountZero"),
         type: "error",

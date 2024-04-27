@@ -113,6 +113,7 @@ function LocationToggle({ value, onChange }: LocationToggleProps) {
           onChange?.(value)
         } else {
           Toast.show({
+            position: "top",
             type: "error",
             text1: t("expense.settings.locationPermissionDeniedTitle"),
             text2: t("expense.settings.locationPermissionDeniedMessage"),
