@@ -115,8 +115,8 @@ function ExpenseListSearchInput() {
     return (
       <TouchableOpacity onPress={() => setSearchTerm("")} style={containerStyle}>
         <Icon
-          type="FontAwesome5"
-          name="times"
+          type="Material"
+          name="close"
           size={sizing.lg}
           color={colors.textDim}
           containerStyle={containerStyle}
