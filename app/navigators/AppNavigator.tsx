@@ -7,14 +7,15 @@
 import { DarkTheme, DefaultTheme, NavigationContainer, RouteProp } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import React from "react"
-import { ViewStyle, useColorScheme } from "react-native"
+import { View, ViewStyle, useColorScheme } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
-import { colors, spacing } from "app/theme"
+import { colors, sizing, spacing } from "app/theme"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import { Icon } from "app/components"
+import { Icon, Text } from "app/components"
 import { useSettingsStore } from "app/models"
+import { TxKeyPath } from "app/i18n"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -65,11 +66,15 @@ const ExpenseTabs = function ExpenseTabs() {
       initialRouteName="ExpenseList"
       screenOptions={({ route }) => ({
         tabBarIcon: createExpenseTabIcon(route),
-        tabBarActiveTintColor: colors.background,
-        tabBarInactiveTintColor: colors.palette.neutral900,
+        tabBarActiveTintColor: colors.tint,
+        tabBarInactiveTintColor: colors.textDim,
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: { backgroundColor: colors.backgroundHighlight, borderTopColor: colors.border, borderTopWidth: 1 },
+        tabBarStyle: {
+          backgroundColor: colors.backgroundHighlight,
+          borderTopColor: colors.border,
+          borderTopWidth: 1,
+        },
       })}
     >
       <Tab.Screen name="ExpenseList" component={Screens.ExpenseListScreen} />
@@ -89,25 +94,35 @@ const ExpenseTabs = function ExpenseTabs() {
   ): (props: TabBarIconProps) => React.ReactNode {
     return ({ focused, color, size }) => {
       const iconStyle: ViewStyle = {
-        opacity: focused ? 1 : 0.5,
-        backgroundColor: focused ? colors.tint : colors.backgroundHighlight,
-        borderRadius: size / 2,
-        paddingVertical: spacing.xxs,
-        paddingHorizontal: spacing.md,
+        opacity: focused ? 1 : 0.9,
+        marginTop: spacing.xs,
       }
       const tabIcons: Record<string, string> = {
         ExpenseList: "list",
         ExpenseReport: "pie-chart",
         ExpenseSettings: "gear",
       }
+      const tabNames: Record<string, TxKeyPath> = {
+        ExpenseList: "expense.tabs.expenses",
+        ExpenseReport: "expense.tabs.report",
+        ExpenseSettings: "expense.tabs.settings",
+      }
       return (
-        <Icon
-          type="FontAwesome"
-          name={tabIcons[route.name]}
-          color={color}
-          size={size}
-          containerStyle={iconStyle}
-        />
+        <View style={{ flexDirection: "column", alignItems: "center" }}>
+          <Icon
+            type="FontAwesome"
+            name={tabIcons[route.name]}
+            color={color}
+            size={size}
+            containerStyle={iconStyle}
+          />
+          <Text
+            tx={tabNames[route.name]}
+            preset={focused ? "bold" : "default"}
+            size="xxs"
+            style={{ textAlign: "center", color:colors.textDim }}
+          />
+        </View>
       )
     }
   }

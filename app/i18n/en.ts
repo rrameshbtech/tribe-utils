@@ -53,6 +53,11 @@ const en = {
     },
   },
   expense: {
+    tabs: {
+      expenses: "Expenses",
+      settings: "Settings",
+      report: "Report",
+    },
     settings: {
       title: "Expense Settings",
       location: "Capture location",
