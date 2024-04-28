@@ -46,9 +46,9 @@ const en = {
       button: "Let's try this again",
     },
     noExpenses: {
-      heading: "Oops! No expenses yet",
+      heading: "Oops! No expenses found",
       content:
-        "Have n't opened your wallet or is it empty already? Ignore my bad joke. If you missed any don't forget to add.",
+        "Forgot to add an expense? Press (+) button to add it.",
       button: "Add an expense",
     },
   },

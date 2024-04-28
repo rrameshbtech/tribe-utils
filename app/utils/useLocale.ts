@@ -10,8 +10,8 @@ export function useLocale() {
       : "International"
   const digitGroupingRegex =
     numberingSystem === "Indian" ? /\B(?=(\d{2})*(\d{3})(?!\d))/g : /\B(?=(\d{3})+(?!\d))/g
-  const formatLocaleMoney = (value: number) => {
-    return value.toString().replace(digitGroupingRegex, locales[0].digitGroupingSeparator ?? ",")
+  const formatLocaleMoney = (value: number, precision = 2) => {
+    return value.toFixed(precision).toString().replace(digitGroupingRegex, locales[0].digitGroupingSeparator ?? ",")
   }
   return {
     ...locales[0],

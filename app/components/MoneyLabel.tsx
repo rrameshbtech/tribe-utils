@@ -17,11 +17,7 @@ export function MoneyLabel({
   containerStyle,
   ...textProps
 }: Readonly<MoneyLabelProps>) {
-  const { digitGroupingRegex, digitGroupingSeparator, currencySymbol } = useLocale()
-  const amountWithThousandsSeparator = amount
-    .toFixed(2)
-    .replace(digitGroupingRegex, digitGroupingSeparator ?? ",")
-
+  const { formatLocaleMoney, currencySymbol } = useLocale()
   const $moneyLabelContainerStyle: ViewStyle = { flexDirection: "row", alignItems: "center" }
 
   return (
@@ -30,7 +26,7 @@ export function MoneyLabel({
         {currencySymbol}
       </Text>
       <Text {...textProps} style={style}>
-        {amountWithThousandsSeparator}
+        {formatLocaleMoney(amount)}
       </Text>
     </View>
   )
