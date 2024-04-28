@@ -363,9 +363,75 @@ const defaultExpenseCategories = (): Record<string, ExpenseCategory> => ({
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  Vacation: {
+    name: "Vacation",
+    icon: { type: "FontAwesome5", name: "hotel" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Meat: {
+    name: "Meat",
+    icon: { type: "Material", name: "food-steak" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Vegitables: {
+    name: "Vegitables",
+    icon: { type: "Material", name: "fruit-grapes-outline" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Healthcare: {
+    name: "Healthcare",
+    icon: { type: "FontAwesome5", name: "hospital" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Pets: {
+    name: "Pets",
+    icon: { type: "FontAwesome", name: "paw" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Rent: {
+    name: "Rent",
+    icon: { type: "FontAwesome5", name: "home" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Utilities: {
+    name: "Utilities",
+    icon: { type: "Material", name: "gas-cylinder" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
   Sports: {
     name: "Sports",
     icon: { type: "FontAwesome", name: "futbol-o" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Insurance: {
+    name: "Insurance",
+    icon: { type: "FontAwesome5", name: "user-injured" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  PersonalCare: {
+    name: "PersonalCare",
+    icon: { type: "FontAwesome5", name: "spa" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Taxes: {
+    name: "Taxes",
+    icon: { type: "image", name: "tax" },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  Clothes: {
+    name: "Clothes",
+    icon: { type: "FontAwesome5", name: "tshirt" },
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -389,4 +455,3 @@ const defaultPayees = (): string[] => [
   "School",
   "Local Cafe",
 ]
-

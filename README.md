@@ -28,3 +28,4 @@ Only Android API level >=21 (Android 5), iOS >= 11 are supported.
     - <a href="https://www.freepik.com/icon/calendar_12127241#fromView=search&term=filter+calendar&track=ais&page=1&position=5&uuid=e10a8b4c-c807-45d4-9521-b93a99de3493">Icon by TravisAvery</a>
     - <a href="https://www.freepik.com/icon/commission_8155668#fromView=search&term=loan&track=ais&page=1&position=16&uuid=07470a9f-13de-4b80-b564-daee4a8c2091">Icon by Freepik</a>
     - <a href="https://www.freepik.com/icon/expenses_5501384#fromView=search&page=1&position=1&uuid=ba4f3dc3-44fe-4ae2-b5c1-f2de022b60c5">Icon by surang</a>
+    <a href="https://www.freepik.com/icon/tax_2168671#fromView=search&page=1&position=0&uuid=f6ceadcf-0397-4b05-9a98-b133d04aeb8a">Icon by Freepik</a>

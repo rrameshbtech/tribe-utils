@@ -149,6 +149,10 @@ const en = {
       BankCard: "Bank Card",
       BankTransfer: "Bank Transfer",
     },
+    categories: {
+      "Healthcare": "Health care",
+      "PersonalCare": "Personal care",
+    }
   },
 }
 

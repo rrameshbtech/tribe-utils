@@ -19,6 +19,7 @@ export const imageIconRegistry = {
   calendarFilter: require("../../assets/icons/calendarFilter.png"),
   loan: require("../../assets/icons/loan.png"),
   expense: require("../../assets/icons/expense.png"),
+  tax: require("../../assets/icons/tax.png"),
 }
 
 export type FontIconType = "FontAwesome" | "FontAwesome5" | "Ionicons" | "Material"

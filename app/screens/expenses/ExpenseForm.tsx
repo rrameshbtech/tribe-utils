@@ -258,6 +258,7 @@ function ExpenseCategoryInput({
         value={selectedCategory}
         onChange={handleCategorySelection}
         options={pipe(Object.values, convertToSelectableListOptions)(expenseCategories)}
+        translationScope="expense.categories"
       />
     </>
   )

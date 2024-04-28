@@ -165,7 +165,11 @@ function CardExpenseSummary({
       }}
     />
   )
-  const $footerStyle:ViewStyle = { flexDirection: "row", justifyContent: "space-between", columnGap: spacing.sm }
+  const $footerStyle: ViewStyle = {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    columnGap: spacing.sm,
+  }
   const FooterComponent = (
     <View style={$footerStyle}>
       <SpenderSummaryLabel />
@@ -268,11 +272,9 @@ interface CategoryLabelProps extends PressableLabelProps {
 function CategoryLabel({ name, onPress, isHighlighted }: Readonly<CategoryLabelProps>) {
   return (
     <Pressable onPress={() => onPress?.("category")}>
-      <Text
-        text={name.toLocaleLowerCase()}
-        preset="bold"
-        style={isHighlighted && $highlightStyle}
-      />
+      <Text preset="bold" style={isHighlighted && $highlightStyle}>
+        {t(`expense.categories.${name}`, { defaultValue: name }).toLocaleLowerCase()}
+      </Text>
     </Pressable>
   )
 }
