@@ -5,7 +5,7 @@ import { spacing } from "../theme"
 import { Button, ButtonProps } from "./Button"
 import { Text, TextProps } from "./Text"
 
-const tribalWomenDoNotKnow = require("../../assets/images/tribal-women-do-not-know.png")
+const tribalWomenDoNotKnow = require("../../assets/images/tribal-women-do-not-know@1x.png")
 
 interface EmptyStateProps {
   /**

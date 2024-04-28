@@ -1,4 +1,4 @@
-# Tribe Utils
+# Tribe
 A mobile app for a family or any closed group to handle their day-to-day needs.
 
 ## Tech Stack
