@@ -17,7 +17,6 @@ import {
   SelectableList,
   SelectableListOption,
   Text,
-  TextField,
   Toggle,
 } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
@@ -34,7 +33,6 @@ import { TextInput } from "react-native-gesture-handler"
 import { t } from "i18n-js"
 import Toast from "react-native-toast-message"
 import { TxKeyPath } from "app/i18n"
-import { useNavigation } from "@react-navigation/native"
 
 interface ExpenseSettingsScreenProps extends AppStackScreenProps<"ExpenseSettings"> {}
 
