@@ -119,7 +119,7 @@ const ExpenseTabs = function ExpenseTabs() {
           <Text
             tx={tabNames[route.name]}
             preset={focused ? "bold" : "default"}
-            size="xxs"
+            size="xxxs"
             style={{ textAlign: "center", color:colors.textDim }}
           />
         </View>

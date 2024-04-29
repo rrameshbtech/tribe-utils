@@ -14,8 +14,9 @@ export const HomeScreen: FC<HomeScreenProps> = function HomeScreen() {
       safeAreaEdges={["top"]}
       StatusBarProps={{ backgroundColor: colors.backgroundHighlight }}
     >
-      <View style={{ backgroundColor: colors.backgroundHighlight, padding: spacing.sm }}>
+      <View style={{ backgroundColor: colors.backgroundHighlight, padding: spacing.sm}}>
         <Text preset="subheading" style={{ color: colors.tint }} tx="homeScreen.title" />
+        <Text size="xxs" style={{ color: colors.tint }} tx="homeScreen.subtitle" />
       </View>
       <View style={$toolsContainerStyle}>
         <BigIconButton

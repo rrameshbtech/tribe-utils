@@ -99,8 +99,8 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
     }
 
     // Todo: Move this logic to a hook and in editor and make it async
-    PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(
-      (locationAllowed) => {
+    PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+      .then((locationAllowed) => {
         if (locationAllowed) {
           Geolocation.getCurrentPosition(
             (position) => {
@@ -114,8 +114,11 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
             },
           )
         }
-      },
-    )
+      })
+      .catch((err) => {
+        console.warn("Unexpected error when requesting location permission", err)
+        saveExpense(expense)
+      })
   }
 
   function saveExpense(expense: Expense) {

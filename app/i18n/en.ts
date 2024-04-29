@@ -12,7 +12,8 @@ const en = {
     save: "Save",
   },
   homeScreen: {
-    title: "The Tribe",
+    title: "Tribe",
+    subtitle: "Connect. Track. Secure",
     expenses: "Expenses",
     settings: "Settings",
   },
