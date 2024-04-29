@@ -1,10 +1,10 @@
 {
-  "name": "tribe-utils",
-  "displayName": "tribe-utils",
+  "name": "Tribe",
+  "displayName": "Tribe",
   "expo": {
-    "name": "tribe-utils",
-    "slug": "tribe-utils",
-    "scheme": "tribe-utils",
+    "name": "Tribe",
+    "slug": "Tribe",
+    "scheme": "com.rrameshbtech.tribeutils",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

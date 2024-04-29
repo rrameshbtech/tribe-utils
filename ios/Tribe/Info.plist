@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>tribe-utils</string>
+    <string>Tribe</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -27,14 +27,14 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>tribe-utils</string>
+          <string>com.rrameshbtech.tribeutils</string>
           <string>com.rrameshbtech.tribeutils</string>
         </array>
       </dict>
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>exp+tribe-utils</string>
+          <string>exp+tribe</string>
         </array>
       </dict>
     </array>

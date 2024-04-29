@@ -25,9 +25,9 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="tribe-utils"/>
         <data android:scheme="com.rrameshbtech.tribeutils"/>
-        <data android:scheme="exp+tribe-utils"/>
+        <data android:scheme="com.rrameshbtech.tribeutils"/>
+        <data android:scheme="exp+tribe"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>
