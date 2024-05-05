@@ -1,5 +1,5 @@
-import React, { FC } from "react"
-import { ViewStyle, View, FlatList, TouchableOpacity } from "react-native"
+import React, { FC, useEffect } from "react"
+import { ViewStyle, View, FlatList, TouchableOpacity, TextInput } from "react-native"
 import { AppStackScreenProps, navigate } from "app/navigators"
 import {
   EmptyState,
@@ -21,6 +21,7 @@ import {
   isCurrentMonthSelected,
 } from "app/models"
 import { ExpenseMonthSelector } from "./ExpenseMonthSelector"
+import { useNavigation } from "@react-navigation/native"
 
 interface ExpenseListScreenProps extends AppStackScreenProps<"ExpenseList"> {}
 export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseListScreen() {
@@ -145,11 +146,28 @@ interface SearchIconProps {
 }
 function ExpenseListSearchInput({ onBackPress }: { onBackPress: () => void }) {
   // TODO: filter should have a dropdown
+  const navigation = useNavigation()
   const setSearchTerm = useExpenseStore((state) => state.setSearchTerm)
+  const ref = React.useRef<TextInput>(null)
   const searchTerm = useExpenseStore((state) => state.searchTerm)
   const durationFilter = useExpenseStore((state) =>
     isCurrentMonthSelected(state) ? state.expenseFilter : "Month",
   )
+
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", (e) => {
+        onBackPress()
+        e.preventDefault()
+      }),
+    [navigation, onBackPress],
+  )
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.focus()
+    }
+  }, [])
 
   const $expenseSearchBarStyle = { flex: 1 }
   const $searchInputContainerStyle: ViewStyle = { flexDirection: "row" }
@@ -161,6 +179,7 @@ function ExpenseListSearchInput({ onBackPress }: { onBackPress: () => void }) {
         RightAccessory={(props) => <RightsideAction props={props} />}
         inputWrapperStyle={$expenseSearchInputWrapperStyles}
         onChangeText={(text) => setSearchTerm(text)}
+        ref={ref}
         value={searchTerm}
         containerStyle={$expenseSearchBarStyle}
         inputMode="search"
