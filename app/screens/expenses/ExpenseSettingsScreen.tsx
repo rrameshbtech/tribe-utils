@@ -12,6 +12,7 @@ import {
 import { AppStackScreenProps } from "app/navigators"
 import {
   AutoComplete,
+  Button,
   Icon,
   Screen,
   SelectableList,
@@ -37,8 +38,7 @@ import { TxKeyPath } from "app/i18n"
 interface ExpenseSettingsScreenProps extends AppStackScreenProps<"ExpenseSettings"> {}
 
 export const ExpenseSettingsScreen: FC<ExpenseSettingsScreenProps> = function SettingsScreen() {
-  const configs = useExpenseStore((s) => s.configs)
-  const updateConfigs = useExpenseStore((s) => s.updateConfigs)
+  const [configs, updateConfigs, reconcil] = useExpenseStore((s) => [s.configs, s.updateConfigs, s.reconcile])
 
   function updateCaptureLocation(value: boolean) {
     updateConfigs({ captureLocation: value })
@@ -66,6 +66,7 @@ export const ExpenseSettingsScreen: FC<ExpenseSettingsScreenProps> = function Se
           style={$deviderStyle}
         ></Text>
         <ExpenseDefaultValues configs={configs} onChange={updateConfigs} />
+        <Button tx="expense.reconcil" onPress={()=> {reconcil(); Toast.show({text1: "Reconciled"}) }} />
       </View>
     </Screen>
   )

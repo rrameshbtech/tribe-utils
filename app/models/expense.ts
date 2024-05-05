@@ -84,6 +84,7 @@ export interface ExpenseSlice {
   setExpenseSummaryCardMode: (mode: ExpenseSummaryCardMode) => void
   toggleExpenseFilter: () => void
   updateConfigs: (configs: Partial<ExpenseConfigs>) => void
+  reconcile: () => void
 
   paymentModes: Record<string, PaymentMode>
   expenseCategories: Record<string, ExpenseCategory>
@@ -148,6 +149,28 @@ export const createExpenseSlice: StateCreator<
   paymentModes: defaultPaymentModes(),
   expenseCategories: defaultExpenseCategories(),
   payees: defaultPayees(),
+  reconcile: () => {
+    set((state) => {
+      Object.values(state.expensesByMonth).forEach((month) => {
+        Object.values(month.data).forEach((expense) => {
+          if (month.month === getMonthId(expense.date)) {
+            return
+          }
+          
+          const expenseMonth = getMonthId(expense.date)
+          if (!state.expensesByMonth[expenseMonth]) {
+            state.expensesByMonth[expenseMonth] = {
+              month: expenseMonth,
+              data: {},
+            }
+          }
+          state.expensesByMonth[expenseMonth].data[expense.id] = expense
+
+          delete month.data[expense.id]
+        })
+      })
+    })
+  },
 })
 
 type ExpenseSliceSetType = (
@@ -174,8 +197,8 @@ const toggleExpenseFilterFn = (set: ExpenseSliceSetType) => () => {
 }
 
 const upsertExpenseFn = (set: ExpenseSliceSetType) => (expense: Expense) => {
-  const expenseMonth = getMonthId(expense.date)
   set((state) => {
+    const expenseMonth = getMonthId(expense.date)
     if (!state.expensesByMonth[expenseMonth]) {
       state.expensesByMonth[expenseMonth] = {
         month: expenseMonth,

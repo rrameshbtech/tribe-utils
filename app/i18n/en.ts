@@ -56,6 +56,7 @@ const en = {
     },
   },
   expense: {
+    reconcil: "Reconcile Expenses",
     tabs: {
       expenses: "Expenses",
       settings: "Settings",
