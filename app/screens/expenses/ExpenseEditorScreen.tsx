@@ -19,7 +19,7 @@ import { useNavigation } from "@react-navigation/native"
 import Geolocation from "@react-native-community/geolocation"
 
 interface ExpenseEditorScreenProps extends AppStackScreenProps<"ExpenseEditor"> {}
-export type ExpenseInput =
+export type ExpenseInputName =
   | "amount"
   | "category"
   | "payee"
@@ -32,15 +32,19 @@ type FormState = "fresh" | "changed" | "saved"
 export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function ExpenseEditorScreen({
   route,
 }) {
-  const getExpense = useExpenseStore((state) => state.getExpense)
-  const upsertExpense = useExpenseStore((state) => state.upsertExpense)
   const currentMember = useMemberStore(getSelf)
-  const newExpense = useExpenseStore(getCreateExpenseFnFor(currentMember.id))
-  const captureLocation = useExpenseStore((state) => state.configs.captureLocation)
+  const [getExpense, upsertExpense, captureLocation, newExpense] = useExpenseStore((state) => [
+    state.getExpense,
+    state.upsertExpense,
+    state.configs.captureLocation,
+    getCreateExpenseFnFor(currentMember.id)(state),
+  ])
 
   const { expenseId } = route.params
-  const [editField, setEditField] = useState<ExpenseInput>("amount")
-  const [expense, setExpense] = useState<Expense>(getExpense(expenseId) ?? newExpense)
+  const existingExpense = getExpense(expenseId)
+  const isEditing = !!existingExpense
+  const [editField, setEditField] = useState<ExpenseInputName>("amount")
+  const [expense, setExpense] = useState<Expense>(existingExpense ?? newExpense)
   const [formState, setFormState] = useState<FormState>("fresh")
   const navigation = useNavigation()
 
@@ -153,10 +157,11 @@ export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function Expens
       <View style={$pageContentStyles}>
         <ExpenseSummaryCard
           {...{ expense, editField }}
-          onExpenseDetailPress={(fieldName: ExpenseInput) => setEditField(fieldName)}
+          onExpenseDetailPress={(fieldName: ExpenseInputName) => setEditField(fieldName)}
         />
         <ExpenseForm
-          visibleField={editField}
+          field={editField}
+          isEditing={isEditing}
           value={expense}
           onChange={onExpenseChange}
           onSave={onSave}

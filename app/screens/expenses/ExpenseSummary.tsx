@@ -3,13 +3,13 @@ import { Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { Card, Text, TrasWithComponents, MoneyLabel } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { Expense, ExpenseLocation, useExpenseStore, useMemberStore } from "app/models"
-import { ExpenseInput } from "./ExpenseEditorScreen"
+import { ExpenseInputName } from "./ExpenseEditorScreen"
 import { t } from "i18n-js"
 
 interface ExpenseSummaryCardProps {
   expense: Expense
-  editField?: ExpenseInput
-  onExpenseDetailPress?: (detailName: ExpenseInput) => void
+  editField?: ExpenseInputName
+  onExpenseDetailPress?: (detailName: ExpenseInputName) => void
 }
 export function ExpenseSummaryCard({
   expense,
@@ -30,15 +30,15 @@ const $expenseSummaryCard: ViewStyle = {
 
 interface ExpenseSummaryProps {
   expense: Expense
-  editField?: ExpenseInput
-  onExpenseDetailPress?: (detailName: ExpenseInput) => void
+  editField?: ExpenseInputName
+  onExpenseDetailPress?: (detailName: ExpenseInputName) => void
 }
 function VerboseExpenseSummary({
   expense,
   editField,
   onExpenseDetailPress,
 }: Readonly<ExpenseSummaryProps>) {
-  function onDetailPress(detailName: ExpenseInput) {
+  function onDetailPress(detailName: ExpenseInputName) {
     onExpenseDetailPress?.(detailName)
   }
   const verboseSummary = (
@@ -97,7 +97,7 @@ function CardExpenseSummary({
   editField,
   onExpenseDetailPress,
 }: Readonly<ExpenseSummaryProps>) {
-  function onDetailPress(detailName: ExpenseInput) {
+  function onDetailPress(detailName: ExpenseInputName) {
     onExpenseDetailPress?.(detailName)
   }
   const $modeAndCategoryContainerStyle: ViewStyle = {
@@ -215,7 +215,7 @@ const $shadowBoxStyle: ViewStyle = {
 
 const $highlightStyle: TextStyle = { color: colors.palette.accent500 }
 interface PressableLabelProps {
-  onPress?: (name: ExpenseInput) => void
+  onPress?: (name: ExpenseInputName) => void
   isHighlighted?: boolean
 }
 interface ExpenseAmountLabelProps extends PressableLabelProps {

@@ -10,24 +10,27 @@ import {
   SelectableListOption,
 } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
-import { ExpenseInput } from "./ExpenseEditorScreen"
+import { ExpenseInputName } from "./ExpenseEditorScreen"
 import { Expense, ExpenseCategory, PaymentMode, useExpenseStore } from "app/models"
 import DatePicker from "react-native-date-picker"
 import { useLocale } from "app/utils/useLocale"
 import { TxKeyPath } from "app/i18n"
 import { pipe } from "app/utils/fns"
 import { formatMonthId } from "app/utils/formatDate"
+import { lastDayOfMonth } from "date-fns"
 
 interface ExpenseFormProps {
-  visibleField: ExpenseInput
+  field: ExpenseInputName
   value: Expense
+  isEditing?: boolean
   onChange: (changedValue: Partial<Expense>) => void
   onSave?: () => void
   onNext?: () => void
 }
 export function ExpenseForm({
-  visibleField,
+  field: visibleField,
   value: expense,
+  isEditing = false,
   onChange,
   onSave,
   onNext,
@@ -35,7 +38,7 @@ export function ExpenseForm({
   const $saveIconStyle = { backgroundColor: colors.palette.secondary400, opacity: 0.9 }
   return (
     <View style={$formContainerStyles}>
-      {renderVisibleField(visibleField, expense, onChange, onNext)}
+      <ExpenseInput field={visibleField} {...{ expense, onChange, onNext, isEditing }} />
       <View style={$controlBarStyles}>
         <Pressable onPressIn={onSave}>
           <Icon
@@ -51,12 +54,21 @@ export function ExpenseForm({
     </View>
   )
 }
-function renderVisibleField(
-  field: ExpenseInput,
-  expense: Expense,
-  onChange: (changedValue: Partial<Expense>) => void,
-  onNext?: () => void,
-) {
+
+type ExpenseInputProps = {
+  field: ExpenseInputName
+  expense: Expense
+  isEditing?: boolean
+  onChange: (changedValue: Partial<Expense>) => void
+  onNext?: () => void
+}
+function ExpenseInput({
+  field,
+  expense,
+  isEditing,
+  onChange,
+  onNext,
+}: Readonly<ExpenseInputProps>) {
   function updateAndMoveToNext(changedValue: Partial<Expense>) {
     onChange(changedValue)
     onNext?.()
@@ -79,13 +91,13 @@ function renderVisibleField(
     case "spender":
       return <ExpenseSpenderInput />
     case "date":
-      return <ExpenseDateInput date={expense.date} onChange={onChange} />
+      return <ExpenseDateInput date={expense.date} onChange={onChange} isEditing={isEditing} />
     case "mode":
       return <PaymentModeInput value={expense.mode} onChange={updateAndMoveToNext} />
     case "location":
       return <ExpenseLocationInput />
     default:
-      return null
+      return <></>
   }
 }
 const $formContainerStyles: ViewStyle = {
@@ -145,16 +157,14 @@ function ExpenseAmountInput({
 
 interface ExpenseDateInputProps {
   date: Date
+  isEditing?: boolean
   onChange: (changed: Partial<Expense>) => void
 }
-function InputLabel({ tx }: { tx: TxKeyPath }) {
-  return <Text tx={tx} style={{ color: colors.textDim, alignSelf: "center" }}></Text>
-}
-
-function ExpenseDateInput({ date, onChange }: Readonly<ExpenseDateInputProps>) {
+function ExpenseDateInput({ date, isEditing, onChange }: Readonly<ExpenseDateInputProps>) {
   const selectedMonth = useExpenseStore((state) => state.selectedMonth)
   const { languageTag } = useLocale()
-  const firstDayOfCurrentMonth = new Date(formatMonthId(selectedMonth))
+  const minSelectableDate = new Date(formatMonthId(selectedMonth))
+  const maxSelectableDate = isEditing ? lastDayOfMonth(date) : new Date()
   const handleDateChange = (newDate: Date) => {
     onChange({ date: newDate })
   }
@@ -165,13 +175,17 @@ function ExpenseDateInput({ date, onChange }: Readonly<ExpenseDateInputProps>) {
       <DatePicker
         date={date}
         onDateChange={handleDateChange}
-        minimumDate={firstDayOfCurrentMonth}
-        maximumDate={new Date()}
+        minimumDate={minSelectableDate}
+        maximumDate={maxSelectableDate}
         fadeToColor={colors.background}
         locale={languageTag}
       />
     </>
   )
+}
+
+function InputLabel({ tx }: { tx: TxKeyPath }) {
+  return <Text tx={tx} style={{ color: colors.textDim, alignSelf: "center" }}></Text>
 }
 
 interface ExpenseLocationInputProps {
