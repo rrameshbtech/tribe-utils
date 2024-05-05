@@ -174,14 +174,15 @@ const toggleExpenseFilterFn = (set: ExpenseSliceSetType) => () => {
 }
 
 const upsertExpenseFn = (set: ExpenseSliceSetType) => (expense: Expense) => {
+  const expenseMonth = getMonthId(expense.date)
   set((state) => {
-    if (!state.expensesByMonth[state.selectedMonth]) {
-      state.expensesByMonth[state.selectedMonth] = {
-        month: state.selectedMonth,
+    if (!state.expensesByMonth[expenseMonth]) {
+      state.expensesByMonth[expenseMonth] = {
+        month: expenseMonth,
         data: {},
       }
     }
-    state.expensesByMonth[state.selectedMonth].data[expense.id] = expense
+    state.expensesByMonth[expenseMonth].data[expense.id] = expense
   })
   upsertPayees(set)(expense)
 }
@@ -220,6 +221,9 @@ export const getVisibleExpenses = (state: ExpenseSlice) => {
   }
 
   function byDuration(): (value: Expense, index: number, array: Expense[]) => unknown {
+    if (!isCurrentMonthSelected(state)) {
+      return () => true
+    }
     return (expense) => expense.date >= filterStartDate()
   }
 
@@ -281,6 +285,8 @@ export const getExpenseSummary =
     }, initialSummary)
   }
 
+export const isCurrentMonthSelected = (state: ExpenseSlice) =>
+  state.selectedMonth === getMonthId(new Date())
 const defaultPaymentModes = (): Record<string, PaymentMode> => ({
   Cash: {
     name: "Cash",

@@ -16,6 +16,7 @@ import DatePicker from "react-native-date-picker"
 import { useLocale } from "app/utils/useLocale"
 import { TxKeyPath } from "app/i18n"
 import { pipe } from "app/utils/fns"
+import { formatMonthId } from "app/utils/formatDate"
 
 interface ExpenseFormProps {
   visibleField: ExpenseInput
@@ -36,15 +37,15 @@ export function ExpenseForm({
     <View style={$formContainerStyles}>
       {renderVisibleField(visibleField, expense, onChange, onNext)}
       <View style={$controlBarStyles}>
-        <Pressable onPressIn={onSave} >
-        <Icon
-          type="FontAwesome"
-          name="check"
-          shape="square"
-          size={sizing.xl}
-          color={colors.background}
-          containerStyle={$saveIconStyle}
-        />
+        <Pressable onPressIn={onSave}>
+          <Icon
+            type="FontAwesome"
+            name="check"
+            shape="square"
+            size={sizing.xl}
+            color={colors.background}
+            containerStyle={$saveIconStyle}
+          />
         </Pressable>
       </View>
     </View>
@@ -151,9 +152,9 @@ function InputLabel({ tx }: { tx: TxKeyPath }) {
 }
 
 function ExpenseDateInput({ date, onChange }: Readonly<ExpenseDateInputProps>) {
+  const selectedMonth = useExpenseStore((state) => state.selectedMonth)
   const { languageTag } = useLocale()
-  // TODO: change this if we want to allow users to select past month expenses
-  const firstDayOfCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  const firstDayOfCurrentMonth = new Date(formatMonthId(selectedMonth))
   const handleDateChange = (newDate: Date) => {
     onChange({ date: newDate })
   }

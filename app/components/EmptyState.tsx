@@ -120,6 +120,11 @@ const EmptyStatePresets = {
     heading: translate("emptyStateComponent.noExpenses.heading"),
     content: translate("emptyStateComponent.noExpenses.content"),
   } as EmptyStatePresetItem,
+  noExpensesReport: {
+    imageSource: tribalWomenDoNotKnow,
+    heading: translate("emptyStateComponent.noExpenses.heading"),
+    content: translate("emptyStateComponent.noExpenses.contentReport"),
+  } as EmptyStatePresetItem,
 } as const
 
 /**

@@ -1,29 +1,20 @@
 import React, { FC, useEffect, useState } from "react"
-import { Modal, Pressable, TextStyle, View, ViewStyle } from "react-native"
+import { Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import {
-  EmptyState,
-  Icon,
-  Screen,
-  Text,
-  TrasWithComponents,
-  MoneyLabel,
-  SelectableList,
-  SelectableListOption,
-} from "app/components"
+import { EmptyState, Screen, Text, TrasWithComponents, MoneyLabel } from "app/components"
 import { colors, sizing, spacing } from "app/theme"
 import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
 import {
   Expense,
   MonthIdentifier,
   getExpenseSummary,
-  getMonthId,
   useExpenseStore,
 } from "app/models"
 import { ScrollView } from "react-native-gesture-handler"
-import { format, getDaysInMonth } from "date-fns"
+import { getDaysInMonth } from "date-fns"
 import { TxKeyPath, convertToLocaleAbbrevatedNumber } from "app/i18n"
 import { useLocale } from "app/utils/useLocale"
+import { ExpenseMonthSelector } from "./ExpenseMonthSelector"
 
 const HEADER_TEXT_COLOR = colors.tint
 const CHART_WRAPPER_BACKGROUND_COLOR = colors.backgroundHighlight
@@ -33,7 +24,10 @@ const CONTENT_HIGHLIGHT_TEXT_COLOR = colors.palette.primary600
 
 interface ExpenseReportScreenProps extends AppStackScreenProps<"ExpenseReport"> {}
 export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function ExpenseReportScreen() {
-  const [reportMonth, setReportMonth] = useState<MonthIdentifier>(getMonthId(new Date()))
+  const [reportMonth, setReportMonth] = useExpenseStore((state) => [
+    state.selectedMonth,
+    state.setSelectedMonth,
+  ])
   const summary = useExpenseStore(getExpenseSummary(reportMonth))
 
   return (
@@ -54,7 +48,7 @@ export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function Expens
             <LineChartByDate data={summary.byDate} />
           </>
         )}
-        {summary.total === 0 && <EmptyState preset="noExpenses" />}
+        {summary.total === 0 && <EmptyState preset="noExpensesReport" />}
       </ScrollView>
     </Screen>
   )
@@ -118,7 +112,13 @@ function ReportHeader({ reportMonth, onReportMonthChange }: ReportHeaderProps) {
         preset="subheading"
         style={{ color: HEADER_TEXT_COLOR }}
         txOptions={{
-          month: <ReportMonthSelector {...{ reportMonth, onReportMonthChange }} />,
+          month: (
+            <ExpenseMonthSelector
+              value={reportMonth}
+              onChange={onReportMonthChange}
+              color={HEADER_TEXT_COLOR}
+            />
+          ),
         }}
       />
     </View>
@@ -127,71 +127,6 @@ function ReportHeader({ reportMonth, onReportMonthChange }: ReportHeaderProps) {
 
 type ChartDataType = {
   data: Record<string, number>
-}
-interface ReportMonthSelectorProps {
-  onReportMonthChange: (month: MonthIdentifier) => void
-  reportMonth: MonthIdentifier
-}
-function ReportMonthSelector({
-  reportMonth,
-  onReportMonthChange,
-}: ReportMonthSelectorProps): JSX.Element {
-  const [isMonthSelectorVisible, setIsMonthSelectorVisible] = useState(false)
-  const availableMonthsNumbers = useExpenseStore((state) => Object.keys(state.expensesByMonth))
-  const availableMonthsNumbersWithCurrentMonth = new Set([
-    ...availableMonthsNumbers,
-    getMonthId(new Date()),
-  ])
-
-  const formatMonthId = (month: string) => month.replace(/\B(?=(\d{4})*(\d{2})(?!\d))/g, "-")
-  const selectedMonth = new Date(formatMonthId(reportMonth))
-  const availableMonthListItems = Array.from(availableMonthsNumbersWithCurrentMonth).map(
-    (month) => {
-      const date = new Date(formatMonthId(month))
-      return {
-        name: format(date, "MMMM''yy"),
-        value: month,
-        icon: {
-          type: "initials",
-          name: format(date, "MMM"),
-        },
-      } as SelectableListOption
-    },
-  )
-  return (
-    <>
-      <Pressable
-        style={{ flexDirection: "row", alignItems: "center", gap: spacing.xxs }}
-        onPress={() => setIsMonthSelectorVisible(true)}
-      >
-        <Text
-          preset="subheading"
-          style={{ color: HEADER_TEXT_COLOR }}
-          text={format(selectedMonth, "MMMM yy")}
-        ></Text>
-        <Icon type="FontAwesome" name="caret-down" color={HEADER_TEXT_COLOR} />
-      </Pressable>
-      <Modal
-        visible={isMonthSelectorVisible}
-        animationType="slide"
-        onRequestClose={() => setIsMonthSelectorVisible(false)}
-      >
-        <Text
-          preset="subheading"
-          tx="expense.report.selectMonthTitle"
-          style={{ margin: spacing.sm, alignSelf: "center" }}
-        ></Text>
-        <SelectableList
-          options={availableMonthListItems}
-          value={reportMonth}
-          onChange={(value) => {
-            onReportMonthChange(value as MonthIdentifier)
-            setIsMonthSelectorVisible(false)
-          }}
-        />
-      </Modal>
-    </>
-  )
 }
 
 function PieChartByExpenseCategory({ data }: ChartDataType) {
@@ -314,7 +249,8 @@ function PieChartInnerCircle({
   selected,
 }: Readonly<PieChartInnerCircleProps>): React.JSX.Element {
   const MAX_TEXT_LENGTH = 8
-  const getFontSize = (content: string) => (content.length <= MAX_TEXT_LENGTH ? sizing.md : sizing.sm)
+  const getFontSize = (content: string) =>
+    content.length <= MAX_TEXT_LENGTH ? sizing.md : sizing.sm
   const totalTextSize = getFontSize(totalByGroup[selected].toString())
   const groupTextSize = getFontSize(selected)
 
@@ -340,7 +276,9 @@ function LineChartByDate({ data }: { data: Record<string, number> }) {
         value: data[date] ?? 0,
         labelComponent: () =>
           index === 0 || ((index ?? 0) + 1) % 5 === 0 ? (
-           <Text style={{ fontSize: sizing.sm, color: CONTENT_TEXT_COLOR, width: sizing.lg }}>{date}</Text>
+            <Text style={{ fontSize: sizing.sm, color: CONTENT_TEXT_COLOR, width: sizing.lg }}>
+              {date}
+            </Text>
           ) : (
             <></>
           ),

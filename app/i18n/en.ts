@@ -50,6 +50,8 @@ const en = {
       heading: "Oops! No expenses found",
       content:
         "Forgot to add an expense? Press (+) button to add it.",
+      contentReport:
+        "Forgot to add an expense? Add the pending ones now.",
       button: "Add an expense",
     },
   },
@@ -81,13 +83,14 @@ const en = {
       paymentModeSelectionTitle: "How do you pay oftem?",
     },
     list: {
+      title: "Expenses of {{month}}",
       spentAt: "{{spentAt}}",
       unknownSpentAt: "unknown",
       totalExpenses: "Total Expenses",
       searchPlaceholder: {
         Day: "Today's expenses",
         Week: "Current week's expenses",
-        Month: "Current month's expenses",
+        Month: "Monthly expenses",
       },
       filter: {
         Day: "Day",
