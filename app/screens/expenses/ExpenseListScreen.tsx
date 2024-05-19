@@ -90,9 +90,12 @@ function ExpenseListHeader() {
     borderBottomColor: colors.border,
     borderBottomWidth: 1,
   }
+  const hideSearch = () => {
+    setIsSearchActive(false)
+  }
   return (
     <View style={$expenseListHeaderStyles}>
-      {isSearchActive && <ExpenseListSearchInput onBackPress={() => setIsSearchActive(false)} />}
+      {isSearchActive && <ExpenseListSearchInput onBackPress={hideSearch} />}
       {!isSearchActive && <ExpenseFilter onSearchPress={() => setIsSearchActive(true)} />}
       <ExpenseSummary />
     </View>
@@ -154,10 +157,15 @@ function ExpenseListSearchInput({ onBackPress }: { onBackPress: () => void }) {
     isCurrentMonthSelected(state) ? state.expenseFilter : "Month",
   )
 
+  const cancelSearch = () => {
+    setSearchTerm("")
+    onBackPress()
+  }
+
   useEffect(
     () =>
       navigation.addListener("beforeRemove", (e) => {
-        onBackPress()
+        cancelSearch()
         e.preventDefault()
       }),
     [navigation, onBackPress],
@@ -175,7 +183,7 @@ function ExpenseListSearchInput({ onBackPress }: { onBackPress: () => void }) {
     <View style={$searchInputContainerStyle}>
       <TextField
         placeholderTx={`expense.list.searchPlaceholder.${durationFilter}`}
-        LeftAccessory={(props) => <BackIcon containerStyle={props.style} onPress={onBackPress} />}
+        LeftAccessory={(props) => <BackIcon containerStyle={props.style} onPress={cancelSearch} />}
         RightAccessory={(props) => <RightsideAction props={props} />}
         inputWrapperStyle={$expenseSearchInputWrapperStyles}
         onChangeText={(text) => setSearchTerm(text)}
