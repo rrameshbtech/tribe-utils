@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react"
+import React, { FC, ReactNode, useEffect } from "react"
 
 import {
   Modal,
@@ -20,7 +20,7 @@ import {
   Text,
   Toggle,
 } from "app/components"
-import { colors, sizing, spacing } from "app/theme"
+import { useColors, sizing, spacing } from "app/theme"
 import {
   ExpenseCategory,
   ExpenseConfigs,
@@ -38,7 +38,12 @@ import { TxKeyPath } from "app/i18n"
 interface ExpenseSettingsScreenProps extends AppStackScreenProps<"ExpenseSettings"> {}
 
 export const ExpenseSettingsScreen: FC<ExpenseSettingsScreenProps> = function SettingsScreen() {
-  const [configs, updateConfigs, reconcil] = useExpenseStore((s) => [s.configs, s.updateConfigs, s.reconcile])
+  const colors = useColors()
+  const [configs, updateConfigs, reconcil] = useExpenseStore((s) => [
+    s.configs,
+    s.updateConfigs,
+    s.reconcile,
+  ])
 
   function updateCaptureLocation(value: boolean) {
     updateConfigs({ captureLocation: value })
@@ -66,27 +71,29 @@ export const ExpenseSettingsScreen: FC<ExpenseSettingsScreenProps> = function Se
           style={$deviderStyle}
         ></Text>
         <ExpenseDefaultValues configs={configs} onChange={updateConfigs} />
-        <Button tx="expense.reconcil" onPress={()=> {reconcil(); Toast.show({text1: "Reconciled"}) }} />
+        <Button
+          tx="expense.reconcil"
+          onPress={() => {
+            reconcil()
+            Toast.show({ text1: "Reconciled" })
+          }}
+        />
       </View>
     </Screen>
   )
 }
 
 function ExpenseSettingsHeader() {
-  return (
-    <Text
-      tx="expense.settings.title"
-      preset="subheading"
-      style={{
-        color: colors.tint,
-        backgroundColor: colors.backgroundHighlight,
-        padding: spacing.xs,
-        paddingLeft: spacing.sm,
-        borderBottomColor: colors.border,
-        borderBottomWidth: 1,
-      }}
-    />
-  )
+  const colors = useColors()
+  const $headerStyle = {
+    color: colors.tint,
+    backgroundColor: colors.backgroundHighlight,
+    padding: spacing.xs,
+    paddingLeft: spacing.sm,
+    borderBottomColor: colors.border,
+    borderBottomWidth: 1,
+  }
+  return <Text tx="expense.settings.title" preset="subheading" style={$headerStyle} />
 }
 
 interface LocationToggleProps {
@@ -124,8 +131,9 @@ function LocationToggle({ value, onChange }: LocationToggleProps) {
         console.warn("Unexpected error when requesting location permission", err)
       })
   }
+  const $toggleContainerStyle: ViewStyle = { flexDirection: "row", justifyContent: "space-between" }
   return (
-    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+    <View style={$toggleContainerStyle}>
       <Text tx="expense.settings.location" />
       <Toggle value={value} variant="switch" onValueChange={handleChange}></Toggle>
     </View>
@@ -148,7 +156,6 @@ function ExpenseDefaultValues({ configs, onChange }: ExpenseDefaultValuesProps) 
   const [activeSelector, setActiveSelector] = React.useState<
     "paymentMode" | "category" | "payee" | "spender" | null
   >(null)
-  const $formRowStyle: ViewStyle = { flexDirection: "row", justifyContent: "space-between" }
 
   function updatePaymentMode(value: string) {
     onChange({ defaultPaymentMode: value })
@@ -246,6 +253,7 @@ interface EditLabelProps {
   onPress?: () => void
 }
 function EditLabel({ value, onPress }: EditLabelProps) {
+  const colors = useColors()
   const $valueContainerStyle: ViewStyle = {
     flexDirection: "row",
     alignItems: "center",
@@ -277,7 +285,7 @@ function PaymentModeSelector({
   const paymentModes = useExpenseStore((state) => Object.values(state.paymentModes))
 
   return (
-    <Modal visible={visible} animationType="slide">
+    <SettingsModal visible={visible}>
       <SelectorModalHeader tx="expense.settings.payeeSelectionTitle" onClose={onClose} />
       <SelectableList
         options={pipe(Object.values, convertToSelectableListOptions)(paymentModes)}
@@ -285,6 +293,20 @@ function PaymentModeSelector({
         onChange={onChange}
         translationScope="expense.paymentModes"
       />
+    </SettingsModal>
+  )
+}
+
+interface SettingsModalProps {
+  children: ReactNode
+  visible?: boolean
+}
+function SettingsModal({ children, visible = false }: Readonly<SettingsModalProps>) {
+  const colors = useColors()
+  const $modalContainerStyle = { flex: 1, backgroundColor: colors.background }
+  return (
+    <Modal visible={visible} animationType="slide">
+      <View style={$modalContainerStyle}>{children}</View>
     </Modal>
   )
 }
@@ -299,7 +321,7 @@ function CategorySelector({ value, onChange, visible, onClose }: Readonly<Catego
   const categories = useExpenseStore((state) => Object.values(state.expenseCategories))
 
   return (
-    <Modal visible={visible} animationType="slide">
+    <SettingsModal visible={visible}>
       <SelectorModalHeader tx="expense.settings.categorySelectionTitle" onClose={onClose} />
       <SelectableList
         options={pipe(Object.values, convertToSelectableListOptions)(categories)}
@@ -307,7 +329,7 @@ function CategorySelector({ value, onChange, visible, onClose }: Readonly<Catego
         onChange={onChange}
         translationScope="expense.categories"
       />
-    </Modal>
+    </SettingsModal>
   )
 }
 
@@ -321,14 +343,14 @@ function SpenderSelector({ value, onChange, visible, onClose }: Readonly<Spender
   const tribeMembers = useMemberStore((state) => Object.values(state.allMembers))
 
   return (
-    <Modal visible={visible} animationType="slide">
+    <SettingsModal visible={visible}>
       <SelectorModalHeader tx="expense.settings.spenderSelectionTitle" onClose={onClose} />
       <SelectableList
         options={pipe(Object.values, convertToSelectableListOptions)(tribeMembers)}
         value={value}
         onChange={onChange}
       />
-    </Modal>
+    </SettingsModal>
   )
 }
 
@@ -345,6 +367,7 @@ type SelectorModalHeaderProps = {
 }
 
 function SelectorModalHeader({ tx, onClose }: SelectorModalHeaderProps) {
+  const colors = useColors()
   const $selectorHeaderStyle: ViewStyle = {
     padding: spacing.xs,
     backgroundColor: colors.backgroundHighlight,
@@ -356,9 +379,10 @@ function SelectorModalHeader({ tx, onClose }: SelectorModalHeaderProps) {
     alignItems: "center",
     columnGap: spacing.xs,
   }
+  const $headerStyle = { color: colors.tint, flex: 1 }
   return (
     <View style={$selectorHeaderStyle}>
-      <Text preset="subheading" tx={tx} style={{ color: colors.tint, flex: 1 }} />
+      <Text preset="subheading" tx={tx} style={$headerStyle} />
       <Icon type="Ionicons" name="close" onPress={onClose} size={sizing.lg}></Icon>
     </View>
   )
@@ -383,7 +407,7 @@ function PayeeSelector({
   }
 
   return (
-    <Modal visible={visible} animationType="slide">
+    <SettingsModal visible={visible}>
       <SelectorModalHeader tx="expense.settings.payeeSelectionTitle" onClose={onClose} />
       <AutoComplete
         {...{ value, ref }}
@@ -395,7 +419,7 @@ function PayeeSelector({
         clearButtonMode="always"
         returnKeyType="next"
       />
-    </Modal>
+    </SettingsModal>
   )
 }
 

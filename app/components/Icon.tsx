@@ -14,7 +14,7 @@ import {
   ViewStyle,
 } from "react-native"
 import { FontAwesome } from "@expo/vector-icons"
-import { colors, sizing } from "app/theme"
+import { useColors, sizing } from "app/theme"
 
 export interface CommonIconProps {
   color?: string
@@ -61,18 +61,14 @@ function InitialsIconComponent({
   ...props
 }: Readonly<InitialsIconPropsWithOutWrapper>) {
   const firstLetterOfWordRegex = /\b(\w)/g
-  const initials = name
-    .match(firstLetterOfWordRegex)
-    ?.join("")
-    .concat(name[1])
-    .slice(0, 2)
-    .toUpperCase() ?? ""
+  const initials =
+    name.match(firstLetterOfWordRegex)?.join("").concat(name[1]).slice(0, 2).toUpperCase() ?? ""
 
   const stepDownedSize = ((size ?? 1) / 8 - 1) * 8
   const fontSize = initials.length > 1 ? stepDownedSize : size
   const $style: StyleProp<TextStyle> = [
     color !== undefined && { color },
-    size !== undefined && { fontSize, lineHeight: fontSize},
+    size !== undefined && { fontSize, lineHeight: fontSize },
     { fontWeight: "bold" },
     style,
   ]
@@ -92,10 +88,11 @@ function InitialsIconComponent({
  * @returns {JSX.Element} The rendered `Icon` component.
  */
 export function Icon(props: ImageIconProps | FontIconProps | InitialsIconProps) {
+  const colors = useColors()
   const {
     type,
     name,
-    color,
+    color = colors.text,
     size = sizing.lg,
     shape,
     style: styleOverride,
@@ -103,8 +100,19 @@ export function Icon(props: ImageIconProps | FontIconProps | InitialsIconProps) 
     ...WrapperProps
   } = props
 
+  const $baseContainerStyle = (size: number): ViewStyle => ({
+    flex: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: size * 2,
+    minHeight: size * 2,
+    backgroundColor: colors.cardBackground,
+    borderColor: colors.cardBorder,
+    borderWidth: 1,
+    borderRadius: sizing.xs,
+  })
   const containerStyle = [
-    shape ? $containerStyle(size): {},
+    shape ? $baseContainerStyle(size) : {},
     shape === "circle" ? $circleContainerStyle(size) : {},
     $containerStyleOverride,
   ]
@@ -140,18 +148,6 @@ export function Icon(props: ImageIconProps | FontIconProps | InitialsIconProps) 
     </Wrapper>
   )
 }
-
-const $containerStyle = (size: number): ViewStyle => ({
-  flex: 0,
-  alignItems: "center",
-  justifyContent: "center",
-  minWidth: size * 2,
-  minHeight: size * 2,
-  backgroundColor: colors.palette.primary100,
-  borderColor: colors.palette.primary200,
-  borderWidth: 1,
-  borderRadius: sizing.xs,
-})
 
 const $circleContainerStyle = (size: number): ViewStyle => ({
   borderRadius: size,

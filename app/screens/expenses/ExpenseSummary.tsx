@@ -1,7 +1,7 @@
 import React from "react"
 import { Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { Card, Text, TrasWithComponents, MoneyLabel } from "app/components"
-import { colors, sizing, spacing } from "app/theme"
+import { useColors, sizing, spacing, Colors } from "app/theme"
 import { Expense, ExpenseLocation, useExpenseStore, useMemberStore } from "app/models"
 import { ExpenseInputName } from "./ExpenseEditorScreen"
 import { t } from "i18n-js"
@@ -97,6 +97,24 @@ function CardExpenseSummary({
   editField,
   onExpenseDetailPress,
 }: Readonly<ExpenseSummaryProps>) {
+  const colors = useColors()
+  const $shadowBoxStyle: ViewStyle = {
+    backgroundColor: colors.background,
+    borderColor: colors.border,
+    margin: spacing.md,
+    flexDirection: "column",
+    rowGap: spacing.md,
+    justifyContent: "space-between",
+    borderRadius: spacing.md,
+    padding: spacing.xs,
+    borderWidth: 1,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12.81,
+    elevation: 16,
+  }
+
   function onDetailPress(detailName: ExpenseInputName) {
     onExpenseDetailPress?.(detailName)
   }
@@ -177,8 +195,9 @@ function CardExpenseSummary({
     </View>
   )
 
+  const $contentStyle: ViewStyle = { alignItems: "center" }
   const ContentComponent = (
-    <View style={{ alignItems: "center" }}>
+    <View style={$contentStyle}>
       <ExpenseAmountLabel
         amount={expense.amount}
         onPress={onDetailPress}
@@ -196,28 +215,11 @@ function CardExpenseSummary({
   )
 }
 
-const $shadowBoxStyle: ViewStyle = {
-  backgroundColor: colors.palette.neutral100,
-  borderColor: colors.palette.neutral300,
-  margin: spacing.md,
-  flexDirection: "column",
-  rowGap: spacing.md,
-  justifyContent: "space-between",
-  borderRadius: spacing.md,
-  padding: spacing.xs,
-  borderWidth: 1,
-  shadowColor: colors.palette.neutral800,
-  shadowOffset: { width: 0, height: 12 },
-  shadowOpacity: 0.08,
-  shadowRadius: 12.81,
-  elevation: 16,
-}
-
-const $highlightStyle: TextStyle = { color: colors.palette.accent500 }
 interface PressableLabelProps {
   onPress?: (name: ExpenseInputName) => void
   isHighlighted?: boolean
 }
+const $highlightStyle = (colors: Colors) => ({ color: colors.highlight })
 interface ExpenseAmountLabelProps extends PressableLabelProps {
   amount: number
 }
@@ -227,10 +229,12 @@ function ExpenseAmountLabel({
   isHighlighted,
   ...pressableProps
 }: Readonly<ExpenseAmountLabelProps>) {
+  const colors = useColors()
+
   const style: TextStyle = {
     fontSize: sizing.xxl,
     lineHeight: sizing.xxl,
-    ...(isHighlighted ? $highlightStyle : {}),
+    ...(isHighlighted ? $highlightStyle(colors) : {}),
   }
   return (
     <Pressable onPress={() => onPress?.("amount")} {...pressableProps}>
@@ -255,12 +259,13 @@ interface PayeeLabelProps extends PressableLabelProps {
   name: string
 }
 function PayeeLabel({ name, onPress, isHighlighted }: Readonly<PayeeLabelProps>) {
+  const colors = useColors()
   return (
     <Pressable onPress={() => onPress?.("payee")}>
       <Text
         text={name.toLocaleLowerCase()}
         preset="bold"
-        style={isHighlighted && $highlightStyle}
+        style={isHighlighted && $highlightStyle(colors)}
       />
     </Pressable>
   )
@@ -270,9 +275,10 @@ interface CategoryLabelProps extends PressableLabelProps {
   name: string
 }
 function CategoryLabel({ name, onPress, isHighlighted }: Readonly<CategoryLabelProps>) {
+  const colors = useColors()
   return (
     <Pressable onPress={() => onPress?.("category")}>
-      <Text preset="bold" style={isHighlighted && $highlightStyle}>
+      <Text preset="bold" style={isHighlighted && $highlightStyle(colors)}>
         {t(`expense.categories.${name}`, { defaultValue: name }).toLocaleLowerCase()}
       </Text>
     </Pressable>
@@ -283,9 +289,10 @@ interface ModeLabelProps extends PressableLabelProps {
   mode: string
 }
 function ModeLabel({ mode, onPress, isHighlighted }: Readonly<ModeLabelProps>) {
+  const colors = useColors()
   return (
     <Pressable onPress={() => onPress?.("mode")}>
-      <Text preset="bold" style={isHighlighted && $highlightStyle}>
+      <Text preset="bold" style={isHighlighted && $highlightStyle(colors)}>
         {t(`expense.paymentModes.${mode}`, { defaultValue: mode }).toLocaleLowerCase()}
       </Text>
     </Pressable>
@@ -296,12 +303,13 @@ interface DateLabelProps extends PressableLabelProps {
   date: Date
 }
 function DateLabel({ date, onPress, isHighlighted }: Readonly<DateLabelProps>) {
+  const colors = useColors()
   return (
     <Pressable onPress={() => onPress?.("date")}>
       <Text
         text={date.toLocaleDateString()}
         preset="bold"
-        style={isHighlighted && $highlightStyle}
+        style={isHighlighted && $highlightStyle(colors)}
       />
     </Pressable>
   )

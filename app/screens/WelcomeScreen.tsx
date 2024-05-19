@@ -2,7 +2,7 @@ import React, { FC } from "react"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import { Button, Screen, Text } from "app/components"
 import { AppStackScreenProps, navigate } from "../navigators"
-import { colors, spacing } from "../theme"
+import { useColors, spacing } from "../theme"
 import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 
 const welcomeLogo = require("../../assets/images/tribal-women-celebrate.png")
@@ -10,7 +10,40 @@ const welcomeLogo = require("../../assets/images/tribal-women-celebrate.png")
 interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> {}
 
 export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen() {
+  const colors = useColors()
   const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])
+
+  const $container: ViewStyle = {
+    flex: 1,
+    backgroundColor: colors.background,
+  }
+
+  const $topContainer: ViewStyle = {
+    flexShrink: 1,
+    flexGrow: 1,
+    flexBasis: "57%",
+    justifyContent: "center",
+    paddingHorizontal: spacing.lg,
+  }
+
+  const $bottomContainer: ViewStyle = {
+    flexShrink: 1,
+    flexGrow: 0,
+    flexBasis: "43%",
+    backgroundColor: colors.backgroundHighlight,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingHorizontal: spacing.lg,
+    justifyContent: "space-around",
+  }
+  const $welcomeLogo: ImageStyle = {
+    height: 150,
+    width: "100%",
+  }
+
+  const $welcomeHeading: TextStyle = {
+    marginBottom: spacing.md,
+  }
 
   return (
     <Screen
@@ -41,36 +74,4 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen() {
       </View>
     </Screen>
   )
-}
-
-const $container: ViewStyle = {
-  flex: 1,
-  backgroundColor: colors.background,
-}
-
-const $topContainer: ViewStyle = {
-  flexShrink: 1,
-  flexGrow: 1,
-  flexBasis: "57%",
-  justifyContent: "center",
-  paddingHorizontal: spacing.lg,
-}
-
-const $bottomContainer: ViewStyle = {
-  flexShrink: 1,
-  flexGrow: 0,
-  flexBasis: "43%",
-  backgroundColor: colors.backgroundHighlight,
-  borderTopLeftRadius: 16,
-  borderTopRightRadius: 16,
-  paddingHorizontal: spacing.lg,
-  justifyContent: "space-around",
-}
-const $welcomeLogo: ImageStyle = {
-  height: 150,
-  width: "100%",
-}
-
-const $welcomeHeading: TextStyle = {
-  marginBottom: spacing.md,
 }

@@ -2,11 +2,11 @@ import i18n from "i18n-js"
 import React from "react"
 import { StyleProp, Text as RNText, TextProps as RNTextProps, TextStyle } from "react-native"
 import { isRTL, translate, TxKeyPath } from "../i18n"
-import { colors, typography } from "../theme"
+import { useColors, typography, Colors } from "../theme"
 
 type Sizes = keyof typeof $sizeStyles
 type Weights = keyof typeof typography.primary
-export type Presets = keyof typeof $presets
+export type Presets = keyof ReturnType<typeof $getPresets>
 
 export interface TextProps extends RNTextProps {
   /**
@@ -52,12 +52,14 @@ export interface TextProps extends RNTextProps {
  * @returns {JSX.Element} The rendered `Text` component.
  */
 export function Text(props: TextProps) {
+  const colors = useColors()
   const { weight, size, tx, txOptions, text, children, style: $styleOverride, ...rest } = props
 
   const i18nText = tx && translate(tx, txOptions)
   const content = i18nText || text || children
 
   const preset: Presets = props.preset ?? "default"
+  const $presets = $getPresets(colors)
   const $styles: StyleProp<TextStyle> = [
     $rtlStyle,
     $presets[preset],
@@ -88,24 +90,26 @@ const $fontWeightStyles = Object.entries(typography.primary).reduce((acc, [weigh
   return { ...acc, [weight]: { fontFamily } }
 }, {}) as Record<Weights, TextStyle>
 
-const $baseStyle: StyleProp<TextStyle> = [
-  $sizeStyles.sm,
-  $fontWeightStyles.normal,
-  { color: colors.text },
-]
-
-const $presets = {
-  default: $baseStyle,
-
-  bold: [$baseStyle, $fontWeightStyles.bold] as StyleProp<TextStyle>,
-
-  heading: [$baseStyle, $sizeStyles.xxl, $fontWeightStyles.bold] as StyleProp<TextStyle>,
-
-  subheading: [$baseStyle, $sizeStyles.lg, $fontWeightStyles.medium] as StyleProp<TextStyle>,
-
-  formLabel: [$baseStyle, $fontWeightStyles.medium] as StyleProp<TextStyle>,
-
-  formHelper: [$baseStyle, $sizeStyles.sm, $fontWeightStyles.normal] as StyleProp<TextStyle>,
-}
-
 const $rtlStyle: TextStyle = isRTL ? { writingDirection: "rtl" } : {}
+
+const $getPresets = (colors: Colors) => {
+  const $baseStyle: StyleProp<TextStyle> = [
+    $sizeStyles.sm,
+    $fontWeightStyles.normal,
+    { color: colors.text },
+  ]
+
+  return {
+    default: $baseStyle,
+
+    bold: [$baseStyle, $fontWeightStyles.bold] as StyleProp<TextStyle>,
+
+    heading: [$baseStyle, $sizeStyles.xxl, $fontWeightStyles.bold] as StyleProp<TextStyle>,
+
+    subheading: [$baseStyle, $sizeStyles.lg, $fontWeightStyles.medium] as StyleProp<TextStyle>,
+
+    formLabel: [$baseStyle, $fontWeightStyles.medium] as StyleProp<TextStyle>,
+
+    formHelper: [$baseStyle, $sizeStyles.sm, $fontWeightStyles.normal] as StyleProp<TextStyle>,
+  }
+}

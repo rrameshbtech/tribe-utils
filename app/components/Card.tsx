@@ -8,7 +8,7 @@ import {
   ViewProps,
   ViewStyle,
 } from "react-native"
-import { colors, spacing } from "../theme"
+import { useColors, spacing } from "../theme"
 import { Text, TextProps } from "./Text"
 
 type Presets = keyof typeof $containerPresets
@@ -160,6 +160,63 @@ export function Card(props: CardProps) {
     TouchableOpacityProps | ViewProps
   >
   const HeaderContentWrapper = verticalAlignment === "force-footer-bottom" ? View : Fragment
+  const colors = useColors()
+  const $containerBase: ViewStyle = {
+    borderRadius: spacing.md,
+    padding: spacing.xs,
+    borderWidth: 1,
+    shadowColor: colors.palette.neutral800,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12.81,
+    elevation: 16,
+    minHeight: 96,
+    flexDirection: "row",
+  }
+  
+  const $alignmentWrapper: ViewStyle = {
+    flex: 1,
+    flexDirection: "column",
+    rowGap: spacing.xs,
+    alignSelf: "stretch",
+  }
+  
+  const $alignmentWrapperFlexOptions = {
+    top: "flex-start",
+    center: "center",
+    "space-between": "space-between",
+    "force-footer-bottom": "space-between",
+  } as const
+  
+  const $containerPresets = {
+    default: [
+      $containerBase,
+      {
+        backgroundColor: colors.palette.neutral100,
+        borderColor: colors.palette.neutral300,
+      },
+    ] as StyleProp<ViewStyle>,
+  
+    reversed: [
+      $containerBase,
+      { backgroundColor: colors.palette.neutral800, borderColor: colors.palette.neutral500 },
+    ] as StyleProp<ViewStyle>,
+  }
+  
+  const $headingPresets: Record<Presets, TextStyle> = {
+    default: {},
+    reversed: { color: colors.palette.neutral100 },
+  }
+  
+  const $contentPresets: Record<Presets, TextStyle> = {
+    default: {},
+    reversed: { color: colors.palette.neutral100 },
+  }
+  
+  const $footerPresets: Record<Presets, TextStyle> = {
+    default: {},
+    reversed: { color: colors.palette.neutral100 },
+  }
 
   const $containerStyle = [$containerPresets[preset], $containerStyleOverride]
   const $headingStyle = [
@@ -241,61 +298,4 @@ export function Card(props: CardProps) {
       {RightComponent}
     </Wrapper>
   )
-}
-
-const $containerBase: ViewStyle = {
-  borderRadius: spacing.md,
-  padding: spacing.xs,
-  borderWidth: 1,
-  shadowColor: colors.palette.neutral800,
-  shadowOffset: { width: 0, height: 12 },
-  shadowOpacity: 0.08,
-  shadowRadius: 12.81,
-  elevation: 16,
-  minHeight: 96,
-  flexDirection: "row",
-}
-
-const $alignmentWrapper: ViewStyle = {
-  flex: 1,
-  flexDirection: "column",
-  rowGap: spacing.xs,
-  alignSelf: "stretch",
-}
-
-const $alignmentWrapperFlexOptions = {
-  top: "flex-start",
-  center: "center",
-  "space-between": "space-between",
-  "force-footer-bottom": "space-between",
-} as const
-
-const $containerPresets = {
-  default: [
-    $containerBase,
-    {
-      backgroundColor: colors.palette.neutral100,
-      borderColor: colors.palette.neutral300,
-    },
-  ] as StyleProp<ViewStyle>,
-
-  reversed: [
-    $containerBase,
-    { backgroundColor: colors.palette.neutral800, borderColor: colors.palette.neutral500 },
-  ] as StyleProp<ViewStyle>,
-}
-
-const $headingPresets: Record<Presets, TextStyle> = {
-  default: {},
-  reversed: { color: colors.palette.neutral100 },
-}
-
-const $contentPresets: Record<Presets, TextStyle> = {
-  default: {},
-  reversed: { color: colors.palette.neutral100 },
-}
-
-const $footerPresets: Record<Presets, TextStyle> = {
-  default: {},
-  reversed: { color: colors.palette.neutral100 },
 }

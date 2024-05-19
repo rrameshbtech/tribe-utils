@@ -1,4 +1,4 @@
-import { colors } from "app/theme"
+import { useColors } from "app/theme"
 import { pipe } from "app/utils/fns"
 import { useLocale } from "app/utils/useLocale"
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react"
@@ -52,11 +52,21 @@ const MoneyInput = forwardRef(
     }: MoneyInputProps,
     ref,
   ) => {
+    const colors = useColors()
     const [isFocused, setIsFocused] = React.useState(false)
     const textInputRef = React.useRef<TextInput>(null)
     const { currencySymbol } = useLocale()
     const hasValidValue = value.length > 0
 
+
+const $textStyles: TextStyle = {
+  fontSize: DEFAULT_FONT_SIZE,
+  color: colors.text,
+}
+
+const $placeholderStyles: TextStyle = {
+  color: colors.text,
+}
     const styles = {
       ...$textStyles,
       ...overrideStyles,
@@ -188,7 +198,7 @@ const MoneyInput = forwardRef(
         return
       }
 
-      const formattedValue = parseFloat(value).toFixed(decimalPrecision).toString()
+      const formattedValue = parseFloat(value)?.toFixed(decimalPrecision).toString()
       if (formattedValue === value) {
         return
       }
@@ -199,10 +209,6 @@ const MoneyInput = forwardRef(
 MoneyInput.displayName = "MoneyInput"
 export { MoneyInput }
 
-const $textStyles: TextStyle = {
-  fontSize: DEFAULT_FONT_SIZE,
-}
-
 const $containerStyles: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
@@ -211,10 +217,6 @@ const $containerStyles: ViewStyle = {
 
 const $textInputStyles: TextStyle = {
   display: "none",
-}
-
-const $placeholderStyles: TextStyle = {
-  color: colors.text,
 }
 
 const $currencySymbolStyles = (textStyle: TextStyle): TextStyle => ({
@@ -241,6 +243,14 @@ function BlinkingCursor({
   isVisible,
 }: BlinkingCursorProps) {
   const [style, setStyle] = useState({ opacity: isVisible ? 1 : 0 })
+  const colors = useColors()
+  const $cursorStyles = (style?: TextStyle): ViewStyle => ({
+    width: 1,
+    height: style?.fontSize ?? DEFAULT_FONT_SIZE,
+    marginLeft: 2,
+    backgroundColor: colors.text,
+  })
+
   useEffect(() => {
     if (!isVisible) {
       setStyle({ opacity: 0 })
@@ -263,9 +273,3 @@ function BlinkingCursor({
     ></View>
   )
 }
-const $cursorStyles = (style?: TextStyle): ViewStyle => ({
-  width: 1,
-  height: style?.fontSize ?? DEFAULT_FONT_SIZE,
-  marginLeft: 2,
-  backgroundColor: colors.text,
-})

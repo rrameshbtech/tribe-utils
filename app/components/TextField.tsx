@@ -9,7 +9,7 @@ import {
   ViewStyle,
 } from "react-native"
 import { isRTL, translate } from "../i18n"
-import { colors, spacing, typography } from "../theme"
+import { useColors, spacing, typography, Colors } from "../theme"
 import { Text, TextProps } from "./Text"
 
 export interface TextFieldAccessoryProps {
@@ -124,6 +124,7 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
     inputWrapperStyle: $inputWrapperStyleOverride,
     ...TextInputProps
   } = props
+  const colors  = useColors()
   const input = useRef<TextInput>(null)
 
   const disabled = TextInputProps.editable === false || status === "disabled"
@@ -137,7 +138,7 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
   const $labelStyles = [$labelStyle, LabelTextProps?.style]
 
   const $inputWrapperStyles = [
-    $inputWrapperStyle,
+    inputWrapperStyle(colors),
     status === "error" && { borderColor: colors.error },
     TextInputProps.multiline && { minHeight: 112 },
     LeftAccessory && { paddingStart: 0 },
@@ -146,7 +147,7 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
   ]
 
   const $inputStyles: StyleProp<TextStyle> = [
-    $inputStyle,
+    inputStyle(colors),
     disabled && { color: colors.textDim },
     isRTL && { textAlign: "right" as TextStyle["textAlign"] },
     TextInputProps.multiline && { height: "auto" },
@@ -237,16 +238,16 @@ const $labelStyle: TextStyle = {
   marginBottom: spacing.xs,
 }
 
-const $inputWrapperStyle: ViewStyle = {
+const inputWrapperStyle = (colors: Colors) => ({
   flexDirection: "row",
   alignItems: "flex-start",
   borderWidth: 1,
-  backgroundColor: colors.palette.neutral200,
-  borderColor: colors.palette.neutral400,
+  backgroundColor: colors.backgroundHighlight,
+  borderColor: colors.border,
   overflow: "hidden",
-}
+} as ViewStyle)
 
-const $inputStyle: TextStyle = {
+const inputStyle = (colors: Colors) => ({
   flex: 1,
   alignSelf: "stretch",
   fontFamily: typography.primary.normal,
@@ -258,7 +259,7 @@ const $inputStyle: TextStyle = {
   paddingHorizontal: 0,
   marginVertical: spacing.xs,
   marginHorizontal: spacing.sm,
-}
+} as TextStyle)
 
 const $helperStyle: TextStyle = {
   marginTop: spacing.xs,

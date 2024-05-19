@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { View, ViewStyle, TextInput, AppState, Platform, Pressable } from "react-native"
+import { View, ViewStyle, TextInput, AppState, Platform, Pressable, TextStyle } from "react-native"
 import {
   AutoComplete,
   TextField,
@@ -9,7 +9,7 @@ import {
   SelectableList,
   SelectableListOption,
 } from "app/components"
-import { colors, sizing, spacing } from "app/theme"
+import { useColors, sizing, spacing } from "app/theme"
 import { ExpenseInputName } from "./ExpenseEditorScreen"
 import { Expense, ExpenseCategory, PaymentMode, useExpenseStore } from "app/models"
 import DatePicker from "react-native-date-picker"
@@ -35,7 +35,8 @@ export function ExpenseForm({
   onSave,
   onNext,
 }: Readonly<ExpenseFormProps>) {
-  const $saveIconStyle = { backgroundColor: colors.palette.secondary400, opacity: 0.9 }
+  const colors = useColors()
+  const $saveIconStyle = { backgroundColor: colors.tint, opacity: 0.9 }
   return (
     <View style={$formContainerStyles}>
       <ExpenseInput field={visibleField} {...{ expense, onChange, onNext, isEditing }} />
@@ -161,6 +162,7 @@ interface ExpenseDateInputProps {
   onChange: (changed: Partial<Expense>) => void
 }
 function ExpenseDateInput({ date, isEditing, onChange }: Readonly<ExpenseDateInputProps>) {
+  const colors = useColors()
   const selectedMonth = useExpenseStore((state) => state.selectedMonth)
   const { languageTag } = useLocale()
   const minSelectableDate = new Date(formatMonthId(selectedMonth))
@@ -185,7 +187,9 @@ function ExpenseDateInput({ date, isEditing, onChange }: Readonly<ExpenseDateInp
 }
 
 function InputLabel({ tx }: { tx: TxKeyPath }) {
-  return <Text tx={tx} style={{ color: colors.textDim, alignSelf: "center" }}></Text>
+  const colors = useColors()
+  const $labelStyle: TextStyle = { color: colors.textDim, alignSelf: "center" }
+  return <Text tx={tx} style={$labelStyle}></Text>
 }
 
 interface ExpenseLocationInputProps {

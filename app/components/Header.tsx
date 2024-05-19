@@ -8,7 +8,7 @@ import {
   ViewStyle,
 } from "react-native"
 import { isRTL, translate } from "../i18n"
-import { colors, spacing } from "../theme"
+import { useColors, spacing } from "../theme"
 import { ExtendedEdge, useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 import { Icon, ImageIconNames } from "./Icon"
 import { Text, TextProps } from "./Text"
@@ -144,6 +144,7 @@ interface HeaderActionProps {
  * @returns {JSX.Element} The rendered `Header` component.
  */
 export function Header(props: HeaderProps) {
+  const colors = useColors()
   const {
     backgroundColor = colors.background,
     LeftActionComponent,
@@ -228,9 +229,12 @@ export function Header(props: HeaderProps) {
  */
 function HeaderAction(props: HeaderActionProps) {
   const { backgroundColor, icon, text, tx, txOptions, onPress, ActionComponent, iconColor } = props
-
+  const colors = useColors()
   const content = tx ? translate(tx, txOptions) : text
 
+  const $actionText: TextStyle = {
+    color: colors.tint,
+  }
   if (ActionComponent) return ActionComponent
 
   if (content) {
@@ -284,10 +288,6 @@ const $actionTextContainer: ViewStyle = {
   height: "100%",
   paddingHorizontal: spacing.md,
   zIndex: 2,
-}
-
-const $actionText: TextStyle = {
-  color: colors.tint,
 }
 
 const $actionIconContainer: ViewStyle = {

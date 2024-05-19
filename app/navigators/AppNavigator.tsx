@@ -4,14 +4,14 @@
  * Generally speaking, it will contain an auth flow (registration, login, forgot password)
  * and a "main" flow which the user will use once logged in.
  */
-import { DarkTheme, DefaultTheme, NavigationContainer, RouteProp } from "@react-navigation/native"
+import { NavigationContainer, RouteProp } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import React from "react"
-import { View, ViewStyle, useColorScheme } from "react-native"
+import { TextStyle, View, ViewStyle } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
-import { colors, spacing } from "app/theme"
+import { useColors, spacing } from "app/theme"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { Icon, Text } from "app/components"
 import { useSettingsStore } from "app/models"
@@ -61,6 +61,7 @@ const Tab = createBottomTabNavigator<ExpenseScreensParamList>()
 const Stack = createNativeStackNavigator<AllScreensParamList>()
 
 const ExpenseTabs = function ExpenseTabs() {
+  const colors = useColors()
   return (
     <Tab.Navigator
       initialRouteName="ExpenseList"
@@ -92,7 +93,15 @@ const ExpenseTabs = function ExpenseTabs() {
   function createExpenseTabIcon(
     route: RouteProp<ExpenseScreensParamList, keyof ExpenseScreensParamList>,
   ): (props: TabBarIconProps) => React.ReactNode {
-    return ({ focused, color, size }) => {
+    return ExpenseTabIcon
+
+    interface ExpenseTabIconProps {
+      focused: boolean
+      color: string
+      size: number
+    }
+    function ExpenseTabIcon({ focused, color, size }: ExpenseTabIconProps) {
+      const colors = useColors()
       const iconStyle: ViewStyle = {
         opacity: focused ? 1 : 0.9,
         marginTop: spacing.xs,
@@ -107,8 +116,10 @@ const ExpenseTabs = function ExpenseTabs() {
         ExpenseReport: "expense.tabs.report",
         ExpenseSettings: "expense.tabs.settings",
       }
+      const $textStyle: TextStyle = { textAlign: "center", color: colors.textDim }
+      const $iconContainerStyle: ViewStyle = { flexDirection: "column", alignItems: "center" }
       return (
-        <View style={{ flexDirection: "column", alignItems: "center" }}>
+        <View style={$iconContainerStyle}>
           <Icon
             type="FontAwesome"
             name={tabIcons[route.name]}
@@ -120,7 +131,7 @@ const ExpenseTabs = function ExpenseTabs() {
             tx={tabNames[route.name]}
             preset={focused ? "bold" : "default"}
             size="xxxs"
-            style={{ textAlign: "center", color:colors.textDim }}
+            style={$textStyle}
           />
         </View>
       )
@@ -163,6 +174,7 @@ function renderSignedOutStack() {
 }
 
 const AppStack = function AppStack() {
+  const colors = useColors()
   const isInitialSetupComplete = useSettingsStore((state) => state.isInitialSetupComplete)
   return (
     <Stack.Navigator
@@ -178,16 +190,10 @@ export interface NavigationProps
   extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 export const AppNavigator = function AppNavigator(props: NavigationProps) {
-  const colorScheme = useColorScheme()
-
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName))
 
   return (
-    <NavigationContainer
-      ref={navigationRef}
-      theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-      {...props}
-    >
+    <NavigationContainer ref={navigationRef} {...props}>
       <AppStack />
     </NavigationContainer>
   )

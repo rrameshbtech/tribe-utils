@@ -7,7 +7,7 @@ import {
   View,
   ViewStyle,
 } from "react-native"
-import { colors, spacing } from "../theme"
+import { useColors, spacing } from "../theme"
 import { Icon as IconComponent } from "./Icon"
 import { Icon } from "../models/icon"
 
@@ -27,7 +27,7 @@ export interface ListItemProps extends TouchableOpacityProps {
    * Default: false
    */
   bottomSeparator?: boolean
-  
+
   /**
    * Optional text style override.
    */
@@ -83,6 +83,7 @@ interface ListItemActionProps {
  * @returns {JSX.Element} The rendered `ListItem` component.
  */
 export function ListItem(props: ListItemProps) {
+  const colors = useColors()
   const {
     bottomSeparator,
     children,
@@ -99,6 +100,15 @@ export function ListItem(props: ListItemProps) {
     ...TouchableOpacityProps
   } = props
 
+  const $separatorTop: ViewStyle = {
+    borderTopWidth: 1,
+    borderTopColor: colors.separator,
+  }
+
+  const $separatorBottom: ViewStyle = {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.separator,
+  }
   const $containerStyles = [
     topSeparator && $separatorTop,
     bottomSeparator && $separatorBottom,
@@ -117,9 +127,7 @@ export function ListItem(props: ListItemProps) {
           iconColor={leftIconColor}
           Component={LeftComponent}
         />
-        <View style={{alignSelf: "stretch", flexGrow:  1}}>
-          {children}
-        </View>
+        <View style={{ alignSelf: "stretch", flexGrow: 1 }}>{children}</View>
         <ListItemAction
           side="right"
           size={height}
@@ -160,16 +168,6 @@ function ListItemAction(props: ListItemActionProps) {
   }
 
   return null
-}
-
-const $separatorTop: ViewStyle = {
-  borderTopWidth: 1,
-  borderTopColor: colors.separator,
-}
-
-const $separatorBottom: ViewStyle = {
-  borderBottomWidth: 1,
-  borderBottomColor: colors.separator,
 }
 
 const $touchableStyle: ViewStyle = {

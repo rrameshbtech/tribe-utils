@@ -14,7 +14,7 @@ import {
   ViewStyle,
 } from "react-native"
 import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated"
-import { colors, spacing } from "../theme"
+import { useColors, spacing } from "../theme"
 import { imageIconRegistry, ImageIconName } from "app/models"
 import { Text, TextProps } from "./Text"
 
@@ -176,6 +176,7 @@ export function Toggle(props: ToggleProps) {
     inputWrapperStyle: $inputWrapperStyleOverride,
     ...WrapperProps
   } = props
+  const colors = useColors()
 
   const { switchAccessibilityMode } = props as SwitchToggleProps
   const { checkboxIcon } = props as CheckboxToggleProps
@@ -256,6 +257,7 @@ const ToggleInputs: Record<Variants, FC<ToggleInputProps>> = {
  * @returns {JSX.Element} The rendered `Checkbox` component.
  */
 function Checkbox(props: ToggleInputProps) {
+  const colors = useColors()
   const {
     on,
     status,
@@ -325,6 +327,7 @@ function Checkbox(props: ToggleInputProps) {
  * @returns {JSX.Element} The rendered `Radio` component.
  */
 function Radio(props: ToggleInputProps) {
+  const colors = useColors()
   const {
     on,
     status,
@@ -388,6 +391,18 @@ function Radio(props: ToggleInputProps) {
  * @returns {JSX.Element} The rendered `Switch` component.
  */
 function Switch(props: ToggleInputProps) {
+  const colors = useColors()
+
+  const $switchInner: ViewStyle = {
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    borderColor: colors.transparent,
+    overflow: "hidden",
+    position: "absolute",
+    paddingStart: 4,
+    paddingEnd: 4,
+  }
   const {
     on,
     status,
@@ -494,6 +509,7 @@ function Switch(props: ToggleInputProps) {
  * @returns {JSX.Element} The rendered `SwitchAccessibilityLabel` component.
  */
 function SwitchAccessibilityLabel(props: ToggleInputProps & { role: "on" | "off" }) {
+  const colors = useColors()
   const { on, disabled, status, switchAccessibilityMode, role, innerStyle, detailStyle } = props
 
   if (!switchAccessibilityMode) return null
@@ -541,6 +557,7 @@ function SwitchAccessibilityLabel(props: ToggleInputProps & { role: "on" | "off"
  * @returns {JSX.Element} The rendered `FieldLabel` component.
  */
 function FieldLabel(props: BaseToggleProps) {
+  const colors = useColors()
   const {
     status,
     label,
@@ -623,17 +640,6 @@ const $radioDetail: ViewStyle = {
   width: 12,
   height: 12,
   borderRadius: 6,
-}
-
-const $switchInner: ViewStyle = {
-  width: "100%",
-  height: "100%",
-  alignItems: "center",
-  borderColor: colors.transparent,
-  overflow: "hidden",
-  position: "absolute",
-  paddingStart: 4,
-  paddingEnd: 4,
 }
 
 const $switchDetail: SwitchToggleProps["inputDetailStyle"] = {

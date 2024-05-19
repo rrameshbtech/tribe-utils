@@ -12,7 +12,7 @@ import {
   TrasWithComponents,
 } from "app/components"
 import { ExpenseListItem } from "./ExpenseListItem"
-import { colors, sizing, spacing } from "app/theme"
+import { useColors, sizing, spacing } from "app/theme"
 import {
   useExpenseStore,
   getVisibleExpenses,
@@ -25,7 +25,7 @@ import { ExpenseMonthSelector } from "./ExpenseMonthSelector"
 interface ExpenseListScreenProps extends AppStackScreenProps<"ExpenseList"> {}
 export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseListScreen() {
   const expenses = useExpenseStore(getVisibleExpenses)
-
+  const colors = useColors()
   const [expandedItem, setExpandedItem] = React.useState<string | null>(null)
   const toggleExpandedItem = (id: string) => {
     if (expandedItem === id) {
@@ -34,6 +34,20 @@ export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseLis
       setExpandedItem(id)
     }
   }
+  const $root: ViewStyle = {
+    flex: 1,
+  }
+  const $screenContentContainer: ViewStyle = {
+    flexGrow: 1,
+  }
+
+  const $listContainerStyle: ViewStyle = {
+    minHeight: 2,
+    flex: 0.9,
+    flexGrow: 1,
+    backgroundColor: colors.background,
+  }
+
   return (
     <Screen
       style={$root}
@@ -41,7 +55,7 @@ export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseLis
       safeAreaEdges={["top"]}
       StatusBarProps={{ backgroundColor: colors.backgroundHighlight }}
     >
-      <View style={$listView}>
+      <View style={$listContainerStyle}>
         <FlatList<Expense>
           renderItem={({ item: expense }) => (
             <ExpenseListItem
@@ -62,21 +76,19 @@ export const ExpenseListScreen: FC<ExpenseListScreenProps> = function ExpenseLis
   )
 }
 
-const $root: ViewStyle = {
-  flex: 1,
-}
-const $screenContentContainer: ViewStyle = {
-  flexGrow: 1,
-}
-
-const $listView: ViewStyle = {
-  minHeight: 2,
-  flex: 0.9,
-  flexGrow: 1,
-}
-
 function ExpenseListHeader() {
+  const colors = useColors()
   const [isSearchActive, setIsSearchActive] = React.useState(false)
+  const $expenseListHeaderStyles: ViewStyle = {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    backgroundColor: colors.backgroundHighlight,
+    padding: spacing.xs,
+    marginBottom: spacing.xxs,
+    borderBottomColor: colors.border,
+    borderBottomWidth: 1,
+  }
   return (
     <View style={$expenseListHeaderStyles}>
       {isSearchActive && <ExpenseListSearchInput onBackPress={() => setIsSearchActive(false)} />}
@@ -89,10 +101,22 @@ function ExpenseListHeader() {
 const $expenseSearchInputWrapperStyles = { borderRadius: 24 }
 
 function ExpenseFilter({ onSearchPress }: { onSearchPress: () => void }) {
+  const colors = useColors()
   const setSelectedMonth = useExpenseStore((state) => state.setSelectedMonth)
   const selectedMonth = useExpenseStore((state) => state.selectedMonth)
+
+  const $filterContainerStyle: ViewStyle = {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  }
+  const $filterToolsContainerStyle: ViewStyle = {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  }
   return (
-    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+    <View style={$filterContainerStyle}>
       <TrasWithComponents
         tx="expense.list.title"
         preset="subheading"
@@ -107,22 +131,12 @@ function ExpenseFilter({ onSearchPress }: { onSearchPress: () => void }) {
           ),
         }}
       />
-      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+      <View style={$filterToolsContainerStyle}>
         <SearchIcon onPress={onSearchPress} />
         <ExpenseFilterIcon />
       </View>
     </View>
   )
-}
-const $expenseListHeaderStyles: ViewStyle = {
-  flex: 1,
-  flexDirection: "column",
-  justifyContent: "space-between",
-  backgroundColor: colors.backgroundHighlight,
-  padding: spacing.xs,
-  marginBottom: spacing.xxs,
-  borderBottomColor: colors.border,
-  borderBottomWidth: 1,
 }
 
 interface SearchIconProps {
@@ -138,8 +152,9 @@ function ExpenseListSearchInput({ onBackPress }: { onBackPress: () => void }) {
   )
 
   const $expenseSearchBarStyle = { flex: 1 }
+  const $searchInputContainerStyle: ViewStyle = { flexDirection: "row" }
   return (
-    <View style={{ flexDirection: "row" }}>
+    <View style={$searchInputContainerStyle}>
       <TextField
         placeholderTx={`expense.list.searchPlaceholder.${durationFilter}`}
         LeftAccessory={(props) => <BackIcon containerStyle={props.style} onPress={onBackPress} />}
@@ -156,6 +171,7 @@ function ExpenseListSearchInput({ onBackPress }: { onBackPress: () => void }) {
     return <Icon type="image" name="back" onPress={onPress} containerStyle={containerStyle} />
   }
   function ClearSearchIcon({ containerStyle }: Readonly<SearchIconProps> = {}) {
+    const colors = useColors()
     return (
       <TouchableOpacity onPress={() => setSearchTerm("")} style={containerStyle}>
         <Icon
@@ -175,6 +191,7 @@ function ExpenseListSearchInput({ onBackPress }: { onBackPress: () => void }) {
 }
 
 function SearchIcon(props: Readonly<SearchIconProps>) {
+  const colors = useColors()
   return (
     <Icon type="Ionicons" name="search-sharp" size={sizing.xl} color={colors.textDim} {...props} />
   )
@@ -184,6 +201,7 @@ interface ExpenseFilterIconProps {
   containerStyle?: ViewStyle
 }
 function ExpenseFilterIcon({ containerStyle }: Readonly<ExpenseFilterIconProps>) {
+  const colors = useColors()
   const [durationFilter, isDisabled] = useExpenseStore((state) => [
     state.expenseFilter,
     !isCurrentMonthSelected(state),
@@ -216,6 +234,7 @@ const $expenseSummaryStyles: ViewStyle = {
   padding: spacing.xxs,
 }
 function ExpenseSummary() {
+  const colors = useColors()
   const totalExpenses = useExpenseStore(getVisibleExpenseTotal)
   return (
     <View style={$expenseSummaryStyles}>
@@ -226,6 +245,7 @@ function ExpenseSummary() {
 }
 
 function AddExpenseButton() {
+  const colors = useColors()
   const $rightBottomStyles: ViewStyle = {
     position: "absolute",
     bottom: spacing.lg,
@@ -237,7 +257,7 @@ function AddExpenseButton() {
   }
 
   const $addExpenseButtonContainerStyle: ViewStyle = {
-    backgroundColor: colors.palette.primary500,
+    backgroundColor: colors.tint,
     opacity: 0.9,
   }
   return (

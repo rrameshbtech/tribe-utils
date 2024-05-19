@@ -2,7 +2,7 @@ import React from "react"
 import { Icon as IconComponent, ListItem, Text, MoneyLabel } from "app/components"
 import { format } from "date-fns"
 import { Alert, Pressable, View, ViewStyle } from "react-native"
-import { colors, sizing, spacing } from "app/theme"
+import { useColors, sizing, spacing } from "app/theme"
 import { Expense, useExpenseStore, Icon } from "app/models"
 import { TxKeyPath, translate } from "app/i18n"
 import Toast from "react-native-toast-message"
@@ -14,6 +14,26 @@ interface ExpenseListItemProps {
   onPress?: (expenseId: string) => void
 }
 export function ExpenseListItem({ expense, isExpanded, onPress }: Readonly<ExpenseListItemProps>) {
+  const colors = useColors()
+  const $expenseItemBoxStyle: ViewStyle = {
+    marginBottom: spacing.xs,
+    marginHorizontal: spacing.xxs,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.backgroundHighlight,
+    borderStyle: "dashed",
+  }
+  const $expenseListItemStyle = {
+    paddingVertical: spacing.xs,
+    gap: spacing.xs,
+    paddingHorizontal: spacing.xs,
+  }
+  const $expandedExpenseListItemStyle: ViewStyle = {
+    borderColor: colors.border,
+    borderWidth: 1,
+    borderRadius: sizing.xs,
+    borderStyle: "solid",
+    overflow: "hidden",
+  }
   return (
     <View style={[$expenseItemBoxStyle, isExpanded && $expandedExpenseListItemStyle]}>
       <ListItem
@@ -31,62 +51,47 @@ export function ExpenseListItem({ expense, isExpanded, onPress }: Readonly<Expen
     </View>
   )
 }
-const $expenseItemBoxStyle: ViewStyle = {
-  marginBottom: spacing.xs,
-  marginHorizontal: spacing.xxs,
-  borderBottomWidth: 1,
-  borderBottomColor: colors.backgroundHighlight,
-  borderStyle: "dashed"
-}
-const $expenseListItemStyle = {
-  paddingVertical: spacing.xs,
-  gap: spacing.xs,
-  paddingHorizontal: spacing.xs,
-}
-const $expandedExpenseListItemStyle: ViewStyle = {
-  backgroundColor: colors.palette.neutral100,
-  borderColor: colors.palette.neutral400,
-  borderWidth: 1,
-  borderRadius: sizing.xs,
-  borderStyle: "solid",
-  overflow: "hidden",
-}
+
 const $expenseContentStyle: ViewStyle = { justifyContent: "space-between", flexDirection: "row" }
 
 interface ExpenseCategoryIconProps {
   category: string
 }
 function ExpenseCategoryIcon({ category }: Readonly<ExpenseCategoryIconProps>) {
+  const colors = useColors()
   const expenseCategories = useExpenseStore((state) => state.expenseCategories)
   const categoryIcon = expenseCategories[category]?.icon || {
     name: "question",
     type: "FontAwesome",
   }
 
-  return (
-    <IconComponent
-      {...categoryIcon}
-      size={sizing.lg}
-      color={colors.tint}
-      shape="circle"
-    />
-  )
+  return <IconComponent {...categoryIcon} size={sizing.lg} color={colors.tint} shape="circle" />
 }
 
 interface ExpenseDateProps {
   date: Date
 }
 function ExpenseDate({ date }: Readonly<ExpenseDateProps>) {
+  const colors = useColors()
   const expenseDateFormat = "do eee p"
   const timeandDayWithOrdinal = format(date, expenseDateFormat)
-  return <Text preset="default" text={timeandDayWithOrdinal} />
+  return <Text preset="default" style={{color: colors.text}} text={timeandDayWithOrdinal} />
 }
 
 interface ExpenseNarrationProps {
   expense: Expense
 }
 function ExpenseNarration({ expense }: Readonly<ExpenseNarrationProps>) {
+  const colors = useColors()
   const spentAt = expense.payee || expense.location || null
+  const $expenseNarrationStyles: ViewStyle = {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    columnGap: spacing.sm,
+  }
+  const $expenseNarrationTextStyle = { color: colors.textDim }
+
   return (
     <View style={$expenseNarrationStyles}>
       <View>
@@ -105,20 +110,13 @@ function ExpenseNarration({ expense }: Readonly<ExpenseNarrationProps>) {
     </View>
   )
 }
-const $expenseNarrationStyles: ViewStyle = {
-  flex: 1,
-  flexDirection: "row",
-  alignItems: "center",
-  columnGap: spacing.sm,
-}
-const $expenseNarrationTextStyle = { color: colors.palette.neutral600 }
-
 interface PaymentModeIconProps {
   mode: string
 }
 function PaymentModeIcon({ mode }: Readonly<PaymentModeIconProps>) {
+  const colors = useColors()
   const paymentModes = useExpenseStore((state) => state.paymentModes)
-  const color = colors.palette.neutral500
+  const color = colors.textDim
   const size = sizing.md
   const icon = paymentModes[mode]?.icon || { name: mode, type: "initials" }
 
@@ -129,14 +127,26 @@ interface ExpenseAmountProps {
   amount: number
 }
 function ExpenseAmount({ amount }: Readonly<ExpenseAmountProps>) {
+  const colors = useColors()
+  const $expenseAmountStyles = { color: colors.secondaryTint }
+
   return <MoneyLabel amount={amount} style={$expenseAmountStyles} />
 }
-const $expenseAmountStyles = { color: colors.palette.secondary500 }
 
 interface ExpenseItemControlsProps {
   expense: Expense
 }
 function ExpenseItemControls({ expense }: Readonly<ExpenseItemControlsProps>) {
+  const colors = useColors()
+  const $expenseControlsStyle: ViewStyle = {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: spacing.xs,
+    borderTopWidth: 1,
+    backgroundColor: colors.backgroundHighlight,
+    borderTopColor: colors.border,
+  }
   const removeExpense = useExpenseStore((state) => state.removeExpense)
   function deleteExpense() {
     Alert.alert(
@@ -184,14 +194,6 @@ function ExpenseItemControls({ expense }: Readonly<ExpenseItemControlsProps>) {
     </View>
   )
 }
-const $expenseControlsStyle: ViewStyle = {
-  flex: 1,
-  flexDirection: "row",
-  justifyContent: "space-around",
-  padding: spacing.xs,
-  borderTopWidth: 1,
-  borderTopColor: colors.palette.neutral300,
-}
 
 interface FlatIconButtonProps {
   icon: Icon
@@ -199,18 +201,20 @@ interface FlatIconButtonProps {
   onPress?: () => void
 }
 function FlatIconButton({ icon, tx, onPress }: Readonly<FlatIconButtonProps>) {
+  const colors = useColors()
   const $iconWrapperStyle: ViewStyle = {
     flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "center",
     columnGap: spacing.xxxs,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
+    flex: 1,
   }
   return (
     <Pressable
       accessibilityRole="button"
       style={$iconWrapperStyle}
-      android_ripple={{ color: colors.palette.neutral300 }}
+      android_ripple={{ color: colors.background }}
       onPress={onPress}
     >
       <IconComponent {...icon} color={colors.textDim} />

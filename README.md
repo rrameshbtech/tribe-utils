@@ -21,6 +21,11 @@ Only Android API level >=21 (Android 5), iOS >= 11 are supported.
 - Run Android app in simulator `bun run android` (or)
   Run iOS app in simulator `bun run ios`
 
+## Themes
+### colors
+Palettes are configured [here](./app/theme/palettes.ts). As of now light & dark theme palettes are configred.
+`useColors` hook expoese the colors based on the color scheme of the device.
+
 ## Courtesy
 - Icons from Freepik.com 
     - <a href="https://www.freepik.com/icon/wallet_4504461#fromView=search&term=wallet+online&track=ais&page=1&position=56&uuid=2f2a87b6-cc3a-4aa6-8ecf-8faf8fd00371">Icon by Superndre</a>

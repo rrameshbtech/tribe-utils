@@ -2,13 +2,19 @@ import React, { FC, useState } from "react"
 import { View, ViewStyle } from "react-native"
 import { Button, Icon, Screen, Text, TextField } from "app/components"
 import { AppStackScreenProps, goBack } from "../navigators"
-import { colors, spacing } from "../theme"
+import { useColors, spacing } from "../theme"
 import { Member, getSelf, useMemberStore, useSettingsStore } from "app/models"
 import { getUniqueId } from "app/utils/generators"
 
 interface SettingsScreenProps extends AppStackScreenProps<"Settings"> {}
 
 export const SettingsScreen: FC<SettingsScreenProps> = function SettingsScreen() {
+  const colors = useColors()
+  const $container: ViewStyle = {
+    flex: 1,
+    backgroundColor: colors.background,
+  }
+
   return (
     <Screen
       style={$container}
@@ -25,15 +31,15 @@ export const SettingsScreen: FC<SettingsScreenProps> = function SettingsScreen()
 }
 
 function SettingsHeader() {
+  const colors = useColors()
+  const $headerStyle: ViewStyle = {
+    backgroundColor: colors.backgroundHighlight,
+    flexDirection: "row",
+    padding: spacing.sm,
+    alignItems: "center",
+  }
   return (
-    <View
-      style={{
-        backgroundColor: colors.backgroundHighlight,
-        flexDirection: "row",
-        padding: spacing.sm,
-        alignItems: "center",
-      }}
-    >
+    <View style={$headerStyle}>
       <Icon type="image" name="back" onPress={() => goBack()} />
       <Text
         tx="settingsScreen.title"
@@ -105,9 +111,4 @@ function AuthUserConfiguration() {
       />
     </View>
   )
-}
-
-const $container: ViewStyle = {
-  flex: 1,
-  backgroundColor: colors.background,
 }

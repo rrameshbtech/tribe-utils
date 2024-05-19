@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react"
 import { Alert, PermissionsAndroid, View, ViewStyle } from "react-native"
 import { AppStackScreenProps, goBack } from "app/navigators"
 import { Icon, Screen, Text } from "app/components"
-import { colors, sizing, spacing } from "app/theme"
+import { useColors, sizing, spacing } from "app/theme"
 import {
   Expense,
   getCreateExpenseFnFor,
@@ -32,6 +32,7 @@ type FormState = "fresh" | "changed" | "saved"
 export const ExpenseEditorScreen: FC<ExpenseEditorScreenProps> = function ExpenseEditorScreen({
   route,
 }) {
+  const colors = useColors()
   const currentMember = useMemberStore(getSelf)
   const [getExpense, upsertExpense, captureLocation, newExpense] = useExpenseStore((state) => [
     state.getExpense,
@@ -176,7 +177,25 @@ const $root: ViewStyle = {
   flexDirection: "column",
 }
 
-function ExpenseEditorHeader({ onClose }: { onClose?: () => void }) {
+interface ExpenseEditorHeaderProps {
+  onClose?: () => void
+}
+
+function ExpenseEditorHeader({ onClose }: Readonly<ExpenseEditorHeaderProps>) {
+  const colors = useColors()
+  const $headerContainerStyles: ViewStyle = {
+    flex: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: colors.backgroundHighlight,
+    borderBottomColor: colors.border,
+    borderBottomWidth: 1,
+    alignItems: "center",
+    alignContent: "space-between",
+    flexBasis: "auto",
+    padding: spacing.md,
+  }
+
   return (
     <View style={$headerContainerStyles}>
       <View style={$titleContainerStyles}>
@@ -190,18 +209,6 @@ function ExpenseEditorHeader({ onClose }: { onClose?: () => void }) {
       </View>
     </View>
   )
-}
-const $headerContainerStyles: ViewStyle = {
-  flex: 0,
-  flexDirection: "row",
-  justifyContent: "space-between",
-  backgroundColor: colors.backgroundHighlight,
-  borderBottomColor: colors.border,
-  borderBottomWidth: 1,
-  alignItems: "center",
-  alignContent: "space-between",
-  flexBasis: "auto",
-  padding: spacing.md,
 }
 const $titleContainerStyles: ViewStyle = {
   flex: 1,
@@ -225,6 +232,7 @@ const $pageContentStyles: ViewStyle = {
 }
 
 function ExpenseSummaryModeToggle() {
+  const colors = useColors()
   const mode = useExpenseStore((state) => state.expenseSummaryCardMode)
   const setExpenseSummaryCardMode = useExpenseStore((state) => state.setExpenseSummaryCardMode)
 

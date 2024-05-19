@@ -2,28 +2,18 @@ import React, { FC, useEffect, useState } from "react"
 import { Pressable, TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import { EmptyState, Screen, Text, TrasWithComponents, MoneyLabel } from "app/components"
-import { colors, sizing, spacing } from "app/theme"
+import { useColors, sizing, spacing } from "app/theme"
 import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
-import {
-  Expense,
-  MonthIdentifier,
-  getExpenseSummary,
-  useExpenseStore,
-} from "app/models"
+import { Expense, MonthIdentifier, getExpenseSummary, useExpenseStore } from "app/models"
 import { ScrollView } from "react-native-gesture-handler"
 import { getDaysInMonth } from "date-fns"
 import { TxKeyPath, convertToLocaleAbbrevatedNumber } from "app/i18n"
 import { useLocale } from "app/utils/useLocale"
 import { ExpenseMonthSelector } from "./ExpenseMonthSelector"
 
-const HEADER_TEXT_COLOR = colors.tint
-const CHART_WRAPPER_BACKGROUND_COLOR = colors.backgroundHighlight
-const CHART_WRAPPER_BORDER_COLOR = colors.border
-const CONTENT_TEXT_COLOR = colors.text
-const CONTENT_HIGHLIGHT_TEXT_COLOR = colors.palette.primary600
-
 interface ExpenseReportScreenProps extends AppStackScreenProps<"ExpenseReport"> {}
 export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function ExpenseReportScreen() {
+  const colors = useColors()
   const [reportMonth, setReportMonth] = useExpenseStore((state) => [
     state.selectedMonth,
     state.setSelectedMonth,
@@ -95,6 +85,7 @@ interface ReportHeaderProps {
 }
 
 function ReportHeader({ reportMonth, onReportMonthChange }: ReportHeaderProps) {
+  const colors = useColors()
   const $headerStyle: ViewStyle = {
     flex: 1,
     flexDirection: "row",
@@ -110,13 +101,13 @@ function ReportHeader({ reportMonth, onReportMonthChange }: ReportHeaderProps) {
       <TrasWithComponents
         tx="expense.report.title"
         preset="subheading"
-        style={{ color: HEADER_TEXT_COLOR }}
+        style={{ color: colors.tint }}
         txOptions={{
           month: (
             <ExpenseMonthSelector
               value={reportMonth}
               onChange={onReportMonthChange}
-              color={HEADER_TEXT_COLOR}
+              color={colors.tint}
             />
           ),
         }}
@@ -147,12 +138,13 @@ interface ExpensePieChartByGroupProps {
 }
 function ExpensePieChartByGroup({ title, data }: Readonly<ExpensePieChartByGroupProps>) {
   const [selected, setSelected] = useState("")
+  const colors = useColors()
 
   const chartData = Object.keys(data)
     .reduce<pieDataItem[]>((chartItem, category, index) => {
       chartItem.push({
         value: data[category],
-        color: colors.chartSectionColors[index],
+        color: colors.colorBox2[index],
         focused: category === selected,
         text: category,
       } as pieDataItem)
@@ -169,10 +161,10 @@ function ExpensePieChartByGroup({ title, data }: Readonly<ExpensePieChartByGroup
         sectionAutoFocus
         radius={90}
         innerRadius={60}
-        innerCircleColor={CHART_WRAPPER_BACKGROUND_COLOR}
+        innerCircleColor={colors.backgroundHighlight}
         centerLabelComponent={() => <PieChartInnerCircle {...{ data, selected }} />}
       />
-      <Legends data={chartData} onSelect={setSelected} />
+      <Legends data={chartData} onSelect={setSelected} selected={selected} />
     </ChartWrapper>
   )
 }
@@ -187,9 +179,11 @@ const $root: ViewStyle = {
 interface LegendsProps {
   data: pieDataItem[]
   onSelect: (name: string) => void
+  selected?: string
 }
 
-const Legends = ({ data, onSelect }: LegendsProps) => {
+const Legends = ({ data, onSelect, selected }: LegendsProps) => {
+  const colors = useColors()
   const $legendsStyle: ViewStyle = {
     flexDirection: "row",
     justifyContent: "center",
@@ -206,6 +200,7 @@ const Legends = ({ data, onSelect }: LegendsProps) => {
           subText={item.value.toString()}
           color={item.color ?? colors.tint}
           onPress={onSelect}
+          isSelected={selected === item.text}
         />
       ))}
     </View>
@@ -217,15 +212,20 @@ interface LegendProps {
   name: string
   subText: string
   onPress?: (name: string) => void
+  isSelected?: boolean
 }
-const Legend = ({ color, name, subText, onPress }: Readonly<LegendProps>) => {
+const Legend = ({ color, name, isSelected, subText, onPress }: Readonly<LegendProps>) => {
+  const colors = useColors()
   const $legendStyle: ViewStyle = { flexDirection: "row", alignItems: "center" }
+  const $textStyle: TextStyle = isSelected
+    ? { color: colors.text}
+    : { color: colors.textDim }
   return (
     <Pressable onPress={() => onPress?.(name)} style={$legendStyle}>
       <Dot color={color} />
-      <Text style={{ color: CONTENT_TEXT_COLOR }}>{name} (</Text>
-      <MoneyLabel amount={parseFloat(subText)} style={{ color: CONTENT_TEXT_COLOR }} />
-      <Text style={{ color: CONTENT_TEXT_COLOR }}>)</Text>
+      <Text style={$textStyle}>{name} (</Text>
+      <MoneyLabel amount={parseFloat(subText)} style={$textStyle} />
+      <Text style={$textStyle}>)</Text>
     </Pressable>
   )
 }
@@ -248,15 +248,16 @@ function PieChartInnerCircle({
   data: totalByGroup,
   selected,
 }: Readonly<PieChartInnerCircleProps>): React.JSX.Element {
+  const colors = useColors()
   const MAX_TEXT_LENGTH = 8
   const getFontSize = (content: string) =>
-    content.length <= MAX_TEXT_LENGTH ? sizing.md : sizing.sm
-  const totalTextSize = getFontSize(totalByGroup[selected].toString())
+    content?.length <= MAX_TEXT_LENGTH ? sizing.md : sizing.sm
+  const totalTextSize = getFontSize(totalByGroup[selected]?.toString())
   const groupTextSize = getFontSize(selected)
 
   const $pieChartInnerCircleStyle: ViewStyle = { justifyContent: "center", alignItems: "center" }
-  const $groupTextStyle = { fontSize: groupTextSize, color: CONTENT_HIGHLIGHT_TEXT_COLOR }
-  const $totalTextStyle = { fontSize: totalTextSize, color: CONTENT_HIGHLIGHT_TEXT_COLOR }
+  const $groupTextStyle = { fontSize: groupTextSize, color: colors.secondaryTint }
+  const $totalTextStyle = { fontSize: totalTextSize, color: colors.secondaryTint }
 
   return (
     <View style={$pieChartInnerCircleStyle}>
@@ -267,6 +268,7 @@ function PieChartInnerCircle({
 }
 
 function LineChartByDate({ data }: { data: Record<string, number> }) {
+  const colors = useColors()
   const { currencySymbol } = useLocale()
   const chartData = Array(getDaysInMonth(new Date()))
     .fill(1)
@@ -276,7 +278,7 @@ function LineChartByDate({ data }: { data: Record<string, number> }) {
         value: data[date] ?? 0,
         labelComponent: () =>
           index === 0 || ((index ?? 0) + 1) % 5 === 0 ? (
-            <Text style={{ fontSize: sizing.sm, color: CONTENT_TEXT_COLOR, width: sizing.lg }}>
+            <Text style={{ fontSize: sizing.sm, color: colors.text, width: sizing.lg }}>
               {date}
             </Text>
           ) : (
@@ -292,16 +294,16 @@ function LineChartByDate({ data }: { data: Record<string, number> }) {
         noOfSections={3}
         spacing={15}
         data={chartData}
-        dataPointsColor={colors.palette.accent500}
+        dataPointsColor={colors.highlight}
         yAxisTextNumberOfLines={2}
         yAxisLabelWidth={50}
-        yAxisColor={CONTENT_TEXT_COLOR}
-        color={colors.palette.accent500}
-        startFillColor={colors.palette.accent500}
+        yAxisColor={colors.text}
+        color={colors.highlight}
+        startFillColor={colors.highlight}
         endFillColor={colors.palette.accent200}
         areaChart
         hideDataPoints1
-        yAxisTextStyle={{ fontSize: sizing.sm, color: CONTENT_TEXT_COLOR }}
+        yAxisTextStyle={{ fontSize: sizing.sm, color: colors.text }}
         xAxisTextNumberOfLines={2}
         formatYLabel={(label) =>
           `${currencySymbol}${convertToLocaleAbbrevatedNumber(parseFloat(label))}`
@@ -317,11 +319,12 @@ interface ChartWrapperProps {
 }
 
 function ChartWrapper({ title, children }: Readonly<ChartWrapperProps>) {
+  const colors = useColors()
   const $chartContainerStyle: ViewStyle = {
     alignItems: "center",
-    backgroundColor: CHART_WRAPPER_BACKGROUND_COLOR,
+    backgroundColor: colors.backgroundHighlight,
     padding: spacing.sm,
-    borderColor: CHART_WRAPPER_BORDER_COLOR,
+    borderColor: colors.border,
     borderWidth: 1,
     borderRadius: sizing.xs,
     margin: spacing.xs,

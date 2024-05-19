@@ -1,4 +1,4 @@
-import { colors, spacing } from "app/theme"
+import { useColors, spacing } from "app/theme"
 import React, { ForwardedRef, createRef, forwardRef, useImperativeHandle, useState } from "react"
 import { View, TextStyle, ViewStyle, TextInputProps } from "react-native"
 import { FlatList, TextInput } from "react-native-gesture-handler"
@@ -24,10 +24,40 @@ const AutoCompleteWithOutRef = (
   }: Readonly<DropDownProps>,
   ref: ForwardedRef<unknown>,
 ) => {
+  const colors = useColors()
   const [isListVisible, setIsListVisible] = useState(false)
   const inputRef = createRef<TextInput>()
+
+  const $containerStyles = {
+    flex: 1,
+    flexDirection: "column",
+  } as ViewStyle
+  const $baseStyle = {
+    width: "100%",
+    height: 50,
+    borderColor: colors.border,
+    borderWidth: 1,
+    backgroundColor: colors.backgroundHighlight,
+    color: colors.text,
+    padding: spacing.sm,
+  } as TextStyle
+  const $listItemStyles = {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.sm,
+    margin: 0,
+    borderWidth: 1,
+    borderColor: colors.palette.neutral300,
+    backgroundColor: colors.palette.neutral100,
+  } as ViewStyle
+  const $listItemTextStyles = {
+    color: colors.textDim,
+    fontSize: 16,
+    flex: 1,
+  } as TextStyle
   const containerStyles = { ...$containerStyles, ...overrideContainerStyles }
-  const styles = { ...$styles, ...overrideStyles }
+  const styles = { ...$baseStyle, ...overrideStyles }
 
   useImperativeHandle(ref, () => ({
     focus: () => {
@@ -92,34 +122,3 @@ const AutoCompleteWithOutRef = (
 const AutoComplete = forwardRef(AutoCompleteWithOutRef)
 AutoComplete.displayName = "AutoComplete"
 export { AutoComplete }
-
-const $containerStyles = {
-  flex: 1,
-  flexDirection: "column",
-} as ViewStyle
-
-const $styles = {
-  width: "100%",
-  height: 50,
-  borderColor: colors.palette.neutral400,
-  borderWidth: 1,
-  backgroundColor: colors.palette.neutral100,
-  padding: spacing.sm,
-} as TextStyle
-
-const $listItemStyles = {
-  flex: 1,
-  alignItems: "center",
-  justifyContent: "center",
-  padding: spacing.sm,
-  margin: 0,
-  borderWidth: 1,
-  borderColor: colors.palette.neutral300,
-  backgroundColor: colors.palette.neutral100,
-} as ViewStyle
-
-const $listItemTextStyles = {
-  color: colors.textDim,
-  fontSize: 16,
-  flex: 1,
-} as TextStyle

@@ -1,10 +1,10 @@
 import { Icon, SelectableList, SelectableListOption, Text } from "app/components"
 import { MonthIdentifier, getMonthId, useExpenseStore } from "app/models"
-import { colors, spacing } from "app/theme"
+import { useColors, spacing } from "app/theme"
 import { formatMonthId } from "app/utils/formatDate"
 import { format } from "date-fns"
-import { useState } from "react"
-import { Modal, Pressable } from "react-native"
+import React, { useState } from "react"
+import { Modal, Pressable, TextStyle, View, ViewStyle } from "react-native"
 
 interface ExpenseMonthSelectorProps {
   onChange: (month: MonthIdentifier) => void
@@ -13,9 +13,10 @@ interface ExpenseMonthSelectorProps {
 }
 export function ExpenseMonthSelector({
   value,
-  onChange: onChange,
+  onChange,
   color,
 }: ExpenseMonthSelectorProps): JSX.Element {
+  const colors = useColors()
   const [isMonthSelectorVisible, setIsMonthSelectorVisible] = useState(false)
   const availableMonthsNumbers = useExpenseStore((state) => Object.keys(state.expensesByMonth))
   const availableMonthsNumbersWithCurrentMonth = new Set([
@@ -27,12 +28,16 @@ export function ExpenseMonthSelector({
   const availableMonthListItems = Array.from(availableMonthsNumbersWithCurrentMonth)
     .sort(byDescending)
     .map(convertToSelectable)
+  const $monthSelectionTitleStyle: ViewStyle = {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xxs,
+  }
+  const $monthTitleStyle: TextStyle = { margin: spacing.sm, alignSelf: "center" }
+  const $monthSelectorModalStyle = { backgroundColor: colors.background, flex: 1 }
   return (
     <>
-      <Pressable
-        style={{ flexDirection: "row", alignItems: "center", gap: spacing.xxs }}
-        onPress={() => setIsMonthSelectorVisible(true)}
-      >
+      <Pressable style={$monthSelectionTitleStyle} onPress={() => setIsMonthSelectorVisible(true)}>
         <Text
           preset="subheading"
           style={{ color: color ?? colors.tint }}
@@ -45,28 +50,27 @@ export function ExpenseMonthSelector({
         animationType="slide"
         onRequestClose={() => setIsMonthSelectorVisible(false)}
       >
-        <Text
-          preset="subheading"
-          tx="expense.report.selectMonthTitle"
-          style={{ margin: spacing.sm, alignSelf: "center" }}
-        ></Text>
-        <SelectableList
-          options={availableMonthListItems}
-          value={value}
-          onChange={(value) => {
-            onChange(value as MonthIdentifier)
-            setIsMonthSelectorVisible(false)
-          }}
-        />
+        <View style={$monthSelectorModalStyle}>
+          <Text
+            preset="subheading"
+            tx="expense.report.selectMonthTitle"
+            style={$monthTitleStyle}
+          ></Text>
+          <SelectableList
+            options={availableMonthListItems}
+            value={value}
+            style={{ backgroundColor: colors.background }}
+            onChange={(value) => {
+              onChange(value as MonthIdentifier)
+              setIsMonthSelectorVisible(false)
+            }}
+          />
+        </View>
       </Modal>
     </>
   )
 
-  function convertToSelectable(
-    month: string,
-    index: number,
-    array: string[],
-  ): SelectableListOption {
+  function convertToSelectable(month: string): SelectableListOption {
     const date = new Date(formatMonthId(month))
     return {
       name: format(date, "MMMM''yy"),
