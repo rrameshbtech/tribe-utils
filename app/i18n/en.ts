@@ -147,6 +147,7 @@ const en = {
       expenseByCategory: "Expenses per category",
       expenseByPayee: "Expenses per payee",
       expenseByPaymentMode: "Expenses per payment mode",
+      expensesByNeed: "Expenses by need",
       summary: "Summary",
       selectMonthTitle: "Which month do you want to analyse?",
     },
@@ -157,7 +158,12 @@ const en = {
     categories: {
       "Healthcare": "Health care",
       "PersonalCare": "Personal care",
-    }
+    },
+    necessityLevel: {
+      "Essential": "Essential",
+      "Avoidable": "Avoidable",
+      "Luxury": "Luxury",
+    },
   },
 }
 

@@ -3,10 +3,18 @@ import { Icon as IconComponent, ListItem, Text, MoneyLabel } from "app/component
 import { format } from "date-fns"
 import { Alert, Pressable, View, ViewStyle } from "react-native"
 import { useColors, sizing, spacing } from "app/theme"
-import { Expense, useExpenseStore, Icon } from "app/models"
+import {
+  Expense,
+  useExpenseStore,
+  Icon,
+  nextNecessity,
+  ExpenseNecessity,
+  ExpenseCategoryNecessityMap,
+} from "app/models"
 import { TxKeyPath, translate } from "app/i18n"
 import Toast from "react-native-toast-message"
 import { navigate } from "app/navigators"
+import { t } from "i18n-js"
 
 interface ExpenseListItemProps {
   expense: Expense
@@ -75,7 +83,7 @@ function ExpenseDate({ date }: Readonly<ExpenseDateProps>) {
   const colors = useColors()
   const expenseDateFormat = "do eee p"
   const timeandDayWithOrdinal = format(date, expenseDateFormat)
-  return <Text preset="default" style={{color: colors.text}} text={timeandDayWithOrdinal} />
+  return <Text preset="default" style={{ color: colors.text }} text={timeandDayWithOrdinal} />
 }
 
 interface ExpenseNarrationProps {
@@ -137,6 +145,10 @@ interface ExpenseItemControlsProps {
   expense: Expense
 }
 function ExpenseItemControls({ expense }: Readonly<ExpenseItemControlsProps>) {
+  const necessity: ExpenseNecessity =
+    expense.necessity ?? ExpenseCategoryNecessityMap[expense.category]
+  const updateExpense = useExpenseStore((state) => state.upsertExpense)
+
   const colors = useColors()
   const $expenseControlsStyle: ViewStyle = {
     flex: 1,
@@ -178,9 +190,29 @@ function ExpenseItemControls({ expense }: Readonly<ExpenseItemControlsProps>) {
   function editExpense() {
     navigate("ExpenseEditor", { expenseId: expense.id })
   }
+  function swapNecessity() {
+    updateExpense({ ...expense, necessity: nextNecessity(necessity) })
+  }
+
+  function getIconByNecessity(necessity: ExpenseNecessity): Icon {
+    switch (necessity) {
+      case "Essential":
+        return { name: "exclamation", type: "FontAwesome5" }
+      case "Avoidable":
+        return { name: "stop-circle-outline", type: "Ionicons" }
+      case "Luxury":
+        return { name: "diamond", type: "FontAwesome" }
+    }
+  }
 
   return (
     <View style={$expenseControlsStyle}>
+      <FlatIconButton
+        // rightIcon={getIconByNecessity(necessity)}
+        icon={{ name: "swap-vertical", type: "Ionicons" }}
+        text={t(`expense.necessityLevel.${necessity}`)}
+        onPress={swapNecessity}
+      />
       <FlatIconButton
         icon={{ name: "delete", type: "Material" }}
         tx="common.delete"
@@ -197,14 +229,17 @@ function ExpenseItemControls({ expense }: Readonly<ExpenseItemControlsProps>) {
 
 interface FlatIconButtonProps {
   icon: Icon
-  tx: TxKeyPath
+  rightIcon?: Icon
+  tx?: TxKeyPath
+  text?: string
   onPress?: () => void
 }
-function FlatIconButton({ icon, tx, onPress }: Readonly<FlatIconButtonProps>) {
+function FlatIconButton({ icon, rightIcon, tx, text, onPress }: Readonly<FlatIconButtonProps>) {
   const colors = useColors()
   const $iconWrapperStyle: ViewStyle = {
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     columnGap: spacing.xxxs,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
@@ -218,7 +253,8 @@ function FlatIconButton({ icon, tx, onPress }: Readonly<FlatIconButtonProps>) {
       onPress={onPress}
     >
       <IconComponent {...icon} color={colors.textDim} />
-      <Text tx={tx}></Text>
+      <Text text={text} tx={tx}></Text>
+      {rightIcon && <IconComponent {...rightIcon} color={colors.textDim} size={sizing.sm} />}
     </Pressable>
   )
 }

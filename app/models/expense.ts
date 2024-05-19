@@ -25,6 +25,7 @@ export interface BasicGeoLocation {
 }
 export type ExpenseLocation = string | BasicGeoLocation
 
+export type ExpenseNecessity = "Essential" | "Avoidable" | "Luxury"
 export interface Expense {
   id: string
   category: string
@@ -34,6 +35,7 @@ export interface Expense {
   source: ExpenseSource
   mode: string
   location?: ExpenseLocation
+  necessity?: ExpenseNecessity
   payee: string
   notes?: string
   createdAt: Date
@@ -153,10 +155,13 @@ export const createExpenseSlice: StateCreator<
     set((state) => {
       Object.values(state.expensesByMonth).forEach((month) => {
         Object.values(month.data).forEach((expense) => {
+          if(!expense.necessity) {
+            expense.necessity = ExpenseCategoryNecessityMap[expense.category]
+          }
           if (month.month === getMonthId(expense.date)) {
             return
           }
-          
+
           const expenseMonth = getMonthId(expense.date)
           if (!state.expensesByMonth[expenseMonth]) {
             state.expensesByMonth[expenseMonth] = {
@@ -205,6 +210,9 @@ const upsertExpenseFn = (set: ExpenseSliceSetType) => (expense: Expense) => {
         data: {},
       }
     }
+    if (expense.necessity === undefined) {
+      expense.necessity = ExpenseCategoryNecessityMap[expense.category]
+    }
     state.expensesByMonth[expenseMonth].data[expense.id] = expense
   })
   upsertPayees(set)(expense)
@@ -240,7 +248,8 @@ export const getVisibleExpenses = (state: ExpenseSlice) => {
       expense.payee.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
       expense.category.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
       expense.mode.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
-      expense.notes?.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())
+      expense.notes?.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) ||
+      expense.necessity?.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())
   }
 
   function byDuration(): (value: Expense, index: number, array: Expense[]) => unknown {
@@ -262,6 +271,12 @@ export const getVisibleExpenses = (state: ExpenseSlice) => {
 
 export const getVisibleExpenseTotal = (state: ExpenseSlice) =>
   getVisibleExpenses(state).reduce((acc, expense) => acc + expense.amount, 0)
+
+export const nextNecessity = (necessity?: ExpenseNecessity) => {
+  const necessityOrder: ExpenseNecessity[] = ["Essential", "Avoidable", "Luxury"]
+  const currentIndex = necessity ? necessityOrder.indexOf(necessity) : -1
+  return necessityOrder[(currentIndex + 1) % necessityOrder.length]
+}
 export interface ExpenseSummary {
   total: number
   largest?: Expense
@@ -269,6 +284,7 @@ export interface ExpenseSummary {
   byPaymentMode: Record<string, number>
   byPayee: Record<string, number>
   byDate: Record<string, number>
+  byNecessity: Record<string, number>
 }
 export const getExpenseSummary =
   (month = getMonthId(new Date())) =>
@@ -280,6 +296,7 @@ export const getExpenseSummary =
       byPaymentMode: {},
       byPayee: {},
       byDate: {},
+      byNecessity: {},
     }
 
     return Object.values(state.expensesOf(month).data).reduce((summary, expense) => {
@@ -290,6 +307,11 @@ export const getExpenseSummary =
         byPayee: addToGroup(summary.byPayee, expense.payee, expense.amount),
         byPaymentMode: addToGroup(summary.byPaymentMode, expense.mode, expense.amount),
         byDate: addToGroup(summary.byDate, expense.date.getDate().toString(), expense.amount),
+        byNecessity: addToGroup(
+          summary.byNecessity,
+          expense.necessity ?? ExpenseCategoryNecessityMap[expense.category],
+          expense.amount,
+        ),
       } as ExpenseSummary
 
       function addToGroup(
@@ -484,3 +506,25 @@ const defaultPayees = (): string[] => [
   "School",
   "Local Cafe",
 ]
+export const ExpenseCategoryNecessityMap: Record<string, ExpenseNecessity> = {
+  Grocery: "Essential",
+  Communication: "Essential",
+  Entertainment: "Luxury",
+  Books: "Essential",
+  Education: "Essential",
+  Food: "Essential",
+  Travel: "Avoidable",
+  Vacation: "Luxury",
+  Meat: "Essential",
+  Vegitables: "Essential",
+  Healthcare: "Essential",
+  Pets: "Avoidable",
+  Rent: "Essential",
+  Utilities: "Essential",
+  Sports: "Essential",
+  Insurance: "Essential",
+  PersonalCare: "Avoidable",
+  Taxes: "Essential",
+  Clothes: "Essential",
+  Others: "Avoidable",
+}

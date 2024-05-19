@@ -32,6 +32,7 @@ export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function Expens
         {summary.total > 0 && (
           <>
             <ReportSummary total={summary.total} largestExpense={summary.largest} />
+            <PieChartByNecessity data={summary.byNecessity} />
             <PieChartByExpenseCategory data={summary.byCategory} />
             <PieChartByPaymentMode data={summary.byPaymentMode} />
             <PieChartByPayee data={summary.byPayee} />
@@ -51,6 +52,7 @@ interface ReportSummaryProps {
 function ReportSummary({ total, largestExpense }: Readonly<ReportSummaryProps>) {
   const $rowStyle: ViewStyle = { flexDirection: "row", alignItems: "flex-start", flexWrap: "wrap" }
   const $totalLabelStyle = { flex: 1, marginLeft: spacing.xs }
+  const rowStyle = { flex: 1, ...$rowStyle }
   return (
     <ChartWrapper title="expense.report.summary">
       <View style={$rowStyle}>
@@ -59,7 +61,7 @@ function ReportSummary({ total, largestExpense }: Readonly<ReportSummaryProps>) 
       </View>
       <View style={$rowStyle}>
         <Text preset="bold">Largest expense:</Text>
-        <View style={{ flex: 1, ...$rowStyle }}>
+        <View style={rowStyle}>
           <TrasWithComponents
             tx="expense.report.summaryLargestExpenseText"
             txOptions={{
@@ -130,6 +132,10 @@ function PieChartByPaymentMode({ data }: ChartDataType) {
 
 function PieChartByPayee({ data }: ChartDataType) {
   return <ExpensePieChartByGroup title="expense.report.expenseByPayee" data={data} />
+}
+
+function PieChartByNecessity({ data }: ChartDataType) {
+  return <ExpensePieChartByGroup title="expense.report.expensesByNeed" data={data} />
 }
 
 interface ExpensePieChartByGroupProps {
