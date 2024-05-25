@@ -1,24 +1,50 @@
 import React, { FC, useEffect, useState } from "react"
 import { Pressable, TextStyle, View, ViewStyle } from "react-native"
-import { AppStackScreenProps } from "app/navigators"
-import { EmptyState, Screen, Text, TrasWithComponents, MoneyLabel } from "app/components"
-import { useColors, sizing, spacing } from "app/theme"
-import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
-import { Expense, MonthIdentifier, getExpenseSummary, useExpenseStore } from "app/models"
 import { ScrollView } from "react-native-gesture-handler"
+import { LineChart, PieChart, lineDataItem, pieDataItem } from "react-native-gifted-charts"
 import { getDaysInMonth } from "date-fns"
+import { releaseCapture, captureRef } from "react-native-view-shot"
+import Share from "react-native-share"
+
+import { AppStackScreenProps } from "app/navigators"
+import { EmptyState, Screen, Text, TrasWithComponents, MoneyLabel, Icon } from "app/components"
+import { useColors, sizing, spacing } from "app/theme"
+import { Expense, MonthIdentifier, getExpenseSummary, useExpenseStore } from "app/models"
 import { TxKeyPath, convertToLocaleAbbrevatedNumber } from "app/i18n"
 import { useLocale } from "app/utils/useLocale"
 import { ExpenseMonthSelector } from "./ExpenseMonthSelector"
+import { convertToDate } from "app/utils/formatDate"
+import format from "date-fns/format"
 
 interface ExpenseReportScreenProps extends AppStackScreenProps<"ExpenseReport"> {}
 export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function ExpenseReportScreen() {
+  const viewRef = React.useRef<View | null>(null)
   const colors = useColors()
   const [reportMonth, setReportMonth] = useExpenseStore((state) => [
     state.selectedMonth,
     state.setSelectedMonth,
   ])
   const summary = useExpenseStore(getExpenseSummary(reportMonth))
+
+  async function shareReport() {
+    // TODO: Verify permissins before sharing
+    const reportMonthName = format(convertToDate(reportMonth), "MMMM-yyyy")
+    try {
+      const uri = await captureRef(viewRef, {
+        fileName: `ExpenseReport-${reportMonthName}`,
+        format: "jpg",
+        quality: 0.8,
+      })
+      await Share.open({
+        url: uri,
+        title: `Expense Report for ${reportMonthName}`,
+        message: `Expense Report for ${reportMonthName}`,
+      })
+      uri && releaseCapture(uri)
+    } catch (error) {
+      console.error("Share failed: ", error)
+    }
+  }
 
   return (
     <Screen
@@ -27,19 +53,29 @@ export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function Expens
       safeAreaEdges={["top"]}
       StatusBarProps={{ backgroundColor: colors.backgroundHighlight }}
     >
-      <ScrollView>
-        <ReportHeader reportMonth={reportMonth} onReportMonthChange={setReportMonth} />
-        {summary.total > 0 && (
-          <>
-            <ReportSummary total={summary.total} largestExpense={summary.largest} />
-            <PieChartByNecessity data={summary.byNecessity} />
-            <PieChartByExpenseCategory data={summary.byCategory} />
-            <PieChartByPaymentMode data={summary.byPaymentMode} />
-            <PieChartByPayee data={summary.byPayee} />
-            <LineChartByDate data={summary.byDate} />
-          </>
-        )}
-        {summary.total === 0 && <EmptyState preset="noExpensesReport" />}
+      <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <ReportHeader
+          reportMonth={reportMonth}
+          onReportMonthChange={setReportMonth}
+          onSharePress={shareReport}
+        />
+        <View
+          style={{ flex: 1, backgroundColor: colors.background }}
+          collapsable={false}
+          ref={viewRef}
+        >
+          {summary.total > 0 && (
+            <>
+              <ReportSummary total={summary.total} largestExpense={summary.largest} />
+              <PieChartByNecessity data={summary.byNecessity} />
+              <PieChartByExpenseCategory data={summary.byCategory} />
+              <PieChartByPaymentMode data={summary.byPaymentMode} />
+              <PieChartByPayee data={summary.byPayee} />
+              <LineChartByDate data={summary.byDate} />
+            </>
+          )}
+          {summary.total === 0 && <EmptyState preset="noExpensesReport" />}
+        </View>
       </ScrollView>
     </Screen>
   )
@@ -84,14 +120,16 @@ function ReportSummary({ total, largestExpense }: Readonly<ReportSummaryProps>) 
 interface ReportHeaderProps {
   reportMonth: MonthIdentifier
   onReportMonthChange: (month: MonthIdentifier) => void
+  onSharePress: () => void
 }
 
-function ReportHeader({ reportMonth, onReportMonthChange }: ReportHeaderProps) {
+function ReportHeader({ reportMonth, onReportMonthChange, onSharePress }: ReportHeaderProps) {
   const colors = useColors()
   const $headerStyle: ViewStyle = {
     flex: 1,
     flexDirection: "row",
     padding: spacing.sm,
+    justifyContent: "space-between",
     backgroundColor: colors.backgroundHighlight,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -114,6 +152,7 @@ function ReportHeader({ reportMonth, onReportMonthChange }: ReportHeaderProps) {
           ),
         }}
       />
+      <Icon type="FontAwesome5" name="share-alt" color={colors.text} onPress={onSharePress} />
     </View>
   )
 }
@@ -223,9 +262,7 @@ interface LegendProps {
 const Legend = ({ color, name, isSelected, subText, onPress }: Readonly<LegendProps>) => {
   const colors = useColors()
   const $legendStyle: ViewStyle = { flexDirection: "row", alignItems: "center" }
-  const $textStyle: TextStyle = isSelected
-    ? { color: colors.text}
-    : { color: colors.textDim }
+  const $textStyle: TextStyle = isSelected ? { color: colors.text } : { color: colors.textDim }
   return (
     <Pressable onPress={() => onPress?.(name)} style={$legendStyle}>
       <Dot color={color} />

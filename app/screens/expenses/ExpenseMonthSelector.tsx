@@ -1,7 +1,7 @@
 import { Icon, SelectableList, SelectableListOption, Text } from "app/components"
 import { MonthIdentifier, getMonthId, useExpenseStore } from "app/models"
 import { useColors, spacing } from "app/theme"
-import { formatMonthId } from "app/utils/formatDate"
+import { convertToDate } from "app/utils/formatDate"
 import { format } from "date-fns"
 import React, { useState } from "react"
 import { Modal, Pressable, TextStyle, View, ViewStyle } from "react-native"
@@ -24,7 +24,7 @@ export function ExpenseMonthSelector({
     getMonthId(new Date()),
   ])
 
-  const selectedMonth = new Date(formatMonthId(value))
+  const selectedMonth = convertToDate(value)
   const availableMonthListItems = Array.from(availableMonthsNumbersWithCurrentMonth)
     .sort(byDescending)
     .map(convertToSelectable)
@@ -71,7 +71,7 @@ export function ExpenseMonthSelector({
   )
 
   function convertToSelectable(month: string): SelectableListOption {
-    const date = new Date(formatMonthId(month))
+    const date = convertToDate(month)
     return {
       name: format(date, "MMMM''yy"),
       value: month,

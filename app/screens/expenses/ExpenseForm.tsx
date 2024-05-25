@@ -16,7 +16,7 @@ import DatePicker from "react-native-date-picker"
 import { useLocale } from "app/utils/useLocale"
 import { TxKeyPath } from "app/i18n"
 import { pipe } from "app/utils/fns"
-import { formatMonthId } from "app/utils/formatDate"
+import { convertToDate } from "app/utils/formatDate"
 import { lastDayOfMonth } from "date-fns"
 
 interface ExpenseFormProps {
@@ -165,7 +165,7 @@ function ExpenseDateInput({ date, isEditing, onChange }: Readonly<ExpenseDateInp
   const colors = useColors()
   const selectedMonth = useExpenseStore((state) => state.selectedMonth)
   const { languageTag } = useLocale()
-  const minSelectableDate = new Date(formatMonthId(selectedMonth))
+  const minSelectableDate = convertToDate(selectedMonth)
   const maxSelectableDate = isEditing ? lastDayOfMonth(date) : new Date()
   const handleDateChange = (newDate: Date) => {
     onChange({ date: newDate })

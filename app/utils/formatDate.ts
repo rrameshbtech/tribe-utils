@@ -27,4 +27,5 @@ export const formatDate = (date: string, dateFormat?: string, options?: Options)
   return format(parseISO(date), dateFormat ?? "MMM dd, yyyy", dateOptions)
 }
 
-export const formatMonthId = (month: string) => month.replace(/\B(?=(\d{4})*(\d{2})(?!\d))/g, "-")
+export const convertToDate = (monthId: string) =>
+  new Date(monthId.replace(/\B(?=(\d{4})*(\d{2})(?!\d))/g, "-"))
