@@ -33,7 +33,7 @@ export const ExpenseReportScreen: FC<ExpenseReportScreenProps> = function Expens
       const uri = await captureRef(viewRef, {
         fileName: `ExpenseReport-${reportMonthName}`,
         format: "jpg",
-        quality: 0.8,
+        quality: 1.0,
       })
       await Share.open({
         url: uri,
@@ -228,7 +228,9 @@ interface LegendsProps {
 }
 
 const Legends = ({ data, onSelect, selected }: LegendsProps) => {
+  const DEFAULT_VISIBLE_LEGENDS = 4
   const colors = useColors()
+  const [showMore, setShowMore] = useState(false)
   const $legendsStyle: ViewStyle = {
     flexDirection: "row",
     justifyContent: "center",
@@ -238,18 +240,35 @@ const Legends = ({ data, onSelect, selected }: LegendsProps) => {
   }
   return (
     <View style={$legendsStyle}>
-      {data.map((item) => (
-        <Legend
-          key={item.text}
-          name={item.text ?? ""}
-          subText={item.value.toString()}
-          color={item.color ?? colors.tint}
-          onPress={onSelect}
-          isSelected={selected === item.text}
-        />
-      ))}
+      {data.slice(0, DEFAULT_VISIBLE_LEGENDS).map((item) => renderLegendFor(item))}
+      {!showMore && data.length > DEFAULT_VISIBLE_LEGENDS && (
+        <Pressable onPress={() => setShowMore(true)}>
+          <Text style={{ color: colors.secondaryTint }} text="..." />
+        </Pressable>
+      )}
+      {showMore &&
+        data.length > DEFAULT_VISIBLE_LEGENDS &&
+        data.slice(DEFAULT_VISIBLE_LEGENDS).map((item) => renderLegendFor(item))}
+      {showMore && (
+        <Pressable onPress={() => setShowMore(false)}>
+          <Text style={{ color: colors.secondaryTint }} text="{less}" />
+        </Pressable>
+      )}
     </View>
   )
+
+  function renderLegendFor(item: pieDataItem) {
+    return (
+      <Legend
+        key={item.text}
+        name={item.text ?? ""}
+        subText={item.value.toString()}
+        color={item.color ?? colors.tint}
+        onPress={onSelect}
+        isSelected={selected === item.text}
+      />
+    )
+  }
 }
 
 interface LegendProps {
